@@ -3,6 +3,7 @@ package it.fulminazzo.fulmicollection.objects;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * Represents an object that on toString() calls
@@ -27,6 +28,8 @@ public abstract class Printable {
             for (Field field : fields) {
                 // Remove fields used by code coverage from Intellij IDEA.
                 if (field.getName().equals("__$hits$__")) continue;
+                // Prevent static non-relevant fields to be shown.
+                if (Modifier.isStatic(field.getModifiers())) continue;
                 field.setAccessible(true);
                 try {
                     Object o = field.get(object);
