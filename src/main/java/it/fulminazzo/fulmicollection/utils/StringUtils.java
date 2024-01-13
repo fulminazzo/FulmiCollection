@@ -2,10 +2,25 @@ package it.fulminazzo.fulmicollection.utils;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The type String utils.
+ */
 public class StringUtils {
+
+    /**
+     * Gets file name from its path.
+     *
+     * @param filePath the file path
+     * @return the file name
+     */
+    public static String getFileName(@Nullable String filePath) {
+        if (filePath == null) return null;
+        return Paths.get(filePath).getFileName().toString();
+    }
 
     /**
      * Repeats a string for a specified number of times.

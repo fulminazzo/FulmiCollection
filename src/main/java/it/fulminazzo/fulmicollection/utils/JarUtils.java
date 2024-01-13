@@ -7,6 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -14,6 +19,64 @@ import java.util.zip.ZipEntry;
  * The type Jar utils.
  */
 public class JarUtils {
+
+    /**
+     * A function to retrieve the entries of a JAR file or a directory.
+     * Useful for testing purposes.
+     *
+     * @param jarPath   the jar path
+     * @param directory the directory
+     * @return the entries
+     */
+    public static @NotNull Iterator<String> getEntries(@NotNull String jarPath, @NotNull String directory) {
+        return getEntries(getJar(jarPath), new File(directory));
+    }
+
+    /**
+     * A function to retrieve the entries of a JAR file or a directory.
+     * Useful for testing purposes.
+     *
+     * @param jarFileClass the jar file class
+     * @param directory    the directory
+     * @return the entries
+     */
+    public static @NotNull Iterator<String> getEntries(@NotNull Class<?> jarFileClass, @NotNull String directory) {
+        return getEntries(getJarFile(jarFileClass), new File(directory));
+    }
+
+    /**
+     * A function to retrieve the entries of a JAR file or a directory.
+     * Useful for testing purposes.
+     *
+     * @param jarFileClass the jar file class
+     * @param directory    the directory
+     * @return the entries
+     */
+    public static @NotNull Iterator<String> getEntries(@NotNull Class<?> jarFileClass, @NotNull File directory) {
+        return getEntries(getJarFile(jarFileClass), directory);
+    }
+
+    /**
+     * A function to retrieve the entries of a JAR file or a directory.
+     * Useful for testing purposes.
+     *
+     * @param jarFile   the jar file
+     * @param directory the directory
+     * @return the entries
+     */
+    public static @NotNull Iterator<String> getEntries(@Nullable JarFile jarFile, @NotNull File directory) {
+        final List<String> entries = new ArrayList<>();
+        if (jarFile != null) {
+            Enumeration<JarEntry> tmp = jarFile.entries();
+            while (tmp.hasMoreElements()) entries.add(tmp.nextElement().getName());
+        } else {
+            File[] files = directory.listFiles();
+            if (files != null)
+                for (File file : files)
+                    entries.add(directory.getPath() + File.separator + file.getName());
+        }
+        return entries.iterator();
+    }
 
     /**
      * Gets a resource from the current jar file.

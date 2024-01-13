@@ -47,7 +47,7 @@ public class ReflectionUtils {
      * @param name   the name
      * @return the field
      */
-    public static Field getField(Object object, String name) {
+    public static @Nullable Field getField(@NotNull Object object, String name) {
         return getField(object.getClass(), name);
     }
 
@@ -58,7 +58,7 @@ public class ReflectionUtils {
      * @param name  the name
      * @return the field
      */
-    public static Field getField(Class<?> clazz, String name) {
+    public static @Nullable Field getField(@NotNull Class<?> clazz, String name) {
         do {
             for (Field field : clazz.getDeclaredFields())
                 if (field.getName().equals(name)) {
@@ -76,7 +76,7 @@ public class ReflectionUtils {
      * @param object the object
      * @return the fields
      */
-    public static List<Field> getFields(Object object) {
+    public static List<Field> getFields(@NotNull Object object) {
         return getFields(object.getClass());
     }
 
@@ -86,7 +86,7 @@ public class ReflectionUtils {
      * @param clazz the clazz
      * @return the fields
      */
-    public static List<Field> getFields(Class<?> clazz) {
+    public static @NotNull List<Field> getFields(@NotNull Class<?> clazz) {
         LinkedList<Field> fields = new LinkedList<>();
         do {
             List<Field> tmp = new LinkedList<>();

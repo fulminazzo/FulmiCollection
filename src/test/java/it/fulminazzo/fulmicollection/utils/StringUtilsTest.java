@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class StringUtilsTest {
 
+    @Test
+    void testGetFileName() {
+        String path = "test/directory/file.yml";
+        assertEquals("file.yml", StringUtils.getFileName(path));
+    }
+
     @ParameterizedTest
     @CsvSource({"test string, Test String",
             "test String, Test String",
