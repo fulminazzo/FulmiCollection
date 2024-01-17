@@ -84,7 +84,8 @@ public class ClassUtils {
                         classes.addAll(findClassesInPackage(packageName + "." + className));
                     else {
                         className = className.substring(0, className.length() - ".class".length());
-                        classes.add(Class.forName(packageName + "." + className));
+                        Class<?> clazz = Class.forName(packageName + "." + className);
+                        if (clazz.getCanonicalName() != null) classes.add(clazz);
                     }
                 }
             }
