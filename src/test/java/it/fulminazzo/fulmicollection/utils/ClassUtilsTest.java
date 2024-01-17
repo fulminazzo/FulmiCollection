@@ -1,8 +1,6 @@
 package it.fulminazzo.fulmicollection.utils;
 
-import it.fulminazzo.fulmicollection.exceptions.ClassCannotBeNullException;
-import it.fulminazzo.fulmicollection.exceptions.GeneralCannotBeNullException;
-import it.fulminazzo.fulmicollection.exceptions.NameCannotBeNullException;
+import it.fulminazzo.fulmicollection.exceptions.*;
 import it.fulminazzo.fulmicollection.interfaces.functions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,16 @@ class ClassUtilsTest {
     @Test
     void findClassesInExceptions() {
         Set<Class<?>> classes = ClassUtils.findClassesInPackage(ClassCannotBeNullException.class.getPackage().getName());
-        Set<Class<?>> expected = new HashSet<>(Arrays.asList(ClassCannotBeNullException.class, GeneralCannotBeNullException.class, NameCannotBeNullException.class));
+        Set<Class<?>> expected = new LinkedHashSet<>(Arrays.asList(ClassCannotBeNullException.class, ClassCannotBeNullExceptionTest.class,
+                GeneralCannotBeNullException.class, NameCannotBeNullException.class, NameCannotBeNullExceptionTest.class));
+        assertEquals(expected, classes);
+    }
+
+    @Test
+    void findClassesInExceptionsDotted() {
+        Set<Class<?>> classes = ClassUtils.findClassesInPackage(ClassCannotBeNullException.class.getPackage().getName() + ".");
+        Set<Class<?>> expected = new LinkedHashSet<>(Arrays.asList(ClassCannotBeNullException.class, ClassCannotBeNullExceptionTest.class,
+                GeneralCannotBeNullException.class, NameCannotBeNullException.class, NameCannotBeNullExceptionTest.class));
         assertEquals(expected, classes);
     }
 
@@ -45,13 +52,6 @@ class ClassUtilsTest {
     }
 
     @Test
-    void findClassesInExceptionsDotted() {
-        Set<Class<?>> classes = ClassUtils.findClassesInPackage(ClassCannotBeNullException.class.getPackage().getName() + ".");
-        Set<Class<?>> expected = new HashSet<>(Arrays.asList(ClassCannotBeNullException.class, GeneralCannotBeNullException.class, NameCannotBeNullException.class));
-        assertEquals(expected, classes);
-    }
-
-    @Test
     void findClassesInNonExistingPackage() {
         Set<Class<?>> classes = ClassUtils.findClassesInPackage("super.cool.package.name");
         assertEquals(new LinkedHashSet<>(), classes);
@@ -65,7 +65,7 @@ class ClassUtilsTest {
 
     @Test
     void findClassesInJar() {
-        Set<Class<?>> classes = ClassUtils.findClassesInPackage(Assertions.class.getPackage().getName() + ".io", Assertions.class);
+        Set<Class<?>> classes = ClassUtils.findClassesInPackage(Assertions.class.getPackage().getName() + ".io");
         assertEquals(new LinkedHashSet<>(Arrays.asList(CleanupMode.class, TempDir.class)), classes);
     }
 }

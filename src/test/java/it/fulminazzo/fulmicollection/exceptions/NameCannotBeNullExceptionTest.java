@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class NameCannotBeNullExceptionTest {
+public class NameCannotBeNullExceptionTest {
 
     @Test
     void testVariableNameContainedInExceptionMessage() {

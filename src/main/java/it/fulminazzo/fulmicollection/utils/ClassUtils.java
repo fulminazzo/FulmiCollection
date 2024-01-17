@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -18,34 +15,49 @@ import java.util.jar.JarInputStream;
  */
 public class ClassUtils {
 
-    public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName)  {
-        return findClassesInPackage(packageName, ClassUtils.class);
-    }
-
     /**
-     * Obtain the calling class path, whether the current
-     * code is running from a JAR file or from an IDE.
-     * Then search the directory tree for every class
-     * contained in the given package name.
-     * Any subpackage will recursively invoke this function,
-     * and the result will be appended to the final one.
+     * This code works whether it is run from a JAR file or from an IDE.
+     * It searches the directory tree for every class contained in the given package name.
+     * Any subpackage will recursively invoke this function, and the result will be appended to the final one.
      *
      * @param packageName  the package name
-     * @param callingClass the calling class
      * @return the set of classes
      */
-    @NotNull
-    public static Set<Class<?>> findClassesInPackage(@Nullable String packageName, @NotNull Class<?> callingClass)  {
-        TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
-        if (packageName == null || packageName.trim().isEmpty()) return classes;
+    public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName)  {
+        if (packageName == null || packageName.trim().isEmpty()) return new HashSet<>();
         if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
-        String path = packageName.replaceAll("\\.", File.separator);
-        String currentJar = JarUtils.getJarName(callingClass);
+
+        final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
+        final String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
+
+        for (String currentJar : classPathEntries) classes.addAll(findClassesInPackage(packageName, currentJar));
+
+        return classes;
+    }
+
+
+    /**
+     * This code works whether it is run from a JAR file or from an IDE.
+     * It searches the given path (JAR or directory) for every class contained in the given package name.
+     * Any subpackage will recursively invoke this function, and the result will be appended to the final one.
+     *
+     * @param packageName  the package name
+     * @param classPath  the class path
+     * @return the set of classes
+     */
+    public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName, String classPath)  {
+        if (packageName == null || packageName.trim().isEmpty()) return new HashSet<>();
+        if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
+        if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
+
+        final String path = packageName.replaceAll("\\.", File.separator);
+        final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
+
         try {
-            if (currentJar.endsWith(".jar")) {
+            if (classPath.endsWith(".jar")) {
                 // JAR File
-                FileInputStream fileInputStream = new FileInputStream(currentJar);
+                FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
                 JarEntry entry;
                 while ((entry = inputStream.getNextJarEntry()) != null) {
@@ -62,7 +74,7 @@ public class ClassUtils {
                 }
             } else {
                 // File System
-                File directory = new File(currentJar, path);
+                File directory = new File(classPath, path);
                 if (!directory.isDirectory()) return classes;
                 File[] files = directory.listFiles();
                 if (files == null) return classes;
@@ -79,6 +91,7 @@ public class ClassUtils {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return new LinkedHashSet<>(classes);
+
+        return classes;
     }
 }
