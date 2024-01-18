@@ -29,7 +29,14 @@ public class ClassUtils {
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
 
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
-        final String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
+        final List<String> classPathEntries = new ArrayList<>(Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator)));
+        // If this code is run in a JAR container as an extension (plugin) to another program,
+        // it will not be present in the classPathEntries list.
+        try {
+            classPathEntries.add(JarUtils.getCurrentJarName());
+        } catch (RuntimeException ignored) {
+
+        }
 
         for (String currentJar : classPathEntries) classes.addAll(findClassesInPackage(packageName, currentJar));
 
