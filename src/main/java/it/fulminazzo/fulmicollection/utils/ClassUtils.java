@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
 /**
@@ -20,10 +21,23 @@ public class ClassUtils {
      * It searches the directory tree for every class contained in the given package name.
      * Any subpackage will recursively invoke this function, and the result will be appended to the final one.
      *
-     * @param packageName  the package name
+     * @param packageName the package name
      * @return the set of classes
      */
     public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName)  {
+        return findClassesInPackage(packageName, null);
+    }
+
+    /**
+     * This code works whether it is run from a JAR file or from an IDE.
+     * It searches the directory tree for every class contained in the given package name.
+     * Any subpackage will recursively invoke this function, and the result will be appended to the final one.
+     *
+     * @param packageName the package name
+     * @param clazz       this class will be used to look up the corresponding JAR file that might contain the package
+     * @return the set of classes
+     */
+    public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName, @Nullable Class<?> clazz)  {
         if (packageName == null || packageName.trim().isEmpty()) return new HashSet<>();
         if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
@@ -34,11 +48,13 @@ public class ClassUtils {
         // it will not be present in the classPathEntries list.
         try {
             classPathEntries.add(JarUtils.getCurrentJarName());
-        } catch (RuntimeException ignored) {
-
+        } catch (RuntimeException ignored) {}
+        if (clazz != null) {
+            JarFile jarFile = JarUtils.getJarFile(clazz);
+            if (jarFile != null) classPathEntries.add(jarFile.getName());
         }
 
-        for (String currentJar : classPathEntries) classes.addAll(findClassesInPackage(packageName, currentJar));
+        for (String currentJar : classPathEntries) classes.addAll(findClassesInPackageSingle(packageName, currentJar));
 
         return classes;
     }
@@ -49,11 +65,11 @@ public class ClassUtils {
      * It searches the given path (JAR or directory) for every class contained in the given package name.
      * Any subpackage will recursively invoke this function, and the result will be appended to the final one.
      *
-     * @param packageName  the package name
-     * @param classPath  the class path
+     * @param packageName the package name
+     * @param classPath   the class path
      * @return the set of classes
      */
-    public static @NotNull Set<Class<?>> findClassesInPackage(@Nullable String packageName, String classPath)  {
+    public static @NotNull Set<Class<?>> findClassesInPackageSingle(@Nullable String packageName, String classPath)  {
         if (packageName == null || packageName.trim().isEmpty()) return new HashSet<>();
         if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
