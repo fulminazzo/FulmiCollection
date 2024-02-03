@@ -5,7 +5,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,6 +70,19 @@ class ReflectionUtilsTest {
         };
     }
 
+    static Object[][] getTestMethods() throws NoSuchMethodException {
+        return new Object[][]{
+                new Object[]{InnerClass.class.getDeclaredMethod("firstMethod"),
+                        String.class, "firstMethod", new Object[0]},
+                new Object[]{UpperClass.class.getDeclaredMethod("secondMethod", String.class),
+                        null, "secondMethod", new Object[]{""}},
+                new Object[]{UpperClass.class.getDeclaredMethod("thirdMethod", String.class),
+                        Integer.class, "thirdMethod", new Object[]{""}},
+                new Object[]{UpperClass.class.getDeclaredMethod("thirdMethod", String.class, String.class),
+                        Integer.class, "thirdMethod", new Object[]{"", ""}}
+        };
+    }
+
     @ParameterizedTest
     @MethodSource("getTestFields")
     void testFields(String field, Object object, boolean isNull) {
@@ -77,10 +92,10 @@ class ReflectionUtilsTest {
     @Test
     void testGetFields() throws NoSuchFieldException {
         List<Field> expected = new ArrayList<>();
-        expected.add(UpperClass.class.getDeclaredField("field1"));
-        expected.add(UpperClass.class.getDeclaredField("field2"));
-        expected.add(InnerClass.class.getDeclaredField("field4"));
         expected.add(InnerClass.class.getDeclaredField("field3"));
+        expected.add(InnerClass.class.getDeclaredField("field4"));
+        expected.add(UpperClass.class.getDeclaredField("field2"));
+        expected.add(UpperClass.class.getDeclaredField("field1"));
         assertIterableEquals(expected, ReflectionUtils.getFields(new InnerClass()));
     }
 
@@ -88,6 +103,22 @@ class ReflectionUtilsTest {
     @MethodSource("getTestClasses")
     void testGetClass(Class<?> clazz) {
         assertEquals(clazz, ReflectionUtils.getClass(clazz.getCanonicalName()));
+    }
+
+    @Test
+    void testGetMethods() {
+        final List<Method> methods = ReflectionUtils.getMethods(new InnerClass());
+        final List<String> expected = Arrays.asList("firstMethod", "secondMethod", "thirdMethod", "thirdMethod");
+        assertEquals(expected.size(), methods.size());
+        for (int i = 0; i < expected.size(); i++)
+            assertEquals(expected.get(i), methods.get(i).getName());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestMethods")
+    void testGetMethod(Method expected, Class<?> returnType, String methodName, Object... parameters) {
+        final InnerClass innerClass = new InnerClass();
+        assertEquals(expected, ReflectionUtils.getMethod(innerClass, returnType, methodName, parameters));
     }
 
     @Test
@@ -118,11 +149,26 @@ class ReflectionUtilsTest {
         public String field3;
         private static String field4;
 
+        String firstMethod() {
+            return null;
+        }
     }
 
     static class UpperClass {
         public static String field1;
         private String field2;
+
+        void secondMethod(String arg) {
+
+        }
+
+        Integer thirdMethod(String value) {
+            return null;
+        }
+
+        Integer thirdMethod(String value, String anotherValue) {
+            return null;
+        }
     }
 
     interface InnerInterface {

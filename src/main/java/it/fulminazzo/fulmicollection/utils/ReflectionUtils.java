@@ -6,7 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -60,14 +63,12 @@ public class ReflectionUtils {
      * @return the field
      */
     public static @Nullable Field getField(@NotNull Class<?> clazz, String name) {
-        do {
-            for (Field field : clazz.getDeclaredFields())
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+            for (Field field : c.getDeclaredFields())
                 if (field.getName().equals(name)) {
                     field.setAccessible(true);
                     return field;
                 }
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
         return null;
     }
 
@@ -89,13 +90,10 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Field> getFields(@NotNull Class<?> clazz) {
         LinkedList<Field> fields = new LinkedList<>();
-        do {
-            List<Field> tmp = new LinkedList<>();
-            tmp.addAll(Arrays.asList(clazz.getFields()));
-            tmp.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            tmp.stream().sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers()))).forEach(fields::addFirst);
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+            Arrays.stream(c.getDeclaredFields())
+                    .sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers())))
+                    .forEach(fields::addLast);
         return fields.stream()
                 // Remove fields used by code coverage from Intellij IDEA.
                 .filter(f -> !f.getName().equals("__$hits$__"))
@@ -112,8 +110,15 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the method
      */
-    public static @Nullable Method getMethod(@NotNull Object object, String name, Object... parameters) {
-        return getMethod(object.getClass(), name, Arrays.stream(parameters).map(o -> o == null ? null : o.getClass()).toArray(Class[]::new));
+    public static @Nullable Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @NotNull String name,
+                                             @Nullable Object... parameters) {
+        if (parameters == null) parameters = new Object[0];
+        final Class<?>[] paramTypes = new Class<?>[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            final Object obj = parameters[i];
+            if (obj != null) paramTypes[i] = obj.getClass();
+        }
+        return getMethod(object.getClass(), returnType, name, paramTypes);
     }
 
     /**
@@ -121,18 +126,27 @@ public class ReflectionUtils {
      *
      * @param clazz   the clazz
      * @param name    the name
-     * @param classes the classes
+     * @param paramTypes the parameter types
      * @return the method
      */
-    public static @Nullable Method getMethod(@NotNull Class<?> clazz, String name, Class<?>... classes) {
-        do {
-            for (Method method : clazz.getDeclaredMethods())
-                if (method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), classes)) {
-                    method.setAccessible(true);
-                    return method;
+    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @NotNull String name,
+                                             @Nullable Class<?>... paramTypes) {
+        if (paramTypes == null) paramTypes = new Class<?>[0];
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+            mainloop:
+            for (Method method : c.getDeclaredMethods()) {
+                if (!method.getName().equalsIgnoreCase(name)) continue;
+                if (returnType != null && !returnType.equals(method.getReturnType())) continue;
+                if (method.getParameterCount() != paramTypes.length) continue;
+                for (int i = 0; i < paramTypes.length; i++) {
+                    final Class<?> expected = paramTypes[i];
+                    if (expected == null) continue;
+                    final Class<?> actual = method.getParameterTypes()[i];
+                    if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
+                        continue mainloop;
                 }
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
+                return method;
+            }
         return null;
     }
 
@@ -154,15 +168,11 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz) {
         LinkedList<Method> methods = new LinkedList<>();
-        do {
-            List<Method> tmp = new LinkedList<>();
-            tmp.addAll(Arrays.asList(clazz.getMethods()));
-            tmp.addAll(Arrays.asList(clazz.getMethods()));
-            tmp.stream().sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers()))).forEach(methods::addFirst);
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+            Arrays.stream(c.getDeclaredMethods())
+                    .sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers())))
+                    .forEach(methods::addLast);
         return methods.stream()
-                .filter(f -> !f.getName().equals("__$hits$__"))
                 .peek(f -> f.setAccessible(true))
                 .distinct()
                 .collect(Collectors.toList());
