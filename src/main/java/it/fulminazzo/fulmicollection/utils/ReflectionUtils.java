@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +98,70 @@ public class ReflectionUtils {
         } while (clazz != null);
         return fields.stream()
                 // Remove fields used by code coverage from Intellij IDEA.
+                .filter(f -> !f.getName().equals("__$hits$__"))
+                .peek(f -> f.setAccessible(true))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets method.
+     *
+     * @param object     the object
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the method
+     */
+    public static @Nullable Method getMethod(@NotNull Object object, String name, Object... parameters) {
+        return getMethod(object.getClass(), name, Arrays.stream(parameters).map(o -> o == null ? null : o.getClass()).toArray(Class[]::new));
+    }
+
+    /**
+     * Gets method.
+     *
+     * @param clazz   the clazz
+     * @param name    the name
+     * @param classes the classes
+     * @return the method
+     */
+    public static @Nullable Method getMethod(@NotNull Class<?> clazz, String name, Class<?>... classes) {
+        do {
+            for (Method method : clazz.getDeclaredMethods())
+                if (method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), classes)) {
+                    method.setAccessible(true);
+                    return method;
+                }
+            clazz = clazz.getSuperclass();
+        } while (clazz != null);
+        return null;
+    }
+
+    /**
+     * Gets methods.
+     *
+     * @param object the object
+     * @return the methods
+     */
+    public static List<Method> getMethods(@NotNull Object object) {
+        return getMethods(object.getClass());
+    }
+
+    /**
+     * Gets methods.
+     *
+     * @param clazz the clazz
+     * @return the methods
+     */
+    public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz) {
+        LinkedList<Method> methods = new LinkedList<>();
+        do {
+            List<Method> tmp = new LinkedList<>();
+            tmp.addAll(Arrays.asList(clazz.getMethods()));
+            tmp.addAll(Arrays.asList(clazz.getMethods()));
+            tmp.stream().sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers()))).forEach(methods::addFirst);
+            clazz = clazz.getSuperclass();
+        } while (clazz != null);
+        return methods.stream()
                 .filter(f -> !f.getName().equals("__$hits$__"))
                 .peek(f -> f.setAccessible(true))
                 .distinct()
