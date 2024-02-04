@@ -136,7 +136,7 @@ public class ReflectionUtils {
             Method method = getMethodFromClass(c, returnType, name, paramTypes);
             if (method != null) return method;
             for (Class<?> i : c.getInterfaces()) {
-                method = getMethodFromClass(i, returnType, name, paramTypes);
+                method = getMethod(i, returnType, name, paramTypes);
                 if (method != null) return method;
             }
         }
