@@ -132,21 +132,31 @@ public class ReflectionUtils {
     public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @NotNull String name,
                                              @Nullable Class<?>... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
-            mainloop:
-            for (Method method : c.getDeclaredMethods()) {
-                if (!method.getName().equalsIgnoreCase(name)) continue;
-                if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
-                if (method.getParameterCount() != paramTypes.length) continue;
-                for (int i = 0; i < paramTypes.length; i++) {
-                    final Class<?> expected = paramTypes[i];
-                    if (expected == null) continue;
-                    final Class<?> actual = method.getParameterTypes()[i];
-                    if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
-                        continue mainloop;
-                }
-                return method;
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+            Method method = getMethodFromClass(c, returnType, name, paramTypes);
+            if (method != null) return method;
+            for (Class<?> i : c.getInterfaces()) {
+                method = getMethodFromClass(i, returnType, name, paramTypes);
+                if (method != null) return method;
             }
+        }
+        return null;
+    }
+
+    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @NotNull String name, @Nullable Class<?> @NotNull [] paramTypes) {
+        for (Method method : c.getDeclaredMethods()) {
+            if (!method.getName().equalsIgnoreCase(name)) continue;
+            if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
+            if (method.getParameterCount() != paramTypes.length) continue;
+            for (int i = 0; i < paramTypes.length; i++) {
+                final Class<?> expected = paramTypes[i];
+                if (expected == null) continue;
+                final Class<?> actual = method.getParameterTypes()[i];
+                if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
+                    return null;
+            }
+            return method;
+        }
         return null;
     }
 
@@ -168,14 +178,21 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz) {
         LinkedList<Method> methods = new LinkedList<>();
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
-            Arrays.stream(c.getDeclaredMethods())
-                    .sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers())))
-                    .forEach(methods::addLast);
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()){
+            addDeclaredMethods(c, methods);
+            for (Class<?> i : c.getInterfaces())
+                addDeclaredMethods(i, methods);
+        }
         return methods.stream()
                 .peek(f -> f.setAccessible(true))
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    private static void addDeclaredMethods(@NotNull Class<?> clazz, @NotNull LinkedList<Method> methods) {
+        Arrays.stream(clazz.getDeclaredMethods())
+                .sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers())))
+                .forEach(methods::addLast);
     }
 
     /**
