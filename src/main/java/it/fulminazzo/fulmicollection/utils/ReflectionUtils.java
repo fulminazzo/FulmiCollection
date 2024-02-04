@@ -136,7 +136,7 @@ public class ReflectionUtils {
             mainloop:
             for (Method method : c.getDeclaredMethods()) {
                 if (!method.getName().equalsIgnoreCase(name)) continue;
-                if (returnType != null && !returnType.equals(method.getReturnType())) continue;
+                if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
                 if (method.getParameterCount() != paramTypes.length) continue;
                 for (int i = 0; i < paramTypes.length; i++) {
                     final Class<?> expected = paramTypes[i];
