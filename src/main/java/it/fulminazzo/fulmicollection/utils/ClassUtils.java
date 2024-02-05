@@ -74,7 +74,7 @@ public class ClassUtils {
         if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
 
-        final String path = packageName.replaceAll("\\.", File.separator);
+        final String path = packageName.replace(".", File.separator);
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
 
         try {
