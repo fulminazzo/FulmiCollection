@@ -84,7 +84,7 @@ public class ClassUtils {
                     if (!className.startsWith(path)) continue;
                     if (className.equalsIgnoreCase(path + File.separator)) continue;
                     className = className.replace("/", ".");
-                    if (!className.endsWith(".class")) classes.addAll(findClassesInPackage(className));
+                    if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
                     else {
                         className = className.substring(0, className.length() - ".class".length());
                         Class<?> clazz = Class.forName(className);
@@ -100,7 +100,7 @@ public class ClassUtils {
                 for (File file : files) {
                     String className = file.getName();
                     if (!className.endsWith(".class"))
-                        classes.addAll(findClassesInPackage(packageName + "." + className));
+                        classes.addAll(findClassesInPackageSingle(packageName + "." + className, classPath));
                     else {
                         className = className.substring(0, className.length() - ".class".length());
                         Class<?> clazz = Class.forName(packageName + "." + className);
@@ -192,7 +192,7 @@ public class ClassUtils {
                     if (cName.equalsIgnoreCase(path + File.separator)) continue;
                     cName = cName.replace("/", ".");
                     if (!cName.endsWith(".class")) {
-                        Class<?> clazz = findClassInPackages(packageName + "." + cName, className);
+                        Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
                         if (clazz != null) return clazz;
                     } else {
                         cName = cName.substring(0, cName.length() - ".class".length());
@@ -209,7 +209,7 @@ public class ClassUtils {
                 for (File file : files) {
                     String cName = file.getName();
                     if (!cName.endsWith(".class")) {
-                        Class<?> clazz = findClassInPackages(packageName + "." + cName, className);
+                        Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
                         if (clazz != null) return clazz;
                     } else {
                         cName = cName.substring(0, cName.length() - ".class".length());
