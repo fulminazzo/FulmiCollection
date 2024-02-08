@@ -84,7 +84,7 @@ public class ClassUtils {
                     if (!className.startsWith(path)) continue;
                     if (className.equalsIgnoreCase(path + File.separator)) continue;
                     className = className.replace("/", ".");
-                    if (className.isEmpty()) continue;
+                    if (className.endsWith(".")) continue;
                     if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
                     else {
                         className = className.substring(0, className.length() - ".class".length());
@@ -100,7 +100,7 @@ public class ClassUtils {
                 if (files == null) return classes;
                 for (File file : files) {
                     String className = file.getName();
-                    if (className.isEmpty()) continue;
+                    if (className.endsWith(".")) continue;
                     if (!className.endsWith(".class"))
                         classes.addAll(findClassesInPackageSingle(packageName + "." + className, classPath));
                     else {
@@ -193,7 +193,7 @@ public class ClassUtils {
                     if (!cName.startsWith(path)) continue;
                     if (cName.equalsIgnoreCase(path + File.separator)) continue;
                     cName = cName.replace("/", ".");
-                    if (cName.isEmpty()) continue;
+                    if (cName.endsWith(".")) continue;
                     if (!cName.endsWith(".class")) {
                         Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
                         if (clazz != null) return clazz;
@@ -211,7 +211,7 @@ public class ClassUtils {
                 if (files == null) return null;
                 for (File file : files) {
                     String cName = file.getName();
-                    if (cName.isEmpty()) continue;
+                    if (cName.endsWith(".")) continue;
                     if (!cName.endsWith(".class")) {
                         Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
                         if (clazz != null) return clazz;
