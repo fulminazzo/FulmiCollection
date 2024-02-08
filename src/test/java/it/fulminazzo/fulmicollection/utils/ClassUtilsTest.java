@@ -17,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ClassUtilsTest {
 
     @Test
+    void findClassInExceptions() {
+        assertEquals(ClassCannotBeNullException.class, ClassUtils.findClassInPackages(ClassCannotBeNullException.class.getPackage().getName(),
+                ClassCannotBeNullException.class.getSimpleName()));
+    }
+
+    @Test
     void findClassesInExceptions() {
         Set<Class<?>> classes = ClassUtils.findClassesInPackage(ClassCannotBeNullException.class.getPackage().getName());
         Set<Class<?>> expected = new LinkedHashSet<>(Arrays.asList(ClassCannotBeNullException.class, ClassCannotBeNullExceptionTest.class,
