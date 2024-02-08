@@ -43,7 +43,7 @@ public class ClassUtils {
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
 
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
-        final List<String> classPathEntries = new ArrayList<>(Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator)));
+        final List<String> classPathEntries = new LinkedList<>(Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator)));
         // If this code is run in a JAR container as an extension (plugin) to another program,
         // it will not be present in the classPathEntries list.
         try {
@@ -69,11 +69,7 @@ public class ClassUtils {
      * @param classPath   the class path
      * @return the set of classes
      */
-    public static @NotNull Set<Class<?>> findClassesInPackageSingle(@Nullable String packageName, String classPath)  {
-        if (packageName == null || packageName.trim().isEmpty()) return new HashSet<>();
-        if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
-        if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
-
+    private static @NotNull Set<Class<?>> findClassesInPackageSingle(@NotNull String packageName, String classPath)  {
         final String path = packageName.replace(".", File.separator);
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
 
@@ -149,7 +145,8 @@ public class ClassUtils {
         if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
         if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
 
-        final List<String> classPathEntries = new ArrayList<>(Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator)));
+        String[] path = System.getProperty("java.class.path").split(File.pathSeparator);
+        final List<String> classPathEntries = new LinkedList<>(Arrays.asList(path));
         // If this code is run in a JAR container as an extension (plugin) to another program,
         // it will not be present in the classPathEntries list.
         try {
@@ -180,11 +177,7 @@ public class ClassUtils {
      * @param className   the class name
      * @return the set of classes
      */
-    public static @Nullable Class<?> findClassInPackagesSingle(@Nullable String packageName, String classPath, @NotNull String className)  {
-        if (packageName == null || packageName.trim().isEmpty()) return null;
-        if (packageName.endsWith(File.separator)) packageName = packageName.substring(0, packageName.length() - 1);
-        if (packageName.endsWith(".")) packageName = packageName.substring(0, packageName.length() - 1);
-
+    private static @Nullable Class<?> findClassInPackagesSingle(@NotNull String packageName, String classPath, @NotNull String className)  {
         final String path = packageName.replace(".", File.separator);
 
         try {
