@@ -22,5 +22,11 @@ public abstract class AbstractReflTest {
         public String printField(String greeting) {
             return greeting + name;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof TestClass) return this.name.equals(((TestClass) o).name);
+            return super.equals(o);
+        }
     }
 }
