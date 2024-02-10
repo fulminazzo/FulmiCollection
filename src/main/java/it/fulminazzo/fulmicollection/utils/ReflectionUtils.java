@@ -96,6 +96,28 @@ public class ReflectionUtils {
     }
 
     /**
+     * Gets field nameless.
+     *
+     * @param object    the object
+     * @param fieldType the field type
+     * @return the field
+     */
+    public static @Nullable Field getFieldNameless(@NotNull Object object, String fieldType) {
+        return getFieldNameless(object.getClass(), fieldType);
+    }
+
+    /**
+     * Gets field nameless.
+     *
+     * @param clazz     the clazz
+     * @param fieldType the field type
+     * @return the field
+     */
+    public static @Nullable Field getFieldNameless(@NotNull Class<?> clazz, String fieldType) {
+        return getField(clazz, getClass(fieldType));
+    }
+
+    /**
      * Gets field.
      *
      * @param object    the object
