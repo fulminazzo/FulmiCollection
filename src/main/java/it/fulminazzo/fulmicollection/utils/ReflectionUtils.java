@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class ReflectionUtils {
+    private static final String CLASS_NOT_FOUND = "Could not find class %class%";
+    private static final String CONSTRUCTOR_NOT_FOUND = "Could not find constructor (%parameters%)";
+    private static final String METHOD_NOT_FOUND = "Could not find method %type% %name%(%parameters%)";
+    private static final String FIELD_NOT_FOUND = "Could not find field of name %name% in %class%";
+    private static final String FIELD_TYPE_NOT_FOUND = "Could not find field of type %type% in %class%";
+
     public static final Class<?>[] WRAPPER_CLASSES = new Class[]{Boolean.class, Byte.class, Short.class, Character.class,
             Integer.class, Long.class, Float.class, Double.class};
 
@@ -30,7 +36,7 @@ public class ReflectionUtils {
         } catch (ClassNotFoundException e) {
             Class<T> clazz = getInnerClass(className);
             if (clazz == null) clazz = getInnerInterface(className);
-            if (clazz == null) throw new RuntimeException("Could not find class " + className);
+            if (clazz == null) throw new RuntimeException(CLASS_NOT_FOUND.replace("%class%", className));
             return clazz;
         }
     }
@@ -130,7 +136,9 @@ public class ReflectionUtils {
         try {
             return getField(clazz, f -> fieldType.isAssignableFrom(f.getType()));
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException(String.format("Could not find field of type %s in %s", fieldType.getName(), clazz.getName()));
+            throw new IllegalArgumentException(FIELD_TYPE_NOT_FOUND
+                    .replace("%type%", fieldType.getName())
+                    .replace("%class%", clazz.getSimpleName()));
         }
     }
 
@@ -156,7 +164,9 @@ public class ReflectionUtils {
         try {
             return getField(clazz, f -> f.getName().equalsIgnoreCase(name));
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException(String.format("Could not find field of name %s in %s", name, clazz.getName()));
+            throw new IllegalArgumentException(FIELD_NOT_FOUND
+                    .replace("%type%", name)
+                    .replace("%class%", clazz.getSimpleName()));
         }
     }
 
@@ -172,7 +182,8 @@ public class ReflectionUtils {
     }
 
     /**
-     * Gets field.
+     * Gets field from the given predicate.
+     * If nothing is found, throws a {@link NullPointerException}.
      *
      * @param clazz     the clazz
      * @param predicate the predicate
@@ -267,7 +278,7 @@ public class ReflectionUtils {
             Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
             if (constructor != null) return constructor;
         }
-        throw new IllegalArgumentException(String.format("Could not find constructor (%s)", classesToString(paramTypes)));
+        throw new IllegalArgumentException(CONSTRUCTOR_NOT_FOUND.replace("%parameters%", classesToString(paramTypes)));
     }
 
     private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, Class<?> @Nullable [] paramTypes) {
@@ -306,33 +317,23 @@ public class ReflectionUtils {
      * @param paramTypes the parameter types
      * @return the method
      */
-    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
+    public static @NotNull Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
                                              Class<?> @Nullable ... paramTypes) {
-        if (paramTypes == null) paramTypes = new Class<?>[0];
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
-            Method method = getMethodFromClass(c, returnType, name, paramTypes);
-            if (method != null) return method;
-            for (Class<?> i : c.getInterfaces()) {
-                method = getMethod(i, returnType, name, paramTypes);
-                if (method != null) return method;
-            }
+        try {
+            return getMethod(clazz, m -> {
+                if (name != null && !m.getName().equalsIgnoreCase(name)) return false;
+                if (returnType != null && !returnType.isAssignableFrom(m.getReturnType())) return false;
+                if (paramTypes == null) return m.getParameterCount() == 0;
+                if (m.getParameterCount() != paramTypes.length) return false;
+                return validateParameters(paramTypes, m);
+            });
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(METHOD_NOT_FOUND
+                    .replace("%type%", returnType == null ? "?" : returnType.getSimpleName())
+                    .replace("%name%", name == null ? "?" : name)
+                    .replace("%parameters%", classesToString(paramTypes))
+            );
         }
-        return null;
-    }
-
-    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name,
-                                                       Class<?> @Nullable [] paramTypes) {
-        for (Method method : c.getDeclaredMethods()) {
-            if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
-            if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
-            if (paramTypes == null)
-                if (method.getParameterCount() == 0) return method;
-                else continue;
-            if (method.getParameterCount() != paramTypes.length) continue;
-            if (!validateParameters(paramTypes, method)) continue;
-            return method;
-        }
-        return null;
     }
 
     private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, @NotNull Executable executable) {
@@ -346,6 +347,33 @@ public class ReflectionUtils {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Gets method.
+     *
+     * @param clazz     the clazz
+     * @param predicate the predicate
+     * @return the method
+     */
+    public static @NotNull Method getMethod(@NotNull Class<?> clazz, @NotNull Predicate<Method> predicate) {
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+            Method method = getMethodFromClass(c, predicate);
+            if (method != null) return method;
+            for (Class<?> i : c.getInterfaces())
+                try {
+                    return getMethod(i, predicate);
+                } catch (NullPointerException ignored) {
+
+                }
+        }
+        throw new NullPointerException();
+    }
+
+    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @NotNull Predicate<Method> predicate) {
+        for (Method method : c.getDeclaredMethods())
+            if (predicate.test(method)) return method;
+        return null;
     }
 
     /**
