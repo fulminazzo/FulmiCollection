@@ -98,6 +98,34 @@ public class ReflectionUtils {
     /**
      * Gets field.
      *
+     * @param object    the object
+     * @param fieldType the field type
+     * @return the field
+     */
+    public static @Nullable Field getField(@NotNull Object object, Class<?> fieldType) {
+        return getField(object.getClass(), fieldType);
+    }
+
+    /**
+     * Gets field.
+     *
+     * @param clazz     the clazz
+     * @param fieldType the field type
+     * @return the field
+     */
+    public static @Nullable Field getField(@NotNull Class<?> clazz, Class<?> fieldType) {
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+            for (Field field : c.getDeclaredFields())
+                if (fieldType.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
+                    return field;
+                }
+        return null;
+    }
+
+    /**
+     * Gets field.
+     *
      * @param object the object
      * @param name   the name
      * @return the field
