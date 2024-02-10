@@ -26,12 +26,13 @@ public class ReflectionUtils {
      * @param className the class name
      * @return the class
      */
-    public static <T> @Nullable Class<T> getClass(@NotNull String className) {
+    public static <T> @NotNull Class<T> getClass(@NotNull String className) {
         try {
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             Class<T> clazz = getInnerClass(className);
             if (clazz == null) clazz = getInnerInterface(className);
+            if (clazz == null) throw new RuntimeException("Could not find class " + className);
             return clazz;
         }
     }
@@ -94,7 +95,7 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getFieldNameless(@NotNull Object object, @NotNull String fieldType) {
+    public static @NotNull Field getFieldNameless(@NotNull Object object, @NotNull String fieldType) {
         return getFieldNameless(object.getClass(), fieldType);
     }
 
@@ -105,10 +106,8 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getFieldNameless(@NotNull Class<?> clazz, @NotNull String fieldType) {
-        Class<?> type = getClass(fieldType);
-        if (type == null) throw new IllegalArgumentException("Could not find class " + fieldType);
-        return getField(clazz, type);
+    public static @NotNull Field getFieldNameless(@NotNull Class<?> clazz, @NotNull String fieldType) {
+        return getField(clazz, getClass(fieldType));
     }
 
     /**
@@ -118,7 +117,7 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Object object, @NotNull Class<?> fieldType) {
+    public static @NotNull Field getField(@NotNull Object object, @NotNull Class<?> fieldType) {
         return getField(object.getClass(), fieldType);
     }
 
@@ -129,14 +128,14 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Class<?> clazz, @NotNull Class<?> fieldType) {
+    public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Class<?> fieldType) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (fieldType.isAssignableFrom(field.getType())) {
                     field.setAccessible(true);
                     return field;
                 }
-        return null;
+        throw new IllegalArgumentException(String.format("Could not find field %s in %s", fieldType.getName(), clazz.getName()));
     }
 
     /**
@@ -205,7 +204,7 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the constructor
      */
-    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Object object, @Nullable Object @Nullable ... parameters) {
+    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Object object, @Nullable Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getConstructor(object.getClass(), objectsToClasses(parameters));
     }
@@ -218,13 +217,13 @@ public class ReflectionUtils {
      * @param paramTypes the param types
      * @return the constructor
      */
-    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?> @Nullable ... paramTypes) {
+    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
             if (constructor != null) return constructor;
         }
-        return null;
+        throw new IllegalArgumentException(String.format("Could not find constructor (%s)", classesToString(paramTypes)));
     }
 
     private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @Nullable [] paramTypes) {

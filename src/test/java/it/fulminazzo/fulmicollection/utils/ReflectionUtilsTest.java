@@ -90,6 +90,21 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    void testGetFieldNameless() throws NoSuchFieldException {
+        assertEquals(InnerClass.class.getDeclaredField("field3"), ReflectionUtils.getFieldNameless(new InnerClass(), String.class.getCanonicalName()));
+    }
+
+    @Test
+    void testGetFieldNamelessClass() throws NoSuchFieldException {
+        assertEquals(InnerClass.class.getDeclaredField("field3"), ReflectionUtils.getField(new InnerClass(), String.class));
+    }
+
+    @Test
+    void testGetConstructor() throws NoSuchMethodException {
+        assertEquals(InnerClass.class.getDeclaredConstructor(), ReflectionUtils.getConstructor(new InnerClass()));
+    }
+
+    @Test
     void testGetFields() throws NoSuchFieldException {
         List<Field> expected = new ArrayList<>();
         expected.add(InnerClass.class.getDeclaredField("field3"));
