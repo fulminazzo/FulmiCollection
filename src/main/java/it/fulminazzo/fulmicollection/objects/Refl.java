@@ -583,6 +583,8 @@ public class Refl<T> {
         final Method method = getMethod(returnType, name, paramTypes);
         method.setAccessible(true);
         try {
+            final Method method = getMethod(returnType, name, paramTypes);
+            method.setAccessible(true);
             return (O) method.invoke(this.object, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
