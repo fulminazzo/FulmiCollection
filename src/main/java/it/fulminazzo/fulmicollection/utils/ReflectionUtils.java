@@ -166,6 +166,17 @@ public class ReflectionUtils {
     /**
      * Gets field.
      *
+     * @param object    the object
+     * @param predicate the predicate
+     * @return the field
+     */
+    public static @NotNull Field getField(@NotNull Object object, @NotNull Predicate<Field> predicate) {
+        return getField(object.getClass(), predicate);
+    }
+
+    /**
+     * Gets field.
+     *
      * @param clazz     the clazz
      * @param predicate the predicate
      * @return the field
