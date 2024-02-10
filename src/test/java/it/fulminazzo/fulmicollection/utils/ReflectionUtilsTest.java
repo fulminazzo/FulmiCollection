@@ -86,7 +86,8 @@ class ReflectionUtilsTest {
     @ParameterizedTest
     @MethodSource("getTestFields")
     void testFields(String field, Object object, boolean isNull) {
-        assertEquals(isNull, ReflectionUtils.getField(object, field) == null);
+        if (isNull) assertThrowsExactly(IllegalArgumentException.class, () -> ReflectionUtils.getField(object, field));
+        else assertDoesNotThrow(() -> ReflectionUtils.getField(object, field));
     }
 
     @Test

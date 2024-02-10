@@ -135,7 +135,7 @@ public class ReflectionUtils {
                     field.setAccessible(true);
                     return field;
                 }
-        throw new IllegalArgumentException(String.format("Could not find field %s in %s", fieldType.getName(), clazz.getName()));
+        throw new IllegalArgumentException(String.format("Could not find field of type %s in %s", fieldType.getName(), clazz.getName()));
     }
 
     /**
@@ -145,7 +145,7 @@ public class ReflectionUtils {
      * @param name   the name
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Object object, @NotNull String name) {
+    public static @NotNull Field getField(@NotNull Object object, @NotNull String name) {
         return getField(object.getClass(), name);
     }
 
@@ -156,14 +156,14 @@ public class ReflectionUtils {
      * @param name  the name
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Class<?> clazz, @NotNull String name) {
+    public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull String name) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (field.getName().equals(name)) {
                     field.setAccessible(true);
                     return field;
                 }
-        return null;
+        throw new IllegalArgumentException(String.format("Could not find field of name %s in %s", name, clazz.getName()));
     }
 
     /**
