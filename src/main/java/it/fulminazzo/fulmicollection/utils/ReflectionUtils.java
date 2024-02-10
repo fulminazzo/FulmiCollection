@@ -302,8 +302,8 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the method
      */
-    public static @Nullable Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @Nullable String name,
-                                             Object @Nullable ... parameters) {
+    public static @NotNull Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @Nullable String name,
+                                            Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getMethod(object.getClass(), returnType, name, objectsToClasses(parameters));
     }
