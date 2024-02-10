@@ -1,7 +1,9 @@
 package it.fulminazzo.fulmicollection.objects;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -27,10 +29,12 @@ class ReflTest extends AbstractReflTest {
         assertEquals(this.testClass.toString(), this.refl.toString());
     }
 
+    @Nested
     @DisplayName("Test constructors")
-    static class ConstructorTest extends AbstractReflTest {
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class ConstructorTest extends AbstractReflTest {
 
-        private static Object[] getConstructors() {
+        private Object[] getConstructors() {
             return new Object[]{
                     (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class.getCanonicalName(), "James"),
                     (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class.getCanonicalName(), new Class[]{String.class}, "James"),
