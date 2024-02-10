@@ -84,6 +84,65 @@ public class Refl<T> {
     public Refl(final T object) {
         this.object = object;
     }
+    
+    /**
+     * Gets the field from its type and sets its value to the specified one.
+     * Uses {@link ReflectionUtils#getClass(String)}.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param fieldType the field type
+     */
+    public <O> Refl<T> setFieldObjectNameless(final @NotNull String fieldType, final @Nullable O value) {
+        return setFieldObject(getFieldNameless(fieldType), value);
+    }
+
+    /**
+     * Gets the field from its type and sets its value to the specified one.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param fieldType the field type
+     */
+    public <O> Refl<T> setFieldObject(final @NotNull Class<?> fieldType, final @Nullable O value) {
+        return setFieldObject(getField(fieldType), value);
+    }
+
+    /**
+     * Gets the field from its name and sets its value to the specified one.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param name the name
+     */
+    public <O> Refl<T> setFieldObject(final @NotNull String name, final @Nullable O value) {
+        return setFieldObject(getField(name), value);
+    }
+
+    /**
+     * Gets the field from the predicate and sets its value to the specified one.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param predicate the predicate
+     */
+    public <O> Refl<T> setFieldObject(final @NotNull Predicate<Field> predicate, final @Nullable O value) {
+        return setFieldObject(getField(predicate), value);
+    }
+
+    /**
+     * Gets the field from the given field and sets its value to the specified one.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param field the field
+     */
+    public <O> Refl<T> setFieldObject(@NotNull Field field, final @Nullable O value) {
+        try {
+            Field finalField = field;
+            field = getField(() -> finalField);
+            field.setAccessible(true);
+            field.set(this.object, value);
+            return this;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Gets field from its type.

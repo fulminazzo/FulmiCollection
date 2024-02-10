@@ -76,6 +76,22 @@ class ReflTest extends AbstractReflTest {
             };
         }
 
+        private Object[] setFieldObject() {
+            return new Object[]{
+                    (Supplier<Refl<?>>) () -> this.refl.setFieldObjectNameless(String.class.getCanonicalName(), "Peter"),
+                    (Supplier<Refl<?>>) () -> this.refl.setFieldObject(String.class, "Peter"),
+                    (Supplier<Refl<?>>) () -> this.refl.setFieldObject("name", "Peter"),
+                    (Supplier<Refl<?>>) () -> this.refl.setFieldObject(f -> f.getType().equals(String.class), "Peter"),
+                    (Supplier<Refl<?>>) () -> {
+                        try {
+                            return this.refl.setFieldObject(TestClass.class.getDeclaredField("name"), "Peter");
+                        } catch (NoSuchFieldException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+            };
+        }
+
         @ParameterizedTest
         @MethodSource("getField")
         void testGetField(Supplier<Field> supplier) throws NoSuchFieldException {
@@ -92,6 +108,16 @@ class ReflTest extends AbstractReflTest {
         @MethodSource("getFieldRefl")
         void testGetFieldRefl(Supplier<Refl<String>> supplier) {
             assertEquals("James", supplier.get().getObject());
+        }
+
+        @ParameterizedTest
+        @MethodSource("setFieldObject")
+        void testSetFieldObject(Supplier<Refl<?>> supplier) throws NoSuchFieldException, IllegalAccessException {
+            Field field = TestClass.class.getDeclaredField("name");
+            field.setAccessible(true);
+            field.set(this.testClass, "James");
+            assertEquals(this.refl, supplier.get());
+            assertEquals("Peter", this.testClass.name);
         }
 
         @Test
