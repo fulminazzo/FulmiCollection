@@ -28,7 +28,7 @@ class ReflTest extends AbstractReflTest {
     }
 
     @DisplayName("Test constructors")
-    static class ConstructorsTest extends AbstractReflTest {
+    static class ConstructorTest extends AbstractReflTest {
 
         private static Object[] getConstructors() {
             return new Object[]{
