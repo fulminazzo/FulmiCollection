@@ -390,17 +390,17 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the method
      */
-    public @Nullable Method getMethod(final Object @Nullable ... parameters) {
+    public @NotNull Method getMethod(final Object @Nullable ... parameters) {
         return getMethod(null, null, ReflectionUtils.objectsToClasses(parameters));
     }
 
     /**
      * Gets method from its parameter types.
      *
-     * @param paramTypes the param types
+     * @param paramTypes the parameter types
      * @return the method
      */
-    public @Nullable Method getMethod(final Class<?> @Nullable ... paramTypes) {
+    public @NotNull Method getMethod(final Class<?> @Nullable ... paramTypes) {
         return getMethod(null, null, paramTypes);
     }
 
@@ -411,7 +411,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+    public @NotNull Method getMethod(final @Nullable String name, final Object @Nullable ... parameters) {
         return getMethod(name, ReflectionUtils.objectsToClasses(parameters));
     }
 
@@ -419,10 +419,10 @@ public class Refl<T> {
      * Gets method from its name and parameter types.
      *
      * @param name       the name
-     * @param paramTypes the param types
+     * @param paramTypes the parameter types
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable String name, final Class<?> @Nullable ... paramTypes) {
+    public @NotNull Method getMethod(final @Nullable String name, final Class<?> @Nullable ... paramTypes) {
         return getMethod(null, name, paramTypes);
     }
 
@@ -433,7 +433,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
         return getMethod(returnType, ReflectionUtils.objectsToClasses(parameters));
     }
 
@@ -441,10 +441,10 @@ public class Refl<T> {
      * Gets method from its return type and parameter types.
      *
      * @param returnType the return type
-     * @param paramTypes the param types
+     * @param paramTypes the parameter types
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable ... paramTypes) {
+    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable ... paramTypes) {
         return getMethod(returnType, null, paramTypes);
     }
 
@@ -456,7 +456,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                       final Object @Nullable ... parameters) {
         return getMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters));
     }
@@ -466,10 +466,10 @@ public class Refl<T> {
      *
      * @param returnType the return type
      * @param name       the name
-     * @param paramTypes the param types
+     * @param paramTypes the parameter types
      * @return the method
      */
-    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                       final Class<?> @Nullable ... paramTypes) {
         try {
             return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
