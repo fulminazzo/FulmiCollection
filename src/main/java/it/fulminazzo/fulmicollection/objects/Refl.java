@@ -90,7 +90,10 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
+     * @param <O>       the type parameter
      * @param fieldType the field type
+     * @param value     the value
+     * @return the field object nameless
      */
     public <O> Refl<T> setFieldObjectNameless(final @NotNull String fieldType, final @Nullable O value) {
         return setFieldObject(getFieldNameless(fieldType), value);
@@ -100,7 +103,10 @@ public class Refl<T> {
      * Gets the field from its type and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
+     * @param <O>       the type parameter
      * @param fieldType the field type
+     * @param value     the value
+     * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Class<?> fieldType, final @Nullable O value) {
         return setFieldObject(getField(fieldType), value);
@@ -110,7 +116,10 @@ public class Refl<T> {
      * Gets the field from its name and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param name the name
+     * @param <O>   the type parameter
+     * @param name  the name
+     * @param value the value
+     * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull String name, final @Nullable O value) {
         return setFieldObject(getField(name), value);
@@ -120,7 +129,10 @@ public class Refl<T> {
      * Gets the field from the predicate and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
+     * @param <O>       the type parameter
      * @param predicate the predicate
+     * @param value     the value
+     * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Predicate<Field> predicate, final @Nullable O value) {
         return setFieldObject(getField(predicate), value);
@@ -130,7 +142,10 @@ public class Refl<T> {
      * Gets the field from the given field and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
+     * @param <O>   the type parameter
      * @param field the field
+     * @param value the value
+     * @return the field object
      */
     public <O> Refl<T> setFieldObject(@NotNull Field field, final @Nullable O value) {
         try {
