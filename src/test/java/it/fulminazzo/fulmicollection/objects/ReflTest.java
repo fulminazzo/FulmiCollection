@@ -39,6 +39,7 @@ class ReflTest extends AbstractReflTest {
                     (Supplier<Field>) () -> this.refl.getFieldNameless(String.class.getCanonicalName()),
                     (Supplier<Field>) () -> this.refl.getField(String.class),
                     (Supplier<Field>) () -> this.refl.getField("name"),
+                    (Supplier<Field>) () -> this.refl.getField(f -> f.getName().equalsIgnoreCase("name")),
             };
         }
 
@@ -46,7 +47,7 @@ class ReflTest extends AbstractReflTest {
             return new Object[]{
                     (Supplier<String>) () -> this.refl.getFieldObjectNameless(String.class.getCanonicalName()),
                     (Supplier<String>) () -> this.refl.getFieldObject(String.class),
-                    (Supplier<String>) () -> this.refl.getFieldObject("name"),
+                    (Supplier<String>) () -> this.refl.getFieldObject(f -> f.getType().equals(String.class)),
                     (Supplier<String>) () -> {
                         try {
                             return this.refl.getFieldObject(TestClass.class.getDeclaredField("name"));
@@ -62,6 +63,7 @@ class ReflTest extends AbstractReflTest {
                     (Supplier<Refl<String>>) () -> this.refl.getFieldReflNameless(String.class.getCanonicalName()),
                     (Supplier<Refl<String>>) () -> this.refl.getFieldRefl(String.class),
                     (Supplier<Refl<String>>) () -> this.refl.getFieldRefl("name"),
+                    (Supplier<Refl<String>>) () -> this.refl.getFieldRefl(f -> f.getType().equals(String.class)),
                     (Supplier<Refl<String>>) () -> {
                         try {
                             return this.refl.getFieldRefl(TestClass.class.getDeclaredField("name"));

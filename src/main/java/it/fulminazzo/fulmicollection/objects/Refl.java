@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -116,6 +117,17 @@ public class Refl<T> {
         return getField(() -> ReflectionUtils.getField(object, fieldName));
     }
 
+    /**
+     * Gets field from the predicate.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param predicate the predicate
+     * @return the field
+     */
+    public @NotNull Field getField(final @NotNull Predicate<Field> predicate) {
+        return getField(() -> ReflectionUtils.getField(object, predicate));
+    }
+
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
         try {
             return ifObjectIsPresent(o -> fieldSupplier.get());
@@ -159,6 +171,18 @@ public class Refl<T> {
      */
     public <O> @Nullable O getFieldObject(final @NotNull String name) {
         return getFieldObject(getField(name));
+    }
+
+    /**
+     * Gets the field content from the predicate.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param predicate the predicate
+     * @return the field object
+     */
+    public <O> @Nullable O getFieldObject(final @NotNull Predicate<Field> predicate) {
+        return getFieldObject(getField(predicate));
     }
 
     /**
@@ -218,6 +242,19 @@ public class Refl<T> {
      */
     public <O> @NotNull Refl<O> getFieldRefl(final @NotNull String name) {
         return new Refl<>(getFieldObject(name));
+    }
+
+    /**
+     * Gets a {@link Refl} wrapping the content of a field.
+     * The contents may be null, but the {@link Refl} will never be.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param predicate the predicate
+     * @return the field refl
+     */
+    public <O> @NotNull Refl<O> getFieldRefl(final @NotNull Predicate<Field> predicate) {
+        return new Refl<>(getFieldObject(predicate));
     }
 
     /**
