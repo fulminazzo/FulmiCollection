@@ -44,33 +44,33 @@ public class ReflObject<T> {
     }
 
     public ReflObject(String classPath, boolean initiate) {
-        Class<T> aClass = null;
+        Class<T> objectClass = null;
         T object = null;
         try {
-            aClass = ReflectionUtils.getClass(classPath);
-            if (aClass == null) throw new ClassNotFoundException(classPath);
+            objectClass = ReflectionUtils.getClass(classPath);
             if (initiate) {
-                Constructor<T> constructor = ReflectionUtils.getConstructor(aClass);
-                if (constructor == null) throw new NoSuchMethodException("Constructor not found");
+                Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass);
+                if (constructor == null)
+                    throw new NoSuchMethodException(String.format("Constructor not found %s()", objectClass.getName()));
                 constructor.setAccessible(true);
                 object = constructor.newInstance();
             }
-        } catch (NullPointerException | ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+        } catch (NullPointerException | NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             ExceptionUtils.throwException(e);
         }
-        this.objectClass = aClass;
+        this.objectClass = objectClass;
         this.object = object;
     }
 
     public ReflObject(T object, Class<T> objectClass) {
+        if (objectClass == null) throw new IllegalArgumentException("Object class cannot be null");
         this.objectClass = objectClass;
         this.object = object;
     }
 
     public ReflObject(T object) {
-        this.objectClass = object == null ? null : (Class<T>) object.getClass();
-        this.object = object;
+        this(object, (Class<T>) object.getClass());
     }
 
     public Object[] getArray(ReflObject<?>... contents) {
