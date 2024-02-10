@@ -204,7 +204,7 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the constructor
      */
-    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Object object, @Nullable Object @Nullable ... parameters) {
+    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Object object, Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getConstructor(object.getClass(), objectsToClasses(parameters));
     }
@@ -217,7 +217,7 @@ public class ReflectionUtils {
      * @param paramTypes the param types
      * @return the constructor
      */
-    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?> @Nullable ... paramTypes) {
+    public static <T> @NotNull Constructor<T> getConstructor(@NotNull Class<?> clazz, Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
@@ -226,7 +226,7 @@ public class ReflectionUtils {
         throw new IllegalArgumentException(String.format("Could not find constructor (%s)", classesToString(paramTypes)));
     }
 
-    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @Nullable [] paramTypes) {
+    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, Class<?> @Nullable [] paramTypes) {
         for (Constructor<?> constructor : c.getDeclaredConstructors()) {
             if (paramTypes == null)
                 if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
@@ -248,7 +248,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @Nullable Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @NotNull String name,
-                                             @Nullable Object @Nullable ... parameters) {
+                                             Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getMethod(object.getClass(), returnType, name, objectsToClasses(parameters));
     }
@@ -263,7 +263,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
-                                             @Nullable Class<?> @Nullable ... paramTypes) {
+                                             Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             Method method = getMethodFromClass(c, returnType, name, paramTypes);
@@ -277,7 +277,7 @@ public class ReflectionUtils {
     }
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name,
-                                                       @Nullable Class<?> @Nullable [] paramTypes) {
+                                                       Class<?> @Nullable [] paramTypes) {
         for (Method method : c.getDeclaredMethods()) {
             if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
             if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
@@ -291,7 +291,7 @@ public class ReflectionUtils {
         return null;
     }
 
-    private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, Executable executable) {
+    private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, @NotNull Executable executable) {
         for (int i = 0; i < paramTypes.length; i++) {
             final Class<?> expected = paramTypes[i];
             if (expected == null) continue;
