@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -29,6 +30,31 @@ class ReflTest extends AbstractReflTest {
     @Test
     void testToString() {
         assertEquals(this.testClass.toString(), this.refl.toString());
+    }
+
+    @Nested
+    @DisplayName("Test methods")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class MethodTest extends AbstractReflTest {
+
+        private Object[] getMethod() {
+            return new Object[]{
+                    (Supplier<Method>) () -> this.refl.getMethod(new Object[]{"param1"}),
+                    (Supplier<Method>) () -> this.refl.getMethod(new Class[]{String.class}),
+                    (Supplier<Method>) () -> this.refl.getMethod("printField", "param1"),
+                    (Supplier<Method>) () -> this.refl.getMethod("printField", String.class),
+                    (Supplier<Method>) () -> this.refl.getMethod(String.class, new Object[]{"param1"}),
+                    (Supplier<Method>) () -> this.refl.getMethod(String.class, new Class[]{String.class}),
+                    (Supplier<Method>) () -> this.refl.getMethod(String.class, "printField", "param1"),
+                    (Supplier<Method>) () -> this.refl.getMethod(String.class, "printField", String.class),
+            };
+        }
+
+        @ParameterizedTest
+        @MethodSource("getMethod")
+        void testGetMethod(Supplier<Method> supplier) throws NoSuchMethodException {
+            assertEquals(TestClass.class.getDeclaredMethod("printField", String.class), supplier.get());
+        }
     }
 
     @Nested

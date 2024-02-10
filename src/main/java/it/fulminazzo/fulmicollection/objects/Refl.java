@@ -7,10 +7,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -84,7 +81,7 @@ public class Refl<T> {
     public Refl(final T object) {
         this.object = object;
     }
-    
+
     /**
      * Gets the field from its type and sets its value to the specified one.
      * Uses {@link ReflectionUtils#getClass(String)}.
@@ -384,6 +381,101 @@ public class Refl<T> {
             return ifObjectIsPresent(o -> ReflectionUtils.getFields(this.object, predicate));
         } catch (NullPointerException e) {
             throw new IllegalStateException("Could not get fields: wrapped object is null");
+        }
+    }
+
+    /**
+     * Gets method from its parameters.
+     *
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @Nullable Method getMethod(final Object @Nullable ... parameters) {
+        return getMethod(null, null, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets method from its parameter types.
+     *
+     * @param paramTypes the param types
+     * @return the method
+     */
+    public @Nullable Method getMethod(final Class<?> @Nullable ... paramTypes) {
+        return getMethod(null, null, paramTypes);
+    }
+
+    /**
+     * Gets method from its name and parameters.
+     *
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+        return getMethod(name, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets method from its name and parameter types.
+     *
+     * @param name       the name
+     * @param paramTypes the param types
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable String name, final Class<?> @Nullable ... paramTypes) {
+        return getMethod(null, name, paramTypes);
+    }
+
+    /**
+     * Gets method from its return type and parameters.
+     *
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return getMethod(returnType, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets method from its return type and parameter types.
+     *
+     * @param returnType the return type
+     * @param paramTypes the param types
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable ... paramTypes) {
+        return getMethod(returnType, null, paramTypes);
+    }
+
+    /**
+     * Gets method from its name, return type and parameters.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                      final Object @Nullable ... parameters) {
+        return getMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets method from its name, return type and parameter types.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the param types
+     * @return the method
+     */
+    public @Nullable Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                      final Class<?> @Nullable ... paramTypes) {
+        try {
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
+                    returnType, name, ReflectionUtils.classesToString(paramTypes)));
         }
     }
 
