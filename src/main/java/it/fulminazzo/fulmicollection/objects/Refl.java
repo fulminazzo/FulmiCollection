@@ -19,23 +19,49 @@ import java.util.Objects;
  */
 @Getter
 public class Refl<T> {
-    private final T object;
+    private final @Nullable T object;
 
+    /**
+     * Instantiates a new Refl.
+     *
+     * @param className  the class name
+     * @param parameters the parameters
+     */
     public Refl(final @NotNull String className, Object @Nullable ... parameters) {
         this(className, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
+    /**
+     * Instantiates a new Refl.
+     *
+     * @param className      the class name
+     * @param parameterTypes the parameter types
+     * @param parameters     the parameters
+     */
     public Refl(final @NotNull String className, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         this(ReflectionUtils.getClass(className), parameterTypes, parameters);
     }
 
-    public Refl(final @NotNull Class<T> clazz, Object @Nullable ... parameters) {
-        this(clazz, ReflectionUtils.objectsToClasses(parameters), parameters);
+    /**
+     * Instantiates a new Refl.
+     *
+     * @param objectClass the object class
+     * @param parameters  the parameters
+     */
+    public Refl(final @NotNull Class<T> objectClass, Object @Nullable ... parameters) {
+        this(objectClass, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
-    public Refl(final @NotNull Class<T> clazz, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
+    /**
+     * Instantiates a new Refl.
+     *
+     * @param objectClass    the object class
+     * @param parameterTypes the parameter types
+     * @param parameters     the parameters
+     */
+    public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
-            Constructor<T> constructor = ReflectionUtils.getConstructor(clazz, parameterTypes);
+            Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass, parameterTypes);
             this.object = constructor.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
@@ -43,6 +69,11 @@ public class Refl<T> {
         }
     }
 
+    /**
+     * Instantiates a new Refl.
+     *
+     * @param object the object
+     */
     public Refl(final @Nullable T object) {
         this.object = object;
     }
