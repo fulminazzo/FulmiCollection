@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A class that acts as a wrapper for an object.
@@ -17,9 +19,10 @@ import java.util.Objects;
  *
  * @param <T> the object
  */
+@SuppressWarnings("unchecked")
 @Getter
 public class Refl<T> {
-    private final @Nullable T object;
+    private final T object;
 
     /**
      * Instantiates a new Refl.
@@ -74,8 +77,44 @@ public class Refl<T> {
      *
      * @param object the object
      */
-    public Refl(final @Nullable T object) {
+    public Refl(final T object) {
         this.object = object;
+    }
+
+    /**
+     * Gets field from its type.
+     * Uses {@link ReflectionUtils#getClass(String)}.
+     *
+     * @param fieldType the field type
+     * @return the field nameless
+     */
+    public @NotNull Field getFieldNameless(final @NotNull String fieldType) {
+        return getField(() -> ReflectionUtils.getFieldNameless(object, fieldType));
+    }
+
+    /**
+     * Gets field from its type.
+     *
+     * @param fieldType the field type
+     * @return the field
+     */
+    public @NotNull Field getField(final @NotNull Class<?> fieldType) {
+        return getField(() -> ReflectionUtils.getField(object, fieldType));
+    }
+
+    /**
+     * Gets field from its name.
+     *
+     * @param fieldName the field name
+     * @return the field
+     */
+    public @NotNull Field getField(final @NotNull String fieldName) {
+        return getField(() -> ReflectionUtils.getField(object, fieldName));
+    }
+
+    private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
+        if (this.object == null) throw new IllegalStateException("Could not get field: wrapped object is null");
+        return fieldSupplier.get();
     }
 
     @Override
