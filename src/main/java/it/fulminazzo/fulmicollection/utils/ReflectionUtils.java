@@ -32,18 +32,17 @@ public class ReflectionUtils {
      * @param className  the class name
      * @return the class
      */
-    public static <T> Class<T> getClass(String className) {
+    public static <T> @Nullable Class<T> getClass(@NotNull String className) {
         try {
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             Class<T> clazz = getInnerClass(className);
             if (clazz == null) clazz = getInnerInterface(className);
-            if (clazz == null) throw new IllegalArgumentException("Could not find class " + className);
             return clazz;
         }
     }
 
-    private static <T> Class<T> getInnerClass(String classPath) {
+    private static <T> @Nullable Class<T> getInnerClass(@NotNull String classPath) {
         Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
         StringBuilder mainClass = new StringBuilder();
@@ -61,7 +60,7 @@ public class ReflectionUtils {
         return clazz;
     }
 
-    private static <T> Class<T> getInnerInterface(String classPath) {
+    private static <T> @Nullable Class<T> getInnerInterface(@NotNull String classPath) {
         Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
         StringBuilder mainClass = new StringBuilder();
@@ -84,7 +83,7 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the classes
      */
-    public static @NotNull Class<?>[] objectsToClasses(final Object @NotNull ... parameters) {
+    public static @NotNull Class<?> @NotNull [] objectsToClasses(final Object @NotNull ... parameters) {
         final Class<?>[] paramTypes = new Class<?>[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             final Object obj = parameters[i];
@@ -100,7 +99,7 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getFieldNameless(@NotNull Object object, String fieldType) {
+    public static @Nullable Field getFieldNameless(@NotNull Object object, @NotNull String fieldType) {
         return getFieldNameless(object.getClass(), fieldType);
     }
 
@@ -111,8 +110,10 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getFieldNameless(@NotNull Class<?> clazz, String fieldType) {
-        return getField(clazz, getClass(fieldType));
+    public static @Nullable Field getFieldNameless(@NotNull Class<?> clazz, @NotNull String fieldType) {
+        Class<?> type = getClass(fieldType);
+        if (type == null) throw new IllegalArgumentException("Could not find class " + fieldType);
+        return getField(clazz, type);
     }
 
     /**
@@ -122,7 +123,7 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Object object, Class<?> fieldType) {
+    public static @Nullable Field getField(@NotNull Object object, @NotNull Class<?> fieldType) {
         return getField(object.getClass(), fieldType);
     }
 
@@ -133,7 +134,7 @@ public class ReflectionUtils {
      * @param fieldType the field type
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Class<?> clazz, Class<?> fieldType) {
+    public static @Nullable Field getField(@NotNull Class<?> clazz, @NotNull Class<?> fieldType) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (fieldType.isAssignableFrom(field.getType())) {
@@ -150,7 +151,7 @@ public class ReflectionUtils {
      * @param name   the name
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Object object, String name) {
+    public static @Nullable Field getField(@NotNull Object object, @NotNull String name) {
         return getField(object.getClass(), name);
     }
 
@@ -161,7 +162,7 @@ public class ReflectionUtils {
      * @param name  the name
      * @return the field
      */
-    public static @Nullable Field getField(@NotNull Class<?> clazz, String name) {
+    public static @Nullable Field getField(@NotNull Class<?> clazz, @NotNull String name) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (field.getName().equals(name)) {
@@ -177,7 +178,7 @@ public class ReflectionUtils {
      * @param object the object
      * @return the fields
      */
-    public static List<Field> getFields(@NotNull Object object) {
+    public static @NotNull List<Field> getFields(@NotNull Object object) {
         return getFields(object.getClass());
     }
 
@@ -209,7 +210,7 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the constructor
      */
-    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Object object, @Nullable Object... parameters) {
+    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Object object, @Nullable Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getConstructor(object.getClass(), objectsToClasses(parameters));
     }
@@ -222,7 +223,7 @@ public class ReflectionUtils {
      * @param paramTypes the param types
      * @return the constructor
      */
-    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?>... paramTypes) {
+    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
@@ -257,7 +258,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @Nullable Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @NotNull String name,
-                                             @Nullable Object... parameters) {
+                                             @Nullable Object @Nullable ... parameters) {
         if (parameters == null) parameters = new Object[0];
         return getMethod(object.getClass(), returnType, name, objectsToClasses(parameters));
     }
@@ -272,7 +273,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
-                                             @Nullable Class<?>... paramTypes) {
+                                             @Nullable Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             Method method = getMethodFromClass(c, returnType, name, paramTypes);
@@ -285,7 +286,8 @@ public class ReflectionUtils {
         return null;
     }
 
-    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name, @Nullable Class<?> @NotNull [] paramTypes) {
+    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name,
+                                                       @Nullable Class<?> @NotNull [] paramTypes) {
         mainloop:
         for (Method method : c.getDeclaredMethods()) {
             if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
@@ -309,7 +311,7 @@ public class ReflectionUtils {
      * @param object the object
      * @return the methods
      */
-    public static List<Method> getMethods(@NotNull Object object) {
+    public static @NotNull List<Method> getMethods(@NotNull Object object) {
         return getMethods(object.getClass());
     }
 
@@ -429,7 +431,7 @@ public class ReflectionUtils {
      * @param classes the classes
      * @return the string
      */
-    public static String classesToString(Class<?>... classes) {
+    public static @NotNull String classesToString(Class<?> @NotNull... classes) {
         return classesToString(Arrays.asList(classes));
     }
 
@@ -439,7 +441,7 @@ public class ReflectionUtils {
      * @param classes the classes
      * @return the string
      */
-    public static String classesToString(List<Class<?>> classes) {
+    public static @NotNull String classesToString(@NotNull List<Class<?>> classes) {
         return classes.stream().map(c -> c == null ? "null" : c.toString()).collect(Collectors.joining(", "));
     }
 }
