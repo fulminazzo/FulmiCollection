@@ -2,6 +2,8 @@ package it.fulminazzo.fulmicollection.objects;
 
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Ref;
 import java.util.Objects;
@@ -16,19 +18,19 @@ import java.util.Objects;
 public class Refl<T> {
     private final T object;
 
-    public Refl(T object) {
+    public Refl(final @Nullable T object) {
         this.object = object;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final @Nullable Object o) {
         if (o instanceof Refl)
             return Objects.equals(this.object, ((Refl<?>) o).object);
         return super.equals(o);
     }
 
     @Override
-    public String toString() {
-        return object == null ? null : object.toString();
+    public @NotNull String toString() {
+        return object == null ? "null" : object.toString();
     }
 }
