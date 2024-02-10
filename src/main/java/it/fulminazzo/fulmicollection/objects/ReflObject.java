@@ -250,98 +250,18 @@ public class ReflObject<T> {
         return getMethodObject(name, ReflectionUtils.objectsToClasses(params), params);
     }
 
-    public <O> O getMethodObject(String name, Class<?>[] paramTypes, Object... params) {
-        ReflObject<O> reflObject = callMethod(name, paramTypes, params);
-        return reflObject == null ? null : reflObject.getObject();
-    }
-
-    public Method getMethodFromReturnType(Class<?> returnType, Object... params) {
-        return getMethodFromReturnType(returnType, ReflectionUtils.objectsToClasses(params));
-    }
-
-    public Method getMethodFromReturnType(Class<?> returnType, Class<?>... paramTypes) {
-        if (objectClass == null) return null;
-        try {
-            Method method = ReflectionUtils.getMethod(objectClass, returnType, null, paramTypes);
-            if (method == null)
-                throw new NoSuchMethodException(String.format("Method %s(%s)->%s not found in class %s", "<?>", "<?>",
-                        returnType, objectClass));
-            return method;
-        } catch (NoSuchMethodException e) {
-            ExceptionUtils.throwException(e);
-            return null;
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ReflObject) {
+            ReflObject<?> reflObject = (ReflObject<?>) o;
+            if (!this.objectClass.equals(reflObject.objectClass)) return false;
+            return Objects.equals(this.object, reflObject.object);
         }
-    }
-
-    public <O> ReflObject<O> callMethodFromReturnType(Class<?> returnType, Object... params) {
-        Object obj = object == null ? objectClass : object;
-        Method method = getMethodFromReturnType(returnType, params);
-        return invokeMethod(obj, method, params);
-    }
-
-    public <O> O getMethodObjectFromReturnType(Class<?> returnType, Object... params) {
-        ReflObject<O> reflObject = callMethodFromReturnType(returnType, params);
-        return reflObject == null ? null : reflObject.getObject();
-    }
-
-    public Method getMethodNameless(Object... params) {
-        if (objectClass == null) return null;
-        return getMethodNameless(ReflectionUtils.objectsToClasses(params));
-    }
-
-    public Method getMethodNameless(Class<?>... paramTypes) {
-        if (objectClass == null) return null;
-        try {
-            Method method = ReflectionUtils.getMethod(objectClass, null, null, paramTypes);
-            if (method == null)
-                throw new NoSuchMethodException(String.format("Method %s(%s) not found in class %s", "",
-                        ReflectionUtils.classesToString(paramTypes), objectClass));
-            return method;
-        } catch (NoSuchMethodException e) {
-            ExceptionUtils.throwException(e);
-            return null;
-        }
-    }
-
-    public <O> ReflObject<O> callMethodNameless(Object... params) {
-        return callMethodNameless(ReflectionUtils.objectsToClasses(params), params);
-    }
-
-    public <O> ReflObject<O> callMethodNameless(Class<?>[] paramTypes, Object... params) {
-        Object obj = object == null ? objectClass : object;
-        Method method = getMethodNameless(paramTypes);
-        return invokeMethod(obj, method, params);
-    }
-
-    private <O> ReflObject<O> invokeMethod(Object obj, Method method, Object[] params) {
-        method.setAccessible(true);
-        try {
-            return new ReflObject<>((O) method.invoke(obj, params));
-        } catch (IllegalAccessException | InvocationTargetException | NullPointerException e) {
-            ExceptionUtils.throwException(e);
-            return null;
-        }
-    }
-
-    public <O> O getMethodNamelessObject(Object... params) {
-        return getMethodNamelessObject(ReflectionUtils.objectsToClasses(params), params);
-    }
-
-    public <O> O getMethodNamelessObject(Class<?>[] paramTypes, Object... params) {
-        ReflObject<O> reflObject = callMethodNameless(paramTypes, params);
-        return reflObject == null ? null : reflObject.getObject();
-    }
-
-    public List<Method> getMethods() {
-        return ReflectionUtils.getMethods(object == null ? objectClass : object);
-    }
-
-    public void printFields() {
-        getFields().forEach(f -> System.out.printf("%s: %s%n", f, getFieldObject(f.getName())));
+        return super.equals(o);
     }
 
     @Override
     public String toString() {
-        return object == null ? (objectClass == null ? null : objectClass.toString()) : object.toString();
+        return object == null ? objectClass.toString() : object.toString();
     }
 }
