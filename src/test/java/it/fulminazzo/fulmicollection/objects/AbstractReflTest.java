@@ -13,7 +13,9 @@ public abstract class AbstractReflTest {
     }
 
     protected static class TestClass {
+        int age = 10;
         final String name;
+        static final String CONSTANT = "";
 
         TestClass(String name) {
             this.name = name;
