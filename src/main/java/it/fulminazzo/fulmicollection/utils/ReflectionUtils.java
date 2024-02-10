@@ -441,6 +441,6 @@ public class ReflectionUtils {
      * @return the string
      */
     public static @NotNull String classesToString(@NotNull List<Class<?>> classes) {
-        return classes.stream().map(c -> c == null ? "null" : c.toString()).collect(Collectors.joining(", "));
+        return classes.stream().map(c -> c == null ? "null" : c.getCanonicalName()).collect(Collectors.joining(", "));
     }
 }
