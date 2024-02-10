@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The type Reflection utils.
@@ -31,53 +30,52 @@ public class ReflectionUtils {
      *
      * @param <T>        the type parameter
      * @param className  the class name
-     * @param paramTypes the param types
      * @return the class
      */
-    public static <T> Class<T> getClass(String className, Class<?>... paramTypes) {
+    public static <T> Class<T> getClass(String className) {
         try {
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
-            Class<T> aClazz = getInnerClass(className, paramTypes);
-            if (aClazz == null) aClazz = getInnerInterface(className);
-            return aClazz;
+            Class<T> clazz = getInnerClass(className);
+            if (clazz == null) clazz = getInnerInterface(className);
+            if (clazz == null) throw new IllegalArgumentException("Could not find class " + className);
+            return clazz;
         }
     }
 
-    private static <T> Class<T> getInnerClass(String classPath, Class<?>... paramTypes) {
-        Class<T> aClass = null;
+    private static <T> Class<T> getInnerClass(String classPath) {
+        Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
-        StringBuilder primClass = new StringBuilder();
-        String clazz = tmp[tmp.length - 1];
-        for (int i = 0; i < tmp.length - 1; i++) primClass.append(tmp[i]).append(".");
-        if (primClass.toString().endsWith("."))
-            primClass = new StringBuilder(primClass.substring(0, primClass.length() - 1));
+        StringBuilder mainClass = new StringBuilder();
+        String realClass = tmp[tmp.length - 1];
+        for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
+        if (mainClass.toString().endsWith("."))
+            mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
         try {
-            Class<?> primClazz = Class.forName(primClass.toString());
-            aClass = (Class<T>) Stream.concat(Arrays.stream(primClazz.getClasses()), Arrays.stream(primClazz.getDeclaredClasses()))
+            Class<?> primClazz = Class.forName(mainClass.toString());
+            clazz = (Class<T>) Arrays.stream(primClazz.getDeclaredClasses())
                     .distinct()
-                    .filter(c -> c.getSimpleName().equals(clazz))
-                    .filter(c -> c.isInterface() || getConstructor(c, paramTypes) != null)
+                    .filter(c -> c.getSimpleName().equals(realClass))
                     .findAny().orElse(null);
         } catch (ClassNotFoundException ignored) {}
-        return aClass;
+        return clazz;
     }
 
     private static <T> Class<T> getInnerInterface(String classPath) {
-        Class<T> aClass = null;
+        Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
-        StringBuilder primClass = new StringBuilder();
-        String clazz = tmp[tmp.length - 1];
-        for (int i = 0; i < tmp.length - 1; i++) primClass.append(tmp[i]).append(".");
-        if (primClass.toString().endsWith("."))
-            primClass = new StringBuilder(primClass.substring(0, primClass.length() - 1));
+        StringBuilder mainClass = new StringBuilder();
+        String realClass = tmp[tmp.length - 1];
+        for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
+        if (mainClass.toString().endsWith("."))
+            mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
         try {
-            Class<?> primClazz = Class.forName(primClass.toString());
-            aClass = (Class<T>) Arrays.stream(primClazz.getInterfaces())
-                    .filter(c -> c.getSimpleName().equals(clazz))
+            Class<?> primClazz = Class.forName(mainClass.toString());
+            clazz = (Class<T>) Arrays.stream(primClazz.getInterfaces())
+                    .filter(c -> c.getSimpleName().equals(realClass))
                     .findAny().orElse(null);
         } catch (ClassNotFoundException ignored) {}
-        return aClass;
+        return clazz;
     }
 
     /**
@@ -234,6 +232,7 @@ public class ReflectionUtils {
     }
 
     private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @NotNull [] paramTypes) {
+        mainloop:
         for (Constructor<?> constructor : c.getDeclaredConstructors()) {
             if (constructor.getParameterCount() != paramTypes.length) continue;
             for (int i = 0; i < paramTypes.length; i++) {
@@ -241,7 +240,7 @@ public class ReflectionUtils {
                 if (expected == null) continue;
                 final Class<?> actual = constructor.getParameterTypes()[i];
                 if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
-                    return null;
+                    continue mainloop;
             }
             return (Constructor<T>) constructor;
         }
@@ -287,6 +286,7 @@ public class ReflectionUtils {
     }
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name, @Nullable Class<?> @NotNull [] paramTypes) {
+        mainloop:
         for (Method method : c.getDeclaredMethods()) {
             if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
             if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
@@ -296,7 +296,7 @@ public class ReflectionUtils {
                 if (expected == null) continue;
                 final Class<?> actual = method.getParameterTypes()[i];
                 if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
-                    return null;
+                    continue mainloop;
             }
             return method;
         }
