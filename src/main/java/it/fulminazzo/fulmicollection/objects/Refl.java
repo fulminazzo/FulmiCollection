@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -268,6 +270,47 @@ public class Refl<T> {
      */
     public <O> @NotNull Refl<O> getFieldRefl(final @NotNull Field field) {
         return new Refl<>(getFieldObject(field));
+    }
+
+    /**
+     * Gets fields.
+     *
+     * @return the fields
+     */
+    public @NotNull List<Field> getFields() {
+        return getFields(f -> true);
+    }
+
+    /**
+     * Gets static fields.
+     *
+     * @return the static fields
+     */
+    public @NotNull List<Field> getStaticFields() {
+        return getFields(f -> Modifier.isStatic(f.getModifiers()));
+    }
+
+    /**
+     * Gets non-static fields.
+     *
+     * @return the non-static fields
+     */
+    public @NotNull List<Field> getNonStaticFields() {
+        return getFields(f -> !Modifier.isStatic(f.getModifiers()));
+    }
+
+    /**
+     * Gets fields.
+     *
+     * @param predicate the predicate
+     * @return the fields
+     */
+    public @NotNull List<Field> getFields(final @NotNull Predicate<Field> predicate) {
+        try {
+            return ifObjectIsPresent(o -> ReflectionUtils.getFields(this.object, predicate));
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("Could not get fields: wrapped object is null");
+        }
     }
 
     /**

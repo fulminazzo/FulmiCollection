@@ -194,6 +194,28 @@ public class ReflectionUtils {
     /**
      * Gets fields.
      *
+     * @param object    the object
+     * @param predicate the predicate
+     * @return the fields
+     */
+    public static @NotNull List<Field> getFields(@NotNull Object object, @NotNull Predicate<Field> predicate) {
+        return getFields(object.getClass(), predicate);
+    }
+
+    /**
+     * Gets fields.
+     *
+     * @param clazz     the clazz
+     * @param predicate the predicate
+     * @return the fields
+     */
+    public static @NotNull List<Field> getFields(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
+        return getFields(clazz).stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets fields.
+     *
      * @param object the object
      * @return the fields
      */

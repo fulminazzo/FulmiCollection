@@ -8,6 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +111,31 @@ class ReflTest extends AbstractReflTest {
             assertNull(refl1.getFieldRefl("name").getObject());
         }
 
+        @Test
+        void testGetFields() throws NoSuchFieldException {
+            assertIterableEquals(Arrays.asList(
+                    TestClass.class.getDeclaredField("age"),
+                    TestClass.class.getDeclaredField("name"),
+                    TestClass.class.getDeclaredField("CONSTANT")), this.refl.getFields());
+        }
+
+        @Test
+        void testGetStaticFields() throws NoSuchFieldException {
+            assertIterableEquals(Collections.singletonList(TestClass.class.getDeclaredField("CONSTANT")), this.refl.getStaticFields());
+        }
+
+        @Test
+        void testGetNonStaticFields() throws NoSuchFieldException {
+            assertIterableEquals(Arrays.asList(
+                    TestClass.class.getDeclaredField("age"),
+                    TestClass.class.getDeclaredField("name")), this.refl.getNonStaticFields());
+        }
+
+        @Test
+        void testGetFieldsPredicate() throws NoSuchFieldException {
+            assertIterableEquals(Collections.singletonList(TestClass.class.getDeclaredField("name")),
+                    this.refl.getFields(f -> f.getName().equalsIgnoreCase("name")));
+        }
     }
 
     @Nested
