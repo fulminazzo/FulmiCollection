@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractReflTest {
     protected TestClass testClass;
-    protected Refl<?> refl;
+    protected Refl<TestClass> refl;
 
     @BeforeEach
     void setUp() {
