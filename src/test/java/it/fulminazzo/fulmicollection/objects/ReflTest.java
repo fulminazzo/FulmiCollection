@@ -35,11 +35,25 @@ class ReflTest extends AbstractReflTest {
     class FieldTest extends AbstractReflTest {
 
         private Object[] getField() {
-            String expected = "James";
             return new Object[]{
-                    (Supplier<Field>) () -> this.refl.getFieldNameless(expected.getClass().getCanonicalName()),
-                    (Supplier<Field>) () -> this.refl.getField(expected.getClass()),
+                    (Supplier<Field>) () -> this.refl.getFieldNameless(String.class.getCanonicalName()),
+                    (Supplier<Field>) () -> this.refl.getField(String.class),
                     (Supplier<Field>) () -> this.refl.getField("name"),
+            };
+        }
+
+        private Object[] getFieldObject() {
+            return new Object[]{
+                    (Supplier<String>) () -> this.refl.getFieldObjectNameless(String.class.getCanonicalName()),
+                    (Supplier<String>) () -> this.refl.getFieldObject(String.class),
+                    (Supplier<String>) () -> this.refl.getFieldObject("name"),
+                    (Supplier<String>) () -> {
+                        try {
+                            return this.refl.getFieldObject(TestClass.class.getDeclaredField("name"));
+                        } catch (NoSuchFieldException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
             };
         }
 
@@ -49,9 +63,20 @@ class ReflTest extends AbstractReflTest {
             assertEquals(TestClass.class.getDeclaredField("name"), supplier.get());
         }
 
+        @ParameterizedTest
+        @MethodSource("getFieldObject")
+        void testGetFieldObject(Supplier<String> supplier) {
+            assertEquals("James", supplier.get());
+        }
+
         @Test
         void testGetFieldFromNull() {
             assertThrows(IllegalStateException.class, () -> new Refl<>(null).getField("test"));
+        }
+
+        @Test
+        void testGetFieldObjectFromNull() {
+            assertThrows(IllegalStateException.class, () -> new Refl<>(null).getFieldObject("test"));
         }
 
     }

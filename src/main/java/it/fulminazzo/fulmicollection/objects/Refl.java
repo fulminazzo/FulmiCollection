@@ -125,12 +125,68 @@ public class Refl<T> {
     }
 
     /**
+     * Gets the field content from its type.
+     * Uses {@link ReflectionUtils#getClass(String)}.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param fieldType the field type
+     * @return the field object nameless
+     */
+    public <O> @Nullable O getFieldObjectNameless(final @NotNull String fieldType) {
+        return getFieldObject(getFieldNameless(fieldType));
+    }
+
+    /**
+     * Gets the field content from its type.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param fieldType the field type
+     * @return the field object
+     */
+    public <O> @Nullable O getFieldObject(final @NotNull Class<?> fieldType) {
+        return getFieldObject(getField(fieldType));
+    }
+
+    /**
+     * Gets the field content from its name.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>  the type parameter
+     * @param name the name
+     * @return the field object
+     */
+    public <O> @Nullable O getFieldObject(final @NotNull String name) {
+        return getFieldObject(getField(name));
+    }
+
+    /**
+     * Gets the field content from the given field.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>   the type parameter
+     * @param field the field
+     * @return the field object
+     */
+    public <O> @Nullable O getFieldObject(@NotNull Field field) {
+        try {
+            Field finalField = field;
+            field = getField(() -> finalField);
+            field.setAccessible(true);
+            return (O) field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *
+     * @param <O>      the object to return
      * @param function the function
      * @return the object to return
-     * @param <O> the object to return
      */
     public <O> O ifObjectIsPresent(final @NotNull Function<@NotNull T, O> function) {
         if (this.object == null) throw new NullPointerException();
