@@ -144,7 +144,7 @@ public class Refl<T> {
      * @param value the value
      * @return the field object
      */
-    public <O> Refl<T> setFieldObject(@NotNull Field field, final @Nullable O value) {
+    public <O> @NotNull Refl<T> setFieldObject(@NotNull Field field, final @Nullable O value) {
         try {
             Field finalField = field;
             field = getField(() -> finalField);
