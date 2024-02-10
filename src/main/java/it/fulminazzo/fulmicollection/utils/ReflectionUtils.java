@@ -3,6 +3,7 @@ package it.fulminazzo.fulmicollection.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -11,10 +12,12 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The type Reflection utils.
  */
+@SuppressWarnings("unchecked")
 public class ReflectionUtils {
     /**
      * The constant WRAPPER_CLASSES.
@@ -26,22 +29,70 @@ public class ReflectionUtils {
      * Gets class from its canonical name.
      * Checks if it is a class wrapped inside another.
      *
-     * @param <T>       the type parameter
-     * @param className the class name
+     * @param <T>        the type parameter
+     * @param className  the class name
+     * @param paramTypes the param types
      * @return the class
      */
-    @SuppressWarnings("unchecked")
-    public static <T> @NotNull Class<T> getClass(@NotNull String className) {
+    public static <T> Class<T> getClass(String className, Class<?>... paramTypes) {
         try {
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
-            int index = className.lastIndexOf(".");
-            if (index != -1)
-                try {
-                    return getClass(className.substring(0, index) + "$" + className.substring(index + 1));
-                } catch (RuntimeException ignored) {}
-            throw new RuntimeException(e);
+            Class<T> aClazz = getInnerClass(className, paramTypes);
+            if (aClazz == null) aClazz = getInnerInterface(className);
+            return aClazz;
         }
+    }
+
+    private static <T> Class<T> getInnerClass(String classPath, Class<?>... paramTypes) {
+        Class<T> aClass = null;
+        String[] tmp = classPath.split("\\.");
+        StringBuilder primClass = new StringBuilder();
+        String clazz = tmp[tmp.length - 1];
+        for (int i = 0; i < tmp.length - 1; i++) primClass.append(tmp[i]).append(".");
+        if (primClass.toString().endsWith("."))
+            primClass = new StringBuilder(primClass.substring(0, primClass.length() - 1));
+        try {
+            Class<?> primClazz = Class.forName(primClass.toString());
+            aClass = (Class<T>) Stream.concat(Arrays.stream(primClazz.getClasses()), Arrays.stream(primClazz.getDeclaredClasses()))
+                    .distinct()
+                    .filter(c -> c.getSimpleName().equals(clazz))
+                    .filter(c -> c.isInterface() || getConstructor(c, paramTypes) != null)
+                    .findAny().orElse(null);
+        } catch (ClassNotFoundException ignored) {}
+        return aClass;
+    }
+
+    private static <T> Class<T> getInnerInterface(String classPath) {
+        Class<T> aClass = null;
+        String[] tmp = classPath.split("\\.");
+        StringBuilder primClass = new StringBuilder();
+        String clazz = tmp[tmp.length - 1];
+        for (int i = 0; i < tmp.length - 1; i++) primClass.append(tmp[i]).append(".");
+        if (primClass.toString().endsWith("."))
+            primClass = new StringBuilder(primClass.substring(0, primClass.length() - 1));
+        try {
+            Class<?> primClazz = Class.forName(primClass.toString());
+            aClass = (Class<T>) Arrays.stream(primClazz.getInterfaces())
+                    .filter(c -> c.getSimpleName().equals(clazz))
+                    .findAny().orElse(null);
+        } catch (ClassNotFoundException ignored) {}
+        return aClass;
+    }
+
+    /**
+     * Converts the given objects to an array of classes.
+     *
+     * @param parameters the parameters
+     * @return the classes
+     */
+    public static @NotNull Class<?>[] objectsToClasses(final Object @NotNull ... parameters) {
+        final Class<?>[] paramTypes = new Class<?>[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            final Object obj = parameters[i];
+            if (obj != null) paramTypes[i] = obj.getClass();
+        }
+        return paramTypes;
     }
 
     /**
@@ -103,9 +154,55 @@ public class ReflectionUtils {
     }
 
     /**
+     * Gets constructor.
+     *
+     * @param <T>        the type parameter
+     * @param object     the object
+     * @param parameters the parameters
+     * @return the constructor
+     */
+    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Object object, @Nullable Object... parameters) {
+        if (parameters == null) parameters = new Object[0];
+        return getConstructor(object.getClass(), objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets constructor.
+     *
+     * @param <T>        the type parameter
+     * @param clazz      the clazz
+     * @param paramTypes the param types
+     * @return the constructor
+     */
+    public static @Nullable <T> Constructor<T> getConstructor(@NotNull Class<?> clazz, @Nullable Class<?>... paramTypes) {
+        if (paramTypes == null) paramTypes = new Class<?>[0];
+        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+            Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
+            if (constructor != null) return constructor;
+        }
+        return null;
+    }
+
+    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @NotNull [] paramTypes) {
+        for (Constructor<?> constructor : c.getDeclaredConstructors()) {
+            if (constructor.getParameterCount() != paramTypes.length) continue;
+            for (int i = 0; i < paramTypes.length; i++) {
+                final Class<?> expected = paramTypes[i];
+                if (expected == null) continue;
+                final Class<?> actual = constructor.getParameterTypes()[i];
+                if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
+                    return null;
+            }
+            return (Constructor<T>) constructor;
+        }
+        return null;
+    }
+
+    /**
      * Gets method.
      *
      * @param object     the object
+     * @param returnType the return type
      * @param name       the name
      * @param parameters the parameters
      * @return the method
@@ -113,23 +210,19 @@ public class ReflectionUtils {
     public static @Nullable Method getMethod(@NotNull Object object, @Nullable Class<?> returnType, @NotNull String name,
                                              @Nullable Object... parameters) {
         if (parameters == null) parameters = new Object[0];
-        final Class<?>[] paramTypes = new Class<?>[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            final Object obj = parameters[i];
-            if (obj != null) paramTypes[i] = obj.getClass();
-        }
-        return getMethod(object.getClass(), returnType, name, paramTypes);
+        return getMethod(object.getClass(), returnType, name, objectsToClasses(parameters));
     }
 
     /**
      * Gets method.
      *
-     * @param clazz   the clazz
-     * @param name    the name
+     * @param clazz      the clazz
+     * @param returnType the return type
+     * @param name       the name
      * @param paramTypes the parameter types
      * @return the method
      */
-    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @NotNull String name,
+    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
                                              @Nullable Class<?>... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
@@ -143,9 +236,9 @@ public class ReflectionUtils {
         return null;
     }
 
-    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @NotNull String name, @Nullable Class<?> @NotNull [] paramTypes) {
+    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name, @Nullable Class<?> @NotNull [] paramTypes) {
         for (Method method : c.getDeclaredMethods()) {
-            if (!method.getName().equalsIgnoreCase(name)) continue;
+            if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
             if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
             if (method.getParameterCount() != paramTypes.length) continue;
             for (int i = 0; i < paramTypes.length; i++) {
