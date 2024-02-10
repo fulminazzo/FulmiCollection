@@ -3,28 +3,147 @@ package it.fulminazzo.fulmicollection.objects;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import it.fulminazzo.fulmicollection.utils.ReflectionUtils;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @SuppressWarnings("unchecked")
 public class ReflObject<T> {
-    protected final Class<T> objectClass;
-    protected final T object;
+    private static final String OBJECT_CLASS_NOT_NULL = "Object class cannot be null";
+    private static final String CONSTRUCTOR_NOT_FOUND = "Constructor not found %s(%s)";
+    private static final String FIELD_NOT_FOUND = "Field %s not found in class %s";
+    private static final String FIELD_TYPE_NOT_FOUND = "Field of type %s not found in class %s";
+    
+    protected final @NotNull Class<T> objectClass;
+    protected final @Nullable T object;
 
-    public ReflObject(String classPath, Object... params) {
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param classPath the class path
+     * @param params    the parameters
+     */
+    public ReflObject(@NotNull String classPath, Object @Nullable ... params) {
         this(ReflectionUtils.getClass(classPath), ReflectionUtils.objectsToClasses(params), params);
     }
 
-    public ReflObject(String classPath, Class<?>[] paramTypes, Object... params) {
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param classPath  the class path
+     * @param paramTypes the parameter types
+     * @param params     the parameters
+     */
+    public ReflObject(@NotNull String classPath, @Nullable Class<?>[] paramTypes, Object @Nullable ... params) {
         this(ReflectionUtils.getClass(classPath), paramTypes, params);
     }
 
-    public ReflObject(Class<T> objectClass, Object... params) {
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param objectClass the object class
+     * @param params     the parameters
+     */
+    public ReflObject(Class<T> objectClass, Object @Nullable ... params) {
         this(objectClass, ReflectionUtils.objectsToClasses(params), params);
     }
+
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param objectClass the object class
+     * @param paramTypes the parameter types
+     * @param params     the parameters
+     */
+    public ReflObject(@Nullable Class<T> objectClass, @Nullable Class<?>[] paramTypes, Object @Nullable ... params) {
+        T object = null;
+        try {
+            if (objectClass == null) throw new IllegalArgumentException(OBJECT_CLASS_NOT_NULL);
+            Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass, paramTypes);
+            if (constructor == null)
+                throw new NoSuchMethodException(String.format(CONSTRUCTOR_NOT_FOUND, objectClass.getName(),
+                        ReflectionUtils.classesToString(paramTypes)));
+            constructor.setAccessible(true);
+            object = constructor.newInstance(params);
+        } catch (NullPointerException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            ExceptionUtils.throwException(e);
+        }
+        this.objectClass = objectClass;
+        this.object = object;
+    }
+
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param classPath the class path
+     * @param initiate  if true, the given class will be initiated with an empty constructor
+     */
+    public ReflObject(@NotNull String classPath, boolean initiate) {
+        Class<T> objectClass;
+        T object = null;
+        try {
+            objectClass = ReflectionUtils.getClass(classPath);
+            if (objectClass == null) throw new IllegalArgumentException(OBJECT_CLASS_NOT_NULL);
+            if (initiate) {
+                Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass);
+                if (constructor == null)
+                    throw new NoSuchMethodException(String.format(CONSTRUCTOR_NOT_FOUND, objectClass.getName(), ""));
+                constructor.setAccessible(true);
+                object = constructor.newInstance();
+            }
+        } catch (NullPointerException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalArgumentException("Unreachable code");
+        }
+        this.objectClass = objectClass;
+        this.object = object;
+    }
+
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param object      the object
+     * @param objectClass the object class
+     */
+    public ReflObject(@Nullable T object, @Nullable Class<T> objectClass) {
+        if (objectClass == null) throw new IllegalArgumentException(OBJECT_CLASS_NOT_NULL);
+        this.objectClass = objectClass;
+        this.object = object;
+    }
+
+    /**
+     * Instantiates a new Refl object.
+     *
+     * @param object the object
+     */
+    public ReflObject(@NotNull T object) {
+        this(object, (Class<T>) object.getClass());
+    }
+
+//    public Object[] getArray(ReflObject<?>... contents) {
+//        Object[] objects = Arrays.stream(contents)
+//                .map(o -> o.getObject() == null ? o.getObjectClass() : o.getObject())
+//                .toArray();
+//        return getArray(objects);
+//    }
+//
+//    public Object[] getArray(Object... contents) {
+//        if (objectClass == null) return null;
+//        Object[] array = getArray(contents.length);
+//        for (int i = 0; i < contents.length; i++) Array.set(array, i, contents[i]);
+//        return array;
+//    }
+//
+//    public Object[] getArray(int size) {
+//        return (Object[]) Array.newInstance(objectClass, size);
+//    }
 
     /**
      * Sets field.
