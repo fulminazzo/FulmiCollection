@@ -80,7 +80,8 @@ public class ReflectionUtils {
      * @param parameters the parameters
      * @return the classes
      */
-    public static @NotNull Class<?> @NotNull [] objectsToClasses(final Object @NotNull ... parameters) {
+    public static @NotNull Class<?> @NotNull [] objectsToClasses(final Object @Nullable ... parameters) {
+        if (parameters == null) return new Class[0];
         final Class<?>[] paramTypes = new Class<?>[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             final Object obj = parameters[i];
@@ -229,9 +230,12 @@ public class ReflectionUtils {
         return null;
     }
 
-    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @NotNull [] paramTypes) {
+    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @Nullable [] paramTypes) {
         mainloop:
         for (Constructor<?> constructor : c.getDeclaredConstructors()) {
+            if (paramTypes == null)
+                if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
+                else continue;
             if (constructor.getParameterCount() != paramTypes.length) continue;
             for (int i = 0; i < paramTypes.length; i++) {
                 final Class<?> expected = paramTypes[i];
@@ -284,11 +288,14 @@ public class ReflectionUtils {
     }
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name,
-                                                       @Nullable Class<?> @NotNull [] paramTypes) {
+                                                       @Nullable Class<?> @Nullable [] paramTypes) {
         mainloop:
         for (Method method : c.getDeclaredMethods()) {
             if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
             if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
+            if (paramTypes == null)
+                if (method.getParameterCount() == 0) return method;
+                else continue;
             if (method.getParameterCount() != paramTypes.length) continue;
             for (int i = 0; i < paramTypes.length; i++) {
                 final Class<?> expected = paramTypes[i];
