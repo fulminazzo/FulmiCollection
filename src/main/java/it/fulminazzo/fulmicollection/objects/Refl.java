@@ -84,6 +84,7 @@ public class Refl<T> {
     /**
      * Gets field from its type.
      * Uses {@link ReflectionUtils#getClass(String)}.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
      *
      * @param fieldType the field type
      * @return the field nameless
@@ -94,6 +95,7 @@ public class Refl<T> {
 
     /**
      * Gets field from its type.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
      *
      * @param fieldType the field type
      * @return the field
@@ -104,6 +106,7 @@ public class Refl<T> {
 
     /**
      * Gets field from its name.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
      *
      * @param fieldName the field name
      * @return the field
