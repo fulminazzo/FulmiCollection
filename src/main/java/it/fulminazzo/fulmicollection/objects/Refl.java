@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -116,8 +117,24 @@ public class Refl<T> {
     }
 
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
-        if (this.object == null) throw new IllegalStateException("Could not get field: wrapped object is null");
-        return fieldSupplier.get();
+        try {
+            return ifObjectIsPresent(o -> fieldSupplier.get());
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("Could not get field: wrapped object is null");
+        }
+    }
+
+    /**
+     * If the object is not null, the given function is executed.
+     * Otherwise, a {@link NullPointerException is thrown}.
+     *
+     * @param function the function
+     * @return the object to return
+     * @param <O> the object to return
+     */
+    public <O> O ifObjectIsPresent(final @NotNull Function<@NotNull T, O> function) {
+        if (this.object == null) throw new NullPointerException();
+        return function.apply(this.object);
     }
 
     @Override
