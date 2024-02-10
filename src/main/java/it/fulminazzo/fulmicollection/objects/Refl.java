@@ -523,8 +523,8 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes, 
-                                      final Object @Nullable ... parameters) {
+    public <O> @Nullable O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(null, name, paramTypes, parameters);
     }
 
@@ -549,8 +549,8 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes, 
-                                      final Object @Nullable ... parameters) {
+    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(returnType, null, paramTypes, parameters);
     }
 
@@ -564,7 +564,7 @@ public class Refl<T> {
      * @return the result
      */
     public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                      final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
@@ -579,9 +579,7 @@ public class Refl<T> {
      * @return the result
      */
     public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                      final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        final Method method = getMethod(returnType, name, paramTypes);
-        method.setAccessible(true);
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         try {
             final Method method = getMethod(returnType, name, paramTypes);
             method.setAccessible(true);
@@ -590,6 +588,103 @@ public class Refl<T> {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
         }
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final Object @Nullable ... parameters) {
+        return callMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return callMethod(null, null, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param name       the name
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+        return callMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
+        return callMethod(null, name, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return callMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
+        return callMethod(returnType, null, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                        final Object @Nullable ... parameters) {
+        return callMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching method without returning its result.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        invokeMethod(returnType, name, paramTypes, parameters);
+        return this;
     }
 
     /**

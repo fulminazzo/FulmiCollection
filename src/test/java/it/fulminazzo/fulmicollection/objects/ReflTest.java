@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class ReflTest extends AbstractReflTest {
 
@@ -64,6 +65,20 @@ class ReflTest extends AbstractReflTest {
             };
         }
 
+        private Object[] callMethod() {
+            String param1 = "Hello, ";
+            return new Object[]{
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(new Object[]{param1}),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(new Class[]{String.class}, param1),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod("printField", param1),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod("printField", new Class[]{String.class}, param1),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(String.class, new Object[]{param1}),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(String.class, new Class[]{String.class}, param1),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(String.class, "printField", param1),
+                    (Supplier<Refl<?>>) () -> this.refl.callMethod(String.class, "printField", new Class[]{String.class}, param1),
+            };
+        }
+
         @ParameterizedTest
         @MethodSource("getMethod")
         void testGetMethod(Supplier<Method> supplier) throws NoSuchMethodException {
@@ -74,6 +89,15 @@ class ReflTest extends AbstractReflTest {
         @MethodSource("invokeMethod")
         void testInvokeMethod(Supplier<String> supplier) {
             assertEquals(this.testClass.printField("Hello, "), supplier.get());
+        }
+
+        @ParameterizedTest
+        @MethodSource("callMethod")
+        void testCallMethod(Supplier<String> supplier) {
+            TestClass testClass = mock(TestClass.class);
+            this.refl = new Refl<>(testClass);
+            supplier.get();
+            verify(testClass, atLeastOnce()).printField("Hello, ");
         }
     }
 
