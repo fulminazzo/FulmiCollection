@@ -688,6 +688,110 @@ public class Refl<T> {
     }
 
     /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final Object @Nullable ... parameters) {
+        return invokeMethodRefl(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return invokeMethodRefl(null, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable String name, final Object @Nullable ... parameters) {
+        return invokeMethodRefl(name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
+        return invokeMethodRefl(null, name, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return invokeMethodRefl(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+                                        final Object @Nullable ... parameters) {
+        return invokeMethodRefl(returnType, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
+                                        final Object @Nullable ... parameters) {
+        return invokeMethodRefl(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return new Refl<>(invokeMethod(returnType, name, paramTypes, parameters));
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *

@@ -79,6 +79,20 @@ class ReflTest extends AbstractReflTest {
             };
         }
 
+        private Object[] invokeMethodRefl() {
+            String param1 = "Hello, ";
+            return new Object[]{
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(new Object[]{param1}),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(new Class[]{String.class}, param1),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl("printField", param1),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl("printField", new Class[]{String.class}, param1),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(String.class, new Object[]{param1}),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(String.class, new Class[]{String.class}, param1),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(String.class, "printField", param1),
+                    (Supplier<Refl<String>>) () -> this.refl.invokeMethodRefl(String.class, "printField", new Class[]{String.class}, param1),
+            };
+        }
+
         @ParameterizedTest
         @MethodSource("getMethod")
         void testGetMethod(Supplier<Method> supplier) throws NoSuchMethodException {
@@ -98,6 +112,12 @@ class ReflTest extends AbstractReflTest {
             this.refl = new Refl<>(testClass);
             supplier.get();
             verify(testClass, atLeastOnce()).printField("Hello, ");
+        }
+
+        @ParameterizedTest
+        @MethodSource("invokeMethodRefl")
+        void testInvokeMethodRefl(Supplier<Refl<String>> supplier) {
+            assertEquals(new Refl<>(this.testClass.printField("Hello, ")), supplier.get());
         }
     }
 
