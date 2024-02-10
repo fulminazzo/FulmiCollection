@@ -480,6 +480,117 @@ public class Refl<T> {
     }
 
     /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final Object @Nullable ... parameters) {
+        return invokeMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return invokeMethod(null, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+        return invokeMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes, 
+                                      final Object @Nullable ... parameters) {
+        return invokeMethod(null, name, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return invokeMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes, 
+                                      final Object @Nullable ... parameters) {
+        return invokeMethod(returnType, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                      final Object @Nullable ... parameters) {
+        return invokeMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching method and return its result.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                      final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        final Method method = getMethod(returnType, name, paramTypes);
+        method.setAccessible(true);
+        try {
+            return (O) method.invoke(this.object, parameters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalStateException("Unreachable code");
+        }
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *
