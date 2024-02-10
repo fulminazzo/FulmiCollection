@@ -3,10 +3,7 @@ package it.fulminazzo.fulmicollection.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -231,19 +228,12 @@ public class ReflectionUtils {
     }
 
     private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, @Nullable Class<?> @Nullable [] paramTypes) {
-        mainloop:
         for (Constructor<?> constructor : c.getDeclaredConstructors()) {
             if (paramTypes == null)
                 if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
                 else continue;
             if (constructor.getParameterCount() != paramTypes.length) continue;
-            for (int i = 0; i < paramTypes.length; i++) {
-                final Class<?> expected = paramTypes[i];
-                if (expected == null) continue;
-                final Class<?> actual = constructor.getParameterTypes()[i];
-                if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
-                    continue mainloop;
-            }
+            if (!validateParameters(paramTypes, constructor)) continue;
             return (Constructor<T>) constructor;
         }
         return null;
@@ -289,7 +279,6 @@ public class ReflectionUtils {
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @Nullable Class<?> returnType, @Nullable String name,
                                                        @Nullable Class<?> @Nullable [] paramTypes) {
-        mainloop:
         for (Method method : c.getDeclaredMethods()) {
             if (name != null && !method.getName().equalsIgnoreCase(name)) continue;
             if (returnType != null && !returnType.isAssignableFrom(method.getReturnType())) continue;
@@ -297,16 +286,23 @@ public class ReflectionUtils {
                 if (method.getParameterCount() == 0) return method;
                 else continue;
             if (method.getParameterCount() != paramTypes.length) continue;
-            for (int i = 0; i < paramTypes.length; i++) {
-                final Class<?> expected = paramTypes[i];
-                if (expected == null) continue;
-                final Class<?> actual = method.getParameterTypes()[i];
-                if (!expected.isAssignableFrom(actual) && !actual.isAssignableFrom(expected))
-                    continue mainloop;
-            }
+            if (!validateParameters(paramTypes, method)) continue;
             return method;
         }
         return null;
+    }
+
+    private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, Executable executable) {
+        for (int i = 0; i < paramTypes.length; i++) {
+            final Class<?> expected = paramTypes[i];
+            if (expected == null) continue;
+            final Class<?> actual = executable.getParameterTypes()[i];
+            if (expected.isArray() && (!actual.isArray() || !expected.getComponentType().isAssignableFrom(actual.getComponentType())))
+                return false;
+            if (!expected.isAssignableFrom(actual))
+                return false;
+        }
+        return true;
     }
 
     /**
