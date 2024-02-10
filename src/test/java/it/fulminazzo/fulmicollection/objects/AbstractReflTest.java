@@ -8,7 +8,7 @@ public abstract class AbstractReflTest {
 
     @BeforeEach
     void setUp() {
-        this.testClass = new TestClass("Hello world");
+        this.testClass = new TestClass("James");
         this.refl = new Refl<>(this.testClass);
     }
 
