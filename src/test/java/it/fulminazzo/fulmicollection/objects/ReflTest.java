@@ -45,5 +45,10 @@ class ReflTest extends AbstractReflTest {
             assertEquals(this.refl, supplier.get());
             assertEquals(this.refl.getObject(), supplier.get().getObject());
         }
+
+        @Test
+        void testClass() {
+            assertEquals(TestClass.class, new Refl<>(TestClass.class).getObject());
+        }
     }
 }
