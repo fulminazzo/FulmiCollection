@@ -18,9 +18,6 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class ReflectionUtils {
-    /**
-     * The constant WRAPPER_CLASSES.
-     */
     public static final Class<?>[] WRAPPER_CLASSES = new Class[]{Boolean.class, Byte.class, Short.class, Character.class,
             Integer.class, Long.class, Float.class, Double.class};
 
@@ -28,8 +25,8 @@ public class ReflectionUtils {
      * Gets class from its canonical name.
      * Checks if it is a class wrapped inside another.
      *
-     * @param <T>        the type parameter
-     * @param className  the class name
+     * @param <T>       the type parameter
+     * @param className the class name
      * @return the class
      */
     public static <T> @Nullable Class<T> getClass(@NotNull String className) {
