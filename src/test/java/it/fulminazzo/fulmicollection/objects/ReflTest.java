@@ -57,6 +57,21 @@ class ReflTest extends AbstractReflTest {
             };
         }
 
+        private Object[] getFieldRefl() {
+            return new Object[]{
+                    (Supplier<Refl<String>>) () -> this.refl.getFieldReflNameless(String.class.getCanonicalName()),
+                    (Supplier<Refl<String>>) () -> this.refl.getFieldRefl(String.class),
+                    (Supplier<Refl<String>>) () -> this.refl.getFieldRefl("name"),
+                    (Supplier<Refl<String>>) () -> {
+                        try {
+                            return this.refl.getFieldRefl(TestClass.class.getDeclaredField("name"));
+                        } catch (NoSuchFieldException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+            };
+        }
+
         @ParameterizedTest
         @MethodSource("getField")
         void testGetField(Supplier<Field> supplier) throws NoSuchFieldException {
@@ -69,6 +84,12 @@ class ReflTest extends AbstractReflTest {
             assertEquals("James", supplier.get());
         }
 
+        @ParameterizedTest
+        @MethodSource("getFieldRefl")
+        void testGetFieldRefl(Supplier<Refl<String>> supplier) {
+            assertEquals("James", supplier.get().getObject());
+        }
+
         @Test
         void testGetFieldFromNull() {
             assertThrows(IllegalStateException.class, () -> new Refl<>(null).getField("test"));
@@ -77,6 +98,13 @@ class ReflTest extends AbstractReflTest {
         @Test
         void testGetFieldObjectFromNull() {
             assertThrows(IllegalStateException.class, () -> new Refl<>(null).getFieldObject("test"));
+        }
+
+        @Test
+        void testGetReflNull() {
+            TestClass testClass1 = new TestClass(null);
+            Refl<TestClass> refl1 = new Refl<>(testClass1);
+            assertNull(refl1.getFieldRefl("name").getObject());
         }
 
     }

@@ -181,6 +181,59 @@ public class Refl<T> {
     }
 
     /**
+     * Gets a {@link Refl} wrapping the content of a field.
+     * The contents may be null, but the {@link Refl} will never be.
+     * Uses {@link ReflectionUtils#getClass(String)}.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param fieldType the field type
+     * @return the field refl nameless
+     */
+    public <O> @NotNull Refl<O> getFieldReflNameless(final @NotNull String fieldType) {
+        return new Refl<>(getFieldObjectNameless(fieldType));
+    }
+
+    /**
+     * Gets a {@link Refl} wrapping the content of a field.
+     * The contents may be null, but the {@link Refl} will never be.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>       the type parameter
+     * @param fieldType the field type
+     * @return the field refl
+     */
+    public <O> @NotNull Refl<O> getFieldRefl(final @NotNull Class<?> fieldType) {
+        return new Refl<>(getFieldObject(fieldType));
+    }
+
+    /**
+     * Gets a {@link Refl} wrapping the content of a field.
+     * The contents may be null, but the {@link Refl} will never be.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>  the type parameter
+     * @param name the name
+     * @return the field refl
+     */
+    public <O> @NotNull Refl<O> getFieldRefl(final @NotNull String name) {
+        return new Refl<>(getFieldObject(name));
+    }
+
+    /**
+     * Gets a {@link Refl} wrapping the content of a field.
+     * The contents may be null, but the {@link Refl} will never be.
+     * Throws {@link IllegalStateException} if {@link #object} is null.
+     *
+     * @param <O>   the type parameter
+     * @param field the field
+     * @return the field refl
+     */
+    public <O> @NotNull Refl<O> getFieldRefl(final @NotNull Field field) {
+        return new Refl<>(getFieldObject(field));
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *
