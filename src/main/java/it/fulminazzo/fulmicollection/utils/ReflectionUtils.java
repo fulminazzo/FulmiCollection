@@ -372,4 +372,24 @@ public class ReflectionUtils {
             return Double.class;
         return clazz;
     }
+
+    /**
+     * Converts the given classes to a string.
+     *
+     * @param classes the classes
+     * @return the string
+     */
+    public static String classesToString(Class<?>... classes) {
+        return classesToString(Arrays.asList(classes));
+    }
+
+    /**
+     * Converts the given classes to a string.
+     *
+     * @param classes the classes
+     * @return the string
+     */
+    public static String classesToString(List<Class<?>> classes) {
+        return classes.stream().map(c -> c == null ? "null" : c.toString()).collect(Collectors.joining(", "));
+    }
 }
