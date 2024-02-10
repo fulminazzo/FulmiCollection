@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -129,13 +130,11 @@ public class ReflectionUtils {
      * @return the field
      */
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Class<?> fieldType) {
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
-            for (Field field : c.getDeclaredFields())
-                if (fieldType.isAssignableFrom(field.getType())) {
-                    field.setAccessible(true);
-                    return field;
-                }
-        throw new IllegalArgumentException(String.format("Could not find field of type %s in %s", fieldType.getName(), clazz.getName()));
+        try {
+            return getField(clazz, f -> fieldType.isAssignableFrom(f.getType()));
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(String.format("Could not find field of type %s in %s", fieldType.getName(), clazz.getName()));
+        }
     }
 
     /**
@@ -157,13 +156,28 @@ public class ReflectionUtils {
      * @return the field
      */
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull String name) {
+        try {
+            return getField(clazz, f -> f.getName().equalsIgnoreCase(name));
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(String.format("Could not find field of name %s in %s", name, clazz.getName()));
+        }
+    }
+
+    /**
+     * Gets field.
+     *
+     * @param clazz     the clazz
+     * @param predicate the predicate
+     * @return the field
+     */
+    public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
-                if (field.getName().equals(name)) {
+                if (predicate.test(field)) {
                     field.setAccessible(true);
                     return field;
                 }
-        throw new IllegalArgumentException(String.format("Could not find field of name %s in %s", name, clazz.getName()));
+        throw new NullPointerException();
     }
 
     /**
