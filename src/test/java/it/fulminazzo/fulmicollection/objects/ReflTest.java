@@ -33,9 +33,9 @@ class ReflTest extends AbstractReflTest {
         private static Object[] getConstructors() {
             return new Object[]{
                     (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class.getCanonicalName(), "James"),
-                    (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class.getCanonicalName(), "James".getClass()),
+                    (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class.getCanonicalName(), new Class[]{String.class}, "James"),
                     (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class, "James"),
-                    (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class, "James".getClass()),
+                    (Supplier<Refl<TestClass>>) () -> new Refl<>(TestClass.class, new Class[]{String.class}, "James")
             };
         }
 
