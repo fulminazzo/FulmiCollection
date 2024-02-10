@@ -4,10 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -477,8 +474,8 @@ public class ReflectionUtils {
      * @param classes the classes
      * @return the string
      */
-    public static @NotNull String classesToString(Class<?> @NotNull... classes) {
-        return classesToString(Arrays.asList(classes));
+    public static @NotNull String classesToString(Class<?> @Nullable... classes) {
+        return classesToString(classes == null ? new ArrayList<>() : Arrays.asList(classes));
     }
 
     /**
