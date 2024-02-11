@@ -119,6 +119,26 @@ class ReflTest extends AbstractReflTest {
         void testInvokeMethodRefl(Supplier<Refl<String>> supplier) {
             assertEquals(new Refl<>(this.testClass.printField("Hello, ")), supplier.get());
         }
+        
+        @Test
+        void testGetMethods() throws NoSuchMethodException {
+            assertIterableEquals(Arrays.asList(
+                    TestClass.class.getDeclaredMethod("printField", String.class),
+                    TestClass.class.getDeclaredMethod("equals", Object.class),
+                    TestClass.class.getDeclaredMethod("print")), this.refl.getMethods());
+        }
+
+        @Test
+        void testGetStaticMethods() throws NoSuchMethodException {
+            assertIterableEquals(Collections.singletonList(TestClass.class.getDeclaredMethod("print")), this.refl.getStaticMethods());
+        }
+
+        @Test
+        void testGetNonStaticMethods() throws NoSuchMethodException {
+            assertIterableEquals(Arrays.asList(
+                    TestClass.class.getDeclaredMethod("printField", String.class),
+                    TestClass.class.getDeclaredMethod("equals", Object.class)), this.refl.getNonStaticMethods());
+        }
     }
 
     @Nested

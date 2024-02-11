@@ -792,6 +792,47 @@ public class Refl<T> {
     }
 
     /**
+     * Gets methods.
+     *
+     * @return the methods
+     */
+    public @NotNull List<Method> getMethods() {
+        return getMethods(f -> true);
+    }
+
+    /**
+     * Gets static methods.
+     *
+     * @return the static methods
+     */
+    public @NotNull List<Method> getStaticMethods() {
+        return getMethods(f -> Modifier.isStatic(f.getModifiers()));
+    }
+
+    /**
+     * Gets non-static methods.
+     *
+     * @return the non-static methods
+     */
+    public @NotNull List<Method> getNonStaticMethods() {
+        return getMethods(f -> !Modifier.isStatic(f.getModifiers()));
+    }
+
+    /**
+     * Gets methods.
+     *
+     * @param predicate the predicate
+     * @return the methods
+     */
+    public @NotNull List<Method> getMethods(final @NotNull Predicate<Method> predicate) {
+        try {
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethods(this.object, predicate));
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("Could not get methods: wrapped object is null");
+        }
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *
@@ -813,6 +854,6 @@ public class Refl<T> {
 
     @Override
     public @NotNull String toString() {
-        return object == null ? "null" : object.toString();
+        return this.object == null ? "null" : this.object.toString();
     }
 }
