@@ -852,6 +852,11 @@ public class Refl<T> {
         return super.equals(o);
     }
 
+    /**
+     * Prints the current object fields.
+     *
+     * @return the fields
+     */
     public @NotNull String print() {
         return ifObjectIsPresent(o -> Printable.printObject(o, ""));
     }
