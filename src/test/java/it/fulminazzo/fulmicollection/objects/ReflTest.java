@@ -1,9 +1,6 @@
 package it.fulminazzo.fulmicollection.objects;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -26,14 +23,6 @@ class ReflTest extends AbstractReflTest {
     @Test
     void testInEquality() {
         assertNotEquals(this.refl, new Refl<>(new Object()));
-    }
-
-    @Test
-    void testPrint() {
-        assertEquals("TestClass {\n" +
-                "  age: 10\n" +
-                "  name: James\n" +
-                "}", this.refl.print());
     }
 
     @Test

@@ -861,6 +861,52 @@ public class Refl<T> {
         return ifObjectIsPresent(o -> Printable.printObject(o, ""));
     }
 
+    /**
+     * Recursively prints the current object fields and fields of non-primitive (or non-wrappers) fields.
+     *
+     * @return the string
+     */
+    public @NotNull String printFields() {
+        return printFields(false);
+    }
+
+    /**
+     * Recursively prints the current object fields and fields of non-primitive (or non-wrappers) fields.
+     *
+     * @param simpleNames if true, only the name of the classes will be displayed (not the path)
+     * @return the string
+     */
+    public @NotNull String printFields(boolean simpleNames) {
+        return ifObjectIsPresent(o -> {
+            final String SEPARATOR = "  ";
+            final Function<Class<?>, String> className = c -> simpleNames ? c.getSimpleName() : c.getCanonicalName();
+            final StringBuilder output = new StringBuilder(className.apply(o.getClass())).append(" {");
+            for (Class<?> c = o.getClass(); c != null && !c.equals(Object.class); c = c.getSuperclass())
+                for (final Field f : c.getDeclaredFields())
+                    try {
+                        // Remove fields in inner classes.
+                        if (f.getName().equalsIgnoreCase("this$1")) continue;
+                        // Remove fields used by code coverage from Intellij IDEA.
+                        if (f.getName().equals("__$hits$__")) continue;
+                        f.setAccessible(true);
+                        final Object v = f.get(o);
+                        final String vToString;
+                        if (v == null) vToString = "null";
+                        else if (ReflectionUtils.isPrimitiveOrWrapper(v.getClass())) vToString = v.toString();
+                        else vToString = new Refl<>(v).printFields(simpleNames).replace("\n", "\n" + SEPARATOR);
+                        output.append("\n").append(SEPARATOR);
+                        output.append("(").append(className.apply(c)).append(") ");
+                        if (Modifier.isStatic(f.getModifiers())) output.append("static ");
+                        output.append(className.apply(f.getType()));
+                        output.append(" ").append(f.getName());
+                        output.append(" = ").append(vToString).append(";");
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+            return output + "\n}";
+        });
+    }
+
     @Override
     public @NotNull String toString() {
         return this.object == null ? "null" : this.object.toString();
