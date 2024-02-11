@@ -53,7 +53,7 @@ class READMERewriter {
             tableNode.getTableRows().clear();
             Pattern pattern = Pattern.compile(FUNCTIONS_REGEX);
             String packageName = FunctionException.class.getPackage().getName();
-            tableNode.setTableRows(ClassUtils.findClassesInPackage(packageName).stream()
+            tableNode.setTableRows(ClassUtils.findClassesInPackage(packageName, FunctionException.class).stream()
                     .map(Class::getSimpleName)
                     .sorted(Comparator.comparing(n -> {
                         Matcher matcher = pattern.matcher(n);
