@@ -83,6 +83,38 @@ public class Refl<T> {
     }
 
     /**
+     * Creates an array with the class of the given object.
+     * If the object is a class, it will be used to create the array.
+     *
+     * @param <V>      the type parameter
+     * @param elements the elements
+     * @return the array
+     */
+    public <V> @NotNull V[] toArray(final V @Nullable... elements) {
+        V[] v = toArray(elements == null ? 0 : elements.length);
+        if (elements != null)
+            System.arraycopy(elements, 0, v, 0, elements.length);
+        return v;
+    }
+
+    /**
+     * Creates an array with the class of the given object.
+     * If the object is a class, it will be used to create the array.
+     *
+     * @param <V>  the type parameter
+     * @param size the size
+     * @return the array
+     */
+    public <V> @NotNull V[] toArray(final int size) {
+        return ifObjectIsPresent(o -> {
+            final Class<V> arrayClass;
+            if (o instanceof Class) arrayClass = (Class<V>) o;
+            else arrayClass = (Class<V>) o.getClass();
+            return (V[]) Array.newInstance(arrayClass, size);
+        });
+    }
+
+    /**
      * Gets the field from its type and sets its value to the specified one.
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.

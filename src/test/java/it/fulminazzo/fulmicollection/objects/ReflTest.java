@@ -16,6 +16,12 @@ import static org.mockito.Mockito.*;
 class ReflTest extends AbstractReflTest {
 
     @Test
+    void testArray() {
+        String[] expected = new String[]{"String1", "String2", "String 3"};
+        assertArrayEquals(expected, new Refl<>(String.class).toArray(expected));
+    }
+
+    @Test
     void testEquality() {
         assertEquals(this.refl, new Refl<>(this.testClass));
     }
