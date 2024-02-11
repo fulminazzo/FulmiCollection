@@ -379,6 +379,28 @@ public class ReflectionUtils {
     /**
      * Gets methods.
      *
+     * @param object    the object
+     * @param predicate the predicate
+     * @return the methods
+     */
+    public static @NotNull List<Method> getMethods(@NotNull Object object, @NotNull Predicate<Method> predicate) {
+        return getMethods(object.getClass(), predicate);
+    }
+
+    /**
+     * Gets methods.
+     *
+     * @param clazz     the clazz
+     * @param predicate the predicate
+     * @return the methods
+     */
+    public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz, @NotNull Predicate<Method> predicate) {
+        return getMethods(clazz).stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets methods.
+     *
      * @param object the object
      * @return the methods
      */
