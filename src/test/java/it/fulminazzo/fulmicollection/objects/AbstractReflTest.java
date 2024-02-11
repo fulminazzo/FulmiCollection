@@ -30,5 +30,9 @@ public abstract class AbstractReflTest {
             if (o instanceof TestClass) return this.name.equals(((TestClass) o).name);
             return super.equals(o);
         }
+
+        public static String print() {
+            return TestClass.class.getCanonicalName();
+        }
     }
 }
