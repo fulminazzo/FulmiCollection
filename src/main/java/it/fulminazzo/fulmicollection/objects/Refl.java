@@ -852,6 +852,10 @@ public class Refl<T> {
         return super.equals(o);
     }
 
+    public @NotNull String print() {
+        return ifObjectIsPresent(o -> Printable.printObject(o, ""));
+    }
+
     @Override
     public @NotNull String toString() {
         return this.object == null ? "null" : this.object.toString();

@@ -29,6 +29,14 @@ class ReflTest extends AbstractReflTest {
     }
 
     @Test
+    void testPrint() {
+        assertEquals("TestClass {\n" +
+                "  age: 10\n" +
+                "  name: James\n" +
+                "}", this.refl.print());
+    }
+
+    @Test
     void testToString() {
         assertEquals(this.testClass.toString(), this.refl.toString());
     }
