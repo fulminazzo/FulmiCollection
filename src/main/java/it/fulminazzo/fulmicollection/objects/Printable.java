@@ -26,6 +26,8 @@ public abstract class Printable {
         while (oClass != null) {
             Field[] fields = oClass.getDeclaredFields();
             for (Field field : fields) {
+                // Remove fields in inner classes.
+                if (field.getName().equalsIgnoreCase("this$1")) continue;
                 // Remove fields used by code coverage from Intellij IDEA.
                 if (field.getName().equals("__$hits$__")) continue;
                 // Prevent static non-relevant fields to be shown.
