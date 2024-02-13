@@ -70,11 +70,12 @@ public class ClassUtils {
      * @return the set of classes
      */
     private static @NotNull Set<Class<?>> findClassesInPackageSingle(@NotNull String packageName, String classPath)  {
-        final String path = packageName.replace(".", File.separator);
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
 
         try {
             if (classPath.endsWith(".jar")) {
+                final String separator = "/";
+                final String path = packageName.replace(".", separator);
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
@@ -82,8 +83,8 @@ public class ClassUtils {
                 while ((entry = inputStream.getNextJarEntry()) != null) {
                     String className = entry.getName();
                     if (!className.startsWith(path)) continue;
-                    if (className.equalsIgnoreCase(path + File.separator)) continue;
-                    className = className.replace("/", ".");
+                    if (className.equalsIgnoreCase(path + separator)) continue;
+                    className = className.replace(separator, ".");
                     if (className.endsWith(".")) continue;
                     if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
                     else {
@@ -93,6 +94,7 @@ public class ClassUtils {
                     }
                 }
             } else {
+                final String path = packageName.replace(".", File.separator);
                 // File System
                 File directory = new File(classPath, path);
                 if (!directory.isDirectory()) return classes;
@@ -180,10 +182,11 @@ public class ClassUtils {
      * @return the set of classes
      */
     private static @Nullable Class<?> findClassInPackagesSingle(@NotNull String packageName, String classPath, @NotNull String className)  {
-        final String path = packageName.replace(".", File.separator);
 
         try {
             if (classPath.endsWith(".jar")) {
+                final String separator = "/";
+                final String path = packageName.replace(".", separator);
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
@@ -191,8 +194,8 @@ public class ClassUtils {
                 while ((entry = inputStream.getNextJarEntry()) != null) {
                     String cName = entry.getName();
                     if (!cName.startsWith(path)) continue;
-                    if (cName.equalsIgnoreCase(path + File.separator)) continue;
-                    cName = cName.replace("/", ".");
+                    if (cName.equalsIgnoreCase(path + separator)) continue;
+                    cName = cName.replace(separator, ".");
                     if (cName.endsWith(".")) continue;
                     if (!cName.endsWith(".class")) {
                         Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
@@ -204,6 +207,7 @@ public class ClassUtils {
                     }
                 }
             } else {
+                final String path = packageName.replace(".", File.separator);
                 // File System
                 File directory = new File(classPath, path);
                 if (!directory.isDirectory()) return null;
