@@ -343,7 +343,7 @@ public class ReflectionUtils {
             final Class<?> actual = executable.getParameterTypes()[i];
             if (expected.isArray() && (!actual.isArray() || !expected.getComponentType().isAssignableFrom(actual.getComponentType())))
                 return false;
-            if (!expected.isAssignableFrom(actual))
+            if (!actual.isAssignableFrom(expected))
                 return false;
         }
         return true;
