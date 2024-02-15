@@ -109,7 +109,7 @@ public class Refl<T> {
         return ifObjectIsPresent(o -> {
             final Class<V> arrayClass;
             if (o instanceof Class) arrayClass = (Class<V>) o;
-            else arrayClass = (Class<V>) o.getClass();
+            else arrayClass = (Class<V>) getObjectClass();
             return (V[]) Array.newInstance(arrayClass, size);
         });
     }
@@ -197,7 +197,7 @@ public class Refl<T> {
      * @return the field nameless
      */
     public @NotNull Field getFieldNameless(final @NotNull String fieldType) {
-        return getField(() -> ReflectionUtils.getFieldNameless(object, fieldType));
+        return getField(() -> ReflectionUtils.getFieldNameless(this.object, fieldType));
     }
 
     /**
@@ -208,7 +208,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Class<?> fieldType) {
-        return getField(() -> ReflectionUtils.getField(object, fieldType));
+        return getField(() -> ReflectionUtils.getField(this.object, fieldType));
     }
 
     /**
@@ -219,7 +219,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull String fieldName) {
-        return getField(() -> ReflectionUtils.getField(object, fieldName));
+        return getField(() -> ReflectionUtils.getField(this.object, fieldName));
     }
 
     /**
@@ -230,7 +230,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Predicate<Field> predicate) {
-        return getField(() -> ReflectionUtils.getField(object, predicate));
+        return getField(() -> ReflectionUtils.getField(this.object, predicate));
     }
 
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
@@ -303,7 +303,7 @@ public class Refl<T> {
             Field finalField = field;
             field = getField(() -> finalField);
             field.setAccessible(true);
-            return (O) field.get(object);
+            return (O) field.get(this.object);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -504,7 +504,7 @@ public class Refl<T> {
     public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                       final Class<?> @Nullable ... paramTypes) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(getObjectClass(), returnType, name, paramTypes));
         } catch (NullPointerException e) {
             throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
                     returnType, name, ReflectionUtils.classesToString(paramTypes)));
@@ -864,6 +864,10 @@ public class Refl<T> {
         }
     }
 
+    public Class<T> getObjectClass() {
+        return (Class<T>) (this.object instanceof Class ? this.object : this.object.getClass());
+    }
+
     /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
@@ -912,8 +916,8 @@ public class Refl<T> {
         return ifObjectIsPresent(o -> {
             final String SEPARATOR = "  ";
             final Function<Class<?>, String> className = c -> simpleNames ? c.getSimpleName() : c.getCanonicalName();
-            final StringBuilder output = new StringBuilder(className.apply(o.getClass())).append(" {");
-            for (Class<?> c = o.getClass(); c != null && !c.equals(Object.class); c = c.getSuperclass())
+            final StringBuilder output = new StringBuilder(className.apply(getObjectClass())).append(" {");
+            for (Class<?> c = getObjectClass(); c != null && !c.equals(Object.class); c = c.getSuperclass())
                 for (final Field f : c.getDeclaredFields())
                     try {
                         // Remove fields in inner classes.
