@@ -26,7 +26,7 @@ public class ReflectionUtils {
      * Gets class from its canonical name.
      * Checks if it is a class wrapped inside another.
      *
-     * @param <T>       the type parameter
+     * @param <T>        the type parameter
      * @param className the class name
      * @return the class
      */
@@ -95,7 +95,7 @@ public class ReflectionUtils {
     /**
      * Gets field nameless.
      *
-     * @param object    the object
+     * @param object the object
      * @param fieldType the field type
      * @return the field
      */
@@ -106,7 +106,7 @@ public class ReflectionUtils {
     /**
      * Gets field nameless.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param fieldType the field type
      * @return the field
      */
@@ -117,7 +117,7 @@ public class ReflectionUtils {
     /**
      * Gets field.
      *
-     * @param object    the object
+     * @param object the object
      * @param fieldType the field type
      * @return the field
      */
@@ -128,7 +128,7 @@ public class ReflectionUtils {
     /**
      * Gets field.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param fieldType the field type
      * @return the field
      */
@@ -146,7 +146,7 @@ public class ReflectionUtils {
      * Gets field.
      *
      * @param object the object
-     * @param name   the name
+     * @param name the name
      * @return the field
      */
     public static @NotNull Field getField(@NotNull Object object, @NotNull String name) {
@@ -157,7 +157,7 @@ public class ReflectionUtils {
      * Gets field.
      *
      * @param clazz the clazz
-     * @param name  the name
+     * @param name the name
      * @return the field
      */
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull String name) {
@@ -173,7 +173,7 @@ public class ReflectionUtils {
     /**
      * Gets field.
      *
-     * @param object    the object
+     * @param object the object
      * @param predicate the predicate
      * @return the field
      */
@@ -185,7 +185,7 @@ public class ReflectionUtils {
      * Gets field from the given predicate.
      * If nothing is found, throws a {@link NullPointerException}.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param predicate the predicate
      * @return the field
      */
@@ -202,7 +202,7 @@ public class ReflectionUtils {
     /**
      * Gets fields.
      *
-     * @param object    the object
+     * @param object the object
      * @param predicate the predicate
      * @return the fields
      */
@@ -213,7 +213,7 @@ public class ReflectionUtils {
     /**
      * Gets fields.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param predicate the predicate
      * @return the fields
      */
@@ -254,8 +254,8 @@ public class ReflectionUtils {
     /**
      * Gets constructor.
      *
-     * @param <T>        the type parameter
-     * @param object     the object
+     * @param <T>         the type parameter
+     * @param object the object
      * @param parameters the parameters
      * @return the constructor
      */
@@ -267,8 +267,8 @@ public class ReflectionUtils {
     /**
      * Gets constructor.
      *
-     * @param <T>        the type parameter
-     * @param clazz      the clazz
+     * @param <T>         the type parameter
+     * @param clazz the clazz
      * @param paramTypes the param types
      * @return the constructor
      */
@@ -296,9 +296,9 @@ public class ReflectionUtils {
     /**
      * Gets method.
      *
-     * @param object     the object
+     * @param object the object
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the method
      */
@@ -311,9 +311,9 @@ public class ReflectionUtils {
     /**
      * Gets method.
      *
-     * @param clazz      the clazz
+     * @param clazz the clazz
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @return the method
      */
@@ -352,7 +352,7 @@ public class ReflectionUtils {
     /**
      * Gets method.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param predicate the predicate
      * @return the method
      */
@@ -379,7 +379,7 @@ public class ReflectionUtils {
     /**
      * Gets methods.
      *
-     * @param object    the object
+     * @param object the object
      * @param predicate the predicate
      * @return the methods
      */
@@ -390,7 +390,7 @@ public class ReflectionUtils {
     /**
      * Gets methods.
      *
-     * @param clazz     the clazz
+     * @param clazz the clazz
      * @param predicate the predicate
      * @return the methods
      */
