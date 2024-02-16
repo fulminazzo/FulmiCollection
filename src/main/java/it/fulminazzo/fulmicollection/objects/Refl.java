@@ -926,6 +926,7 @@ public class Refl<T> {
                         if (f.getName().equals("__$hits$__")) continue;
                         f.setAccessible(true);
                         final Object v = f.get(o);
+                        if (o.equals(v)) continue;
                         final String vToString;
                         if (v == null) vToString = "null";
                         else if (ReflectionUtils.isPrimitiveOrWrapper(v.getClass())) vToString = v.toString();
