@@ -519,6 +519,23 @@ public class ReflectionUtils {
     }
 
     /**
+     * A method that checks if two objects are equal.
+     * If a {@link ClassCastException} occurs while comparing,
+     * it is ignored and the result is false.
+     *
+     * @param object1 the first object
+     * @param object2 the second object
+     * @return true if they match
+     */
+    public static boolean equalsClass(final Object object1, final Object object2) {
+        try {
+            return Objects.equals(object1, object2);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    /**
      * Converts the given classes to a string.
      *
      * @param classes the classes
