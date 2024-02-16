@@ -936,7 +936,8 @@ public class Refl<T> {
                         output.append(className.apply(f.getType()));
                         output.append(" ").append(f.getName());
                         output.append(" = ").append(vToString).append(";");
-                    } catch (IllegalAccessException e) {
+                    } catch (Exception e) {
+                        if (e.getClass().getSimpleName().equalsIgnoreCase("InaccessibleObjectException")) continue;
                         throw new RuntimeException(e);
                     }
             return output + "\n}";
