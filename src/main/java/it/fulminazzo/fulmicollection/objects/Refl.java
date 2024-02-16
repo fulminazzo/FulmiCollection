@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * A class that acts as a wrapper for an object.
  * It provides various utilities to work with reflections.
  *
- * @param <T> the object
+ * @param <T>  the object
  */
 @SuppressWarnings("unchecked")
 @Getter
@@ -28,7 +28,7 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param className  the class name
+     * @param className the class name
      * @param parameters the parameters
      */
     public Refl(final @NotNull String className, Object @Nullable ... parameters) {
@@ -38,9 +38,9 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param className      the class name
+     * @param className the class name
      * @param parameterTypes the parameter types
-     * @param parameters     the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull String className, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         this(ReflectionUtils.getClass(className), parameterTypes, parameters);
@@ -50,7 +50,7 @@ public class Refl<T> {
      * Instantiates a new Refl.
      *
      * @param objectClass the object class
-     * @param parameters  the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull Class<T> objectClass, Object @Nullable ... parameters) {
         this(objectClass, ReflectionUtils.objectsToClasses(parameters), parameters);
@@ -59,9 +59,9 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param objectClass    the object class
+     * @param objectClass the object class
      * @param parameterTypes the parameter types
-     * @param parameters     the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
@@ -86,7 +86,7 @@ public class Refl<T> {
      * Creates an array with the class of the given object.
      * If the object is a class, it will be used to create the array.
      *
-     * @param <V>      the type parameter
+     * @param <V>       the type parameter
      * @param elements the elements
      * @return the array
      */
@@ -101,7 +101,7 @@ public class Refl<T> {
      * Creates an array with the class of the given object.
      * If the object is a class, it will be used to create the array.
      *
-     * @param <V>  the type parameter
+     * @param <V>   the type parameter
      * @param size the size
      * @return the array
      */
@@ -119,9 +119,9 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
-     * @param value     the value
+     * @param value the value
      * @return the field object nameless
      */
     public <O> Refl<T> setFieldObjectNameless(final @NotNull String fieldType, final @Nullable O value) {
@@ -132,9 +132,9 @@ public class Refl<T> {
      * Gets the field from its type and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
-     * @param value     the value
+     * @param value the value
      * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Class<?> fieldType, final @Nullable O value) {
@@ -145,8 +145,8 @@ public class Refl<T> {
      * Gets the field from its name and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
-     * @param name  the name
+     * @param <O>    the type parameter
+     * @param name the name
      * @param value the value
      * @return the field object
      */
@@ -158,9 +158,9 @@ public class Refl<T> {
      * Gets the field from the predicate and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
-     * @param value     the value
+     * @param value the value
      * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Predicate<Field> predicate, final @Nullable O value) {
@@ -171,7 +171,7 @@ public class Refl<T> {
      * Gets the field from the given field and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @param value the value
      * @return the field object
@@ -246,7 +246,7 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field object nameless
      */
@@ -258,7 +258,7 @@ public class Refl<T> {
      * Gets the field content from its type.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field object
      */
@@ -270,7 +270,7 @@ public class Refl<T> {
      * Gets the field content from its name.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>  the type parameter
+     * @param <O>   the type parameter
      * @param name the name
      * @return the field object
      */
@@ -282,7 +282,7 @@ public class Refl<T> {
      * Gets the field content from the predicate.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
      * @return the field object
      */
@@ -294,7 +294,7 @@ public class Refl<T> {
      * Gets the field content from the given field.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @return the field object
      */
@@ -315,7 +315,7 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field refl nameless
      */
@@ -328,7 +328,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field refl
      */
@@ -341,7 +341,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>  the type parameter
+     * @param <O>   the type parameter
      * @param name the name
      * @return the field refl
      */
@@ -354,7 +354,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
      * @return the field refl
      */
@@ -367,7 +367,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @return the field refl
      */
@@ -439,7 +439,7 @@ public class Refl<T> {
     /**
      * Gets method from its name and parameters.
      *
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the method
      */
@@ -450,7 +450,7 @@ public class Refl<T> {
     /**
      * Gets method from its name and parameter types.
      *
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @return the method
      */
@@ -484,7 +484,7 @@ public class Refl<T> {
      * Gets method from its name, return type and parameters.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the method
      */
@@ -497,7 +497,7 @@ public class Refl<T> {
      * Gets method from its name, return type and parameter types.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @return the method
      */
@@ -514,7 +514,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param parameters the parameters
      * @return the result
      */
@@ -525,7 +525,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -537,8 +537,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -549,8 +549,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -563,7 +563,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param parameters the parameters
      * @return the result
@@ -575,7 +575,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param paramTypes the parameter types
      * @param parameters the parameters
@@ -589,9 +589,9 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -603,9 +603,9 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -646,7 +646,7 @@ public class Refl<T> {
     /**
      * Call the best matching method without returning its result.
      *
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return this refl
      */
@@ -657,7 +657,7 @@ public class Refl<T> {
     /**
      * Call the best matching method without returning its result.
      *
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return this refl
@@ -695,7 +695,7 @@ public class Refl<T> {
      * Call the best matching method without returning its result.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return this refl
      */
@@ -708,7 +708,7 @@ public class Refl<T> {
      * Call the best matching method without returning its result.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return this refl
@@ -722,7 +722,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param parameters the parameters
      * @return the result
      */
@@ -733,7 +733,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -745,8 +745,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -757,8 +757,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -771,7 +771,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param parameters the parameters
      * @return the result
@@ -783,7 +783,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param paramTypes the parameter types
      * @param parameters the parameters
@@ -797,9 +797,9 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -811,9 +811,9 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -864,6 +864,11 @@ public class Refl<T> {
         }
     }
 
+    /**
+     * Gets object class.
+     *
+     * @return the object class
+     */
     public Class<T> getObjectClass() {
         return (Class<T>) (this.object instanceof Class ? this.object : this.object.getClass());
     }
@@ -872,7 +877,7 @@ public class Refl<T> {
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link NullPointerException is thrown}.
      *
-     * @param <O>      the object to return
+     * @param <O>       the object to return
      * @param function the function
      * @return the object to return
      */
@@ -913,34 +918,63 @@ public class Refl<T> {
      * @return the string
      */
     public @NotNull String printFields(boolean simpleNames) {
+        return printFields(simpleNames, false);
+    }
+
+    /**
+     * Recursively prints the current object fields and fields of non-primitive (or non-wrappers) fields.
+     *
+     * @param simpleNames if true, only the name of the classes will be displayed (not the path)
+     * @param printStatic if true, print the static fields
+     * @return the string
+     */
+    public @NotNull String printFields(boolean simpleNames, boolean printStatic) {
+        return printFields(simpleNames, printStatic, false);
+    }
+
+    /**
+     * Recursively prints the current object fields and fields of non-primitive (or non-wrappers) fields.
+     *
+     * @param simpleNames if true, only the name of the classes will be displayed (not the path)
+     * @param printStatic if true, print the static fields
+     * @param recursive if true, converts the unknown objects to a {@link Refl} and invoke this function.
+     * @return the string
+     */
+    public @NotNull String printFields(boolean simpleNames, boolean printStatic, boolean recursive) {
         return ifObjectIsPresent(o -> {
             final String SEPARATOR = "  ";
             final Function<Class<?>, String> className = c -> simpleNames ? c.getSimpleName() : c.getCanonicalName();
             final StringBuilder output = new StringBuilder(className.apply(getObjectClass())).append(" {");
             for (Class<?> c = getObjectClass(); c != null && !c.equals(Object.class); c = c.getSuperclass())
-                for (final Field f : c.getDeclaredFields())
+                for (final Field f : c.getDeclaredFields()) {
+                    // Remove fields in inner classes.
+                    if (f.getName().equalsIgnoreCase("this$1")) continue;
+                    // Remove fields used by code coverage from Intellij IDEA.
+                    if (f.getName().equals("__$hits$__")) continue;
+                    if (!printStatic && Modifier.isStatic(f.getModifiers())) continue;
                     try {
-                        // Remove fields in inner classes.
-                        if (f.getName().equalsIgnoreCase("this$1")) continue;
-                        // Remove fields used by code coverage from Intellij IDEA.
-                        if (f.getName().equals("__$hits$__")) continue;
                         f.setAccessible(true);
                         final Object v = f.get(o);
-                        if (o.equals(v)) continue;
+                        if (ReflectionUtils.equalsClass(o, v)) continue;
                         final String vToString;
-                        if (v == null) vToString = "null";
-                        else if (ReflectionUtils.isPrimitiveOrWrapper(v.getClass())) vToString = v.toString();
-                        else vToString = new Refl<>(v).printFields(simpleNames).replace("\n", "\n" + SEPARATOR);
                         output.append("\n").append(SEPARATOR);
                         output.append("(").append(className.apply(c)).append(") ");
                         if (Modifier.isStatic(f.getModifiers())) output.append("static ");
                         output.append(className.apply(f.getType()));
                         output.append(" ").append(f.getName());
-                        output.append(" = ").append(vToString).append(";");
+                        output.append(" = ");
+                        if (v == null) vToString = "null";
+                        else if (ReflectionUtils.isPrimitiveOrWrapper(v.getClass())) vToString = v.toString();
+                        else if (recursive)
+                            vToString = new Refl<>(v).printFields(simpleNames, printStatic).replace("\n", "\n" + SEPARATOR);
+                        else vToString = v.toString();
+                        output.append(vToString);
                     } catch (Exception e) {
-                        if (e.getClass().getSimpleName().equalsIgnoreCase("InaccessibleObjectException")) continue;
-                        throw new RuntimeException(e);
+                        output.append("UNKNOWN");
+                    } finally {
+                        output.append(";");
                     }
+                }
             return output + "\n}";
         });
     }

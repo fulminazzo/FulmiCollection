@@ -40,7 +40,7 @@ public class ReflPrintTest {
                 "  };\n" +
                 "  (it.fulminazzo.fulmicollection.objects.AbstractReflTest) it.fulminazzo.fulmicollection.objects.AbstractReflTest.TestClass testClass = null;\n" +
                 "  (it.fulminazzo.fulmicollection.objects.AbstractReflTest) it.fulminazzo.fulmicollection.objects.Refl refl = null;\n" +
-                "}", this.refl.printFields());
+                "}", this.refl.printFields(false, true, true));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ReflPrintTest {
                 "  };\n" +
                 "  (AbstractReflTest) TestClass testClass = null;\n" +
                 "  (AbstractReflTest) Refl refl = null;\n" +
-                "}", this.refl.printFields(true));
+                "}", this.refl.printFields(true, true, true));
     }
 
     static class DemoClass extends AbstractReflTest {
