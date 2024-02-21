@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
+import java.util.zip.ZipException;
 
 /**
  * The type Class utils.
@@ -79,20 +80,25 @@ public class ClassUtils {
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
-                JarEntry entry;
-                while ((entry = inputStream.getNextJarEntry()) != null) {
-                    String className = entry.getName();
-                    if (!className.startsWith(path)) continue;
-                    if (className.equalsIgnoreCase(path + separator)) continue;
-                    className = className.replace(separator, ".");
-                    if (className.endsWith(".")) continue;
-                    if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
-                    else {
-                        className = className.substring(0, className.length() - ".class".length());
-                        Class<?> clazz = Class.forName(className);
-                        if (clazz.getCanonicalName() != null) classes.add(clazz);
+                JarEntry entry = null;
+                do {
+                    try {
+                        entry = inputStream.getNextJarEntry();
+                        if (entry == null) break;
+                        String className = entry.getName();
+                        if (!className.startsWith(path)) continue;
+                        if (className.equalsIgnoreCase(path + separator)) continue;
+                        className = className.replace(separator, ".");
+                        if (className.endsWith(".")) continue;
+                        if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
+                        else {
+                            className = className.substring(0, className.length() - ".class".length());
+                            Class<?> clazz = Class.forName(className);
+                            if (clazz.getCanonicalName() != null) classes.add(clazz);
+                        }
+                    } catch (ZipException ignored) {
                     }
-                }
+                } while (entry != null);
             } else {
                 final String path = packageName.replace(".", File.separator);
                 // File System
@@ -190,22 +196,28 @@ public class ClassUtils {
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
-                JarEntry entry;
-                while ((entry = inputStream.getNextJarEntry()) != null) {
-                    String cName = entry.getName();
-                    if (!cName.startsWith(path)) continue;
-                    if (cName.equalsIgnoreCase(path + separator)) continue;
-                    cName = cName.replace(separator, ".");
-                    if (cName.endsWith(".")) continue;
-                    if (!cName.endsWith(".class")) {
-                        Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
-                        if (clazz != null) return clazz;
-                    } else {
-                        cName = cName.substring(0, cName.length() - ".class".length());
-                        Class<?> clazz = Class.forName(cName);
-                        if (className.equalsIgnoreCase(clazz.getSimpleName())) return clazz;
+                JarEntry entry = null;
+                do {
+                    try {
+                        entry = inputStream.getNextJarEntry();
+                        if (entry == null) break;
+                        String cName = entry.getName();
+                        if (!cName.startsWith(path)) continue;
+                        if (cName.equalsIgnoreCase(path + separator)) continue;
+                        cName = cName.replace(separator, ".");
+                        if (cName.endsWith(".")) continue;
+                        if (!cName.endsWith(".class")) {
+                            Class<?> clazz = findClassInPackagesSingle(packageName + "." + cName, classPath, className);
+                            if (clazz != null) return clazz;
+                        } else {
+                            cName = cName.substring(0, cName.length() - ".class".length());
+                            Class<?> clazz = Class.forName(cName);
+                            if (className.equalsIgnoreCase(clazz.getSimpleName())) return clazz;
+                        }
+                    } catch (ZipException ignored) {
+
                     }
-                }
+                } while (entry != null);
             } else {
                 final String path = packageName.replace(".", File.separator);
                 // File System
