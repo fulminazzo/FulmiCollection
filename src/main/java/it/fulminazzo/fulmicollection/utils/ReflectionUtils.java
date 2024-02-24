@@ -165,7 +165,7 @@ public class ReflectionUtils {
             return getField(clazz, f -> f.getName().equalsIgnoreCase(name));
         } catch (NullPointerException e) {
             throw new IllegalArgumentException(FIELD_NOT_FOUND
-                    .replace("%type%", name)
+                    .replace("%name%", name)
                     .replace("%class%", clazz.getSimpleName()));
         }
     }
