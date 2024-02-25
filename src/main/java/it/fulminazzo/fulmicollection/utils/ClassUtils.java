@@ -80,11 +80,10 @@ public class ClassUtils {
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
-                JarEntry entry = null;
-                do {
+                while (inputStream.available() > 0) {
                     try {
-                        entry = inputStream.getNextJarEntry();
-                        if (entry == null) break;
+                        JarEntry entry = inputStream.getNextJarEntry();
+                        if (entry == null) continue;
                         String className = entry.getName();
                         if (!className.startsWith(path)) continue;
                         if (className.equalsIgnoreCase(path + separator)) continue;
@@ -98,7 +97,7 @@ public class ClassUtils {
                         }
                     } catch (ZipException ignored) {
                     }
-                } while (entry != null);
+                }
             } else {
                 final String path = packageName.replace(".", File.separator);
                 // File System
@@ -196,10 +195,9 @@ public class ClassUtils {
                 // JAR File
                 FileInputStream fileInputStream = new FileInputStream(classPath);
                 JarInputStream inputStream = new JarInputStream(fileInputStream);
-                JarEntry entry = null;
-                do {
+                while (inputStream.available() > 0) {
                     try {
-                        entry = inputStream.getNextJarEntry();
+                        JarEntry entry = inputStream.getNextJarEntry();
                         if (entry == null) break;
                         String cName = entry.getName();
                         if (!cName.startsWith(path)) continue;
@@ -217,7 +215,7 @@ public class ClassUtils {
                     } catch (ZipException ignored) {
 
                     }
-                } while (entry != null);
+                }
             } else {
                 final String path = packageName.replace(".", File.separator);
                 // File System
