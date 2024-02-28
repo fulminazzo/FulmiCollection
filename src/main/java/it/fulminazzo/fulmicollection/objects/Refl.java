@@ -197,7 +197,7 @@ public class Refl<T> {
      * @return the field nameless
      */
     public @NotNull Field getFieldNameless(final @NotNull String fieldType) {
-        return getField(() -> ReflectionUtils.getFieldNameless(this.object, fieldType));
+        return getField(() -> ReflectionUtils.getFieldNameless(getObjectClass(), fieldType));
     }
 
     /**
@@ -208,7 +208,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Class<?> fieldType) {
-        return getField(() -> ReflectionUtils.getField(this.object, fieldType));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldType));
     }
 
     /**
@@ -219,7 +219,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull String fieldName) {
-        return getField(() -> ReflectionUtils.getField(this.object, fieldName));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldName));
     }
 
     /**
@@ -230,7 +230,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Predicate<Field> predicate) {
-        return getField(() -> ReflectionUtils.getField(this.object, predicate));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), predicate));
     }
 
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
@@ -410,7 +410,7 @@ public class Refl<T> {
      */
     public @NotNull List<Field> getFields(final @NotNull Predicate<Field> predicate) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getFields(this.object, predicate));
+            return ifObjectIsPresent(o -> ReflectionUtils.getFields(getObjectClass(), predicate));
         } catch (NullPointerException e) {
             throw new IllegalStateException("Could not get fields: wrapped object is null");
         }
@@ -858,7 +858,7 @@ public class Refl<T> {
      */
     public @NotNull List<Method> getMethods(final @NotNull Predicate<Method> predicate) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getMethods(this.object, predicate));
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethods(getObjectClass(), predicate));
         } catch (NullPointerException e) {
             throw new IllegalStateException("Could not get methods: wrapped object is null");
         }
