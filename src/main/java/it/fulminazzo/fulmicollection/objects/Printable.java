@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Map;
 
 /**
  * Represents an object that on toString() calls
@@ -20,7 +21,27 @@ public abstract class Printable {
      * @return the string
      */
     public static @NotNull String convertToJson(@Nullable Object object) {
-        if (object == null) return "{}";
+        if (object == null) return "null";
+        else if (object instanceof String) return String.format("\"%s\"", object);
+        else if (ReflectionUtils.isPrimitiveOrWrapper(object.getClass())) return object.toString();
+        else if (object instanceof Iterable) {
+            StringBuilder tmp = new StringBuilder("[");
+            Iterable<?> i = (Iterable<?>) object;
+            for (Object o : i) tmp.append(convertToJson(o)).append(", ");
+            String output = tmp.toString();
+            if (output.length() > 1) output = output.substring(0, output.length() - 2);
+            return output + "]";
+        } else if (object instanceof Map) {
+            StringBuilder tmp = new StringBuilder("{");
+            Map<?, ?> i = (Map<?, ?>) object;
+            for (Object k : i.keySet()) {
+                Object v = i.get(k);
+                tmp.append(convertToJson(k)).append(": ").append(convertToJson(v)).append(", ");
+            }
+            String output = tmp.toString();
+            if (output.length() > 1) output = output.substring(0, output.length() - 2);
+            return output + "}";
+        }
         StringBuilder result = new StringBuilder("{");
         Class<?> oClass = object.getClass();
         while (oClass != null) {
@@ -36,11 +57,7 @@ public abstract class Printable {
                     field.setAccessible(true);
                     Object o = field.get(object);
                     if (o != null && o.hashCode() == object.hashCode()) continue;
-                    String objectString;
-                    if (o == null) objectString = "null";
-                    else if (o instanceof String) objectString = String.format("\"%s\"", o);
-                    else if (ReflectionUtils.isPrimitiveOrWrapper(o.getClass())) objectString = o.toString();
-                    else objectString = convertToJson(o);
+                    String objectString = convertToJson(o);
                     result.append(String.format("\"%s\"", field.getName()))
                             .append(": ")
                             .append(objectString)
