@@ -62,7 +62,7 @@ public abstract class Printable {
                             .append(": ")
                             .append(objectString)
                             .append(", ");
-                } catch (IllegalAccessException ignored) {}
+                } catch (Exception ignored) {}
             }
             oClass = oClass.getSuperclass();
         }
