@@ -13,6 +13,12 @@ import java.lang.reflect.Modifier;
  */
 public abstract class Printable {
 
+    /**
+     * Convert the given object to a json compatible string.
+     *
+     * @param object the object
+     * @return the string
+     */
     public static @NotNull String convertToJson(@Nullable Object object) {
         if (object == null) return "{}";
         StringBuilder result = new StringBuilder("{");
