@@ -8,7 +8,7 @@ public class PrintableTest {
 
     @Test
     void printJson() {
-        assertEquals("{\"name\": \"Leonel\", \"age\": {}, \"partner\": {\"name\": \"Alex\", \"age\": {}, \"partner\": null}}",
+        assertEquals("{\"name\": \"Leonel\", \"age\": 10, \"partner\": {\"name\": \"Alex\", \"age\": 11, \"partner\": null}}",
                 Printable.convertToJson(new Person("Leonel", 10, new Person("Alex", 11, null))));
     }
 
