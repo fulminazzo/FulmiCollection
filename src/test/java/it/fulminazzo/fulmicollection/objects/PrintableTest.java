@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PrintableTest {
 
     @Test
+    void printJson() {
+        assertEquals("{\"name\": \"Leonel\", \"age\": {}, \"partner\": {\"name\": \"Alex\", \"age\": {}, \"partner\": null}}",
+                Printable.convertToJson(new Person("Leonel", 10, new Person("Alex", 11, null))));
+    }
+
+    @Test
     void printNull() {
         assertNull(Printable.printObject(null, null));
     }
