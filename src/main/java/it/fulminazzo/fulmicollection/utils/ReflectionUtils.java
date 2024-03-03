@@ -519,6 +519,30 @@ public class ReflectionUtils {
     }
 
     /**
+     * Compares object1 fields with object2 fields.
+     *
+     * @param object1 the first object
+     * @param object2 the second object
+     * @return true if all the fields are equal using {@link Object#equals(Object)}.
+     */
+    public static boolean equalsFields(@NotNull Object object1, @Nullable Object object2) {
+        if (object2 == null) return false;
+        if (!object1.getClass().isAssignableFrom(object2.getClass())) return false;
+        for (Field field : getFields(object1)) {
+            if (Modifier.isStatic(field.getModifiers())) continue;
+            try {
+                field.setAccessible(true);
+                Object o1 = field.get(object1);
+                Object o2 = field.get(object2);
+                if (!Objects.equals(o1, o2)) return false;
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return true;
+    }
+
+    /**
      * A method that checks if two objects are equal.
      * If a {@link ClassCastException} occurs while comparing,
      * it is ignored and the result is false.

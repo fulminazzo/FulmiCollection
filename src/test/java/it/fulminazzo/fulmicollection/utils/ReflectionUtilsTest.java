@@ -1,5 +1,6 @@
 package it.fulminazzo.fulmicollection.utils;
 
+import it.fulminazzo.fulmicollection.objects.PrintableTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -88,6 +89,13 @@ class ReflectionUtilsTest {
     void testFields(String field, Object object, boolean isNull) {
         if (isNull) assertThrowsExactly(IllegalArgumentException.class, () -> ReflectionUtils.getField(object, field));
         else assertDoesNotThrow(() -> ReflectionUtils.getField(object, field));
+    }
+
+    @Test
+    void testEqualFields() {
+        PrintableTest.Person person1 = new PrintableTest.Person("Alex", 10, null);
+        PrintableTest.Person person2 = new PrintableTest.Person("Alex", 10, null);
+        assertTrue(ReflectionUtils.equalsFields(person1, person2));
     }
 
     @Test
