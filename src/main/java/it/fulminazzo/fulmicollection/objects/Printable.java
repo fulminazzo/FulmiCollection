@@ -38,8 +38,8 @@ public abstract class Printable {
                     if (o != null && o.hashCode() == object.hashCode()) continue;
                     String objectString;
                     if (o == null) objectString = "null";
-                    else if (ReflectionUtils.isPrimitive(o.getClass())) objectString = o.toString();
                     else if (o instanceof String) objectString = String.format("\"%s\"", o);
+                    else if (ReflectionUtils.isPrimitiveOrWrapper(o.getClass())) objectString = o.toString();
                     else objectString = convertToJson(o);
                     result.append(String.format("\"%s\"", field.getName()))
                             .append(": ")
