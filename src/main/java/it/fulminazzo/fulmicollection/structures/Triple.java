@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 /**
  * The type Triple.
