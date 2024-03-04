@@ -66,6 +66,7 @@ public class Refl<T> {
     public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
             Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass, parameterTypes);
+            constructor.setAccessible(true);
             this.object = constructor.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
