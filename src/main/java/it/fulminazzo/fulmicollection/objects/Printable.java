@@ -22,6 +22,7 @@ public abstract class Printable {
      */
     public static @NotNull String convertToJson(@Nullable Object object) {
         if (object == null) return "null";
+        else if (object instanceof Enum<?>) return ((Enum<?>) object).name();
         else if (object instanceof String) return String.format("\"%s\"", object);
         else if (ReflectionUtils.isPrimitiveOrWrapper(object.getClass())) return object.toString();
         else if (object instanceof Iterable) {
