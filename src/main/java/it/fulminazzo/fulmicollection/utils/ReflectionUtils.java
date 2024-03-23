@@ -338,9 +338,10 @@ public class ReflectionUtils {
 
     private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, @NotNull Executable executable) {
         for (int i = 0; i < paramTypes.length; i++) {
-            final Class<?> expected = paramTypes[i];
+            final Class<?> expected = getWrapperClass(paramTypes[i]);
             if (expected == null) continue;
-            final Class<?> actual = executable.getParameterTypes()[i];
+            final Class<?> actual = getWrapperClass(executable.getParameterTypes()[i]);
+            if (actual == null) throw new IllegalStateException("Unreachable code");
             if (expected.isArray() && (!actual.isArray() || !expected.getComponentType().isAssignableFrom(actual.getComponentType())))
                 return false;
             if (!actual.isAssignableFrom(expected))
