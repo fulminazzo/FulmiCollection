@@ -95,6 +95,19 @@ public class ReflectionUtils {
     }
 
     /**
+     * Sets the given field accessible using a {@link PrivilegedAction}.
+     *
+     * @param field the field
+     * @return the same field
+     */
+    public static @NotNull Field setAccessible(final @NotNull Field field) {
+        return AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+            field.setAccessible(true);
+            return field;
+        });
+    }
+
+    /**
      * Gets field nameless.
      *
      * @param object    the object
