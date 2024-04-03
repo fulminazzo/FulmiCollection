@@ -114,15 +114,16 @@ public class ReflectionUtils {
     }
 
     /**
-     * Sets the given field accessible using a {@link PrivilegedAction}.
+     * Sets the given object accessible using a {@link PrivilegedAction}.
      *
-     * @param field the field
-     * @return the same field
+     * @param <T>    the type parameter
+     * @param object the object
+     * @return the same object
      */
-    public static @NotNull Field setAccessible(final @NotNull Field field) {
-        return AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
-            field.setAccessible(true);
-            return field;
+    public static <T extends AccessibleObject> @NotNull T setAccessible(final @NotNull T object) {
+        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+            object.setAccessible(true);
+            return object;
         });
     }
 
