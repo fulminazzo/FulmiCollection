@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class JarUtilsTest {
-    private final String jarDirectory = "build/libs/";
-    private final String jarName = "FulmiCollection-[0-9].[0-9].jar";
 
     private File getJar() {
         return new File(JarUtils.getJarName(Assertions.class));
