@@ -319,8 +319,7 @@ public class ReflectionUtils {
                 if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
                 else continue;
             if (constructor.getParameterCount() != paramTypes.length) continue;
-            if (!validateParameters(paramTypes, constructor)) continue;
-            return (Constructor<T>) constructor;
+            if (validateParameters(paramTypes, constructor)) return (Constructor<T>) constructor;
         }
         return null;
     }
