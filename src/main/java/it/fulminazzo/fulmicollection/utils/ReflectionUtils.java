@@ -227,10 +227,7 @@ public class ReflectionUtils {
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
-                if (predicate.test(field)) {
-                    field.setAccessible(true);
-                    return field;
-                }
+                if (predicate.test(field)) return setAccessible(field);
         throw new NullPointerException();
     }
 
@@ -281,7 +278,7 @@ public class ReflectionUtils {
         return fields.stream()
                 // Remove fields used by code coverage from Intellij IDEA.
                 .filter(f -> !f.getName().equals("__$hits$__"))
-                .peek(f -> f.setAccessible(true))
+                .peek(ReflectionUtils::setAccessible)
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -458,7 +455,7 @@ public class ReflectionUtils {
                 addDeclaredMethods(i, methods);
         }
         return methods.stream()
-                .peek(f -> f.setAccessible(true))
+                .map(ReflectionUtils::setAccessible)
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -566,14 +563,9 @@ public class ReflectionUtils {
         if (!object1.getClass().isAssignableFrom(object2.getClass())) return false;
         for (Field field : getFields(object1)) {
             if (Modifier.isStatic(field.getModifiers())) continue;
-            try {
-                field.setAccessible(true);
-                Object o1 = field.get(object1);
-                Object o2 = field.get(object2);
-                if (!Objects.equals(o1, o2)) return false;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object o1 = get(field, object1);
+            Object o2 = get(field, object2);
+            if (!Objects.equals(o1, o2)) return false;
         }
         return true;
     }

@@ -55,8 +55,7 @@ public abstract class Printable {
                 // Prevent static non-relevant fields to be shown.
                 if (Modifier.isStatic(field.getModifiers())) continue;
                 try {
-                    field.setAccessible(true);
-                    Object o = field.get(object);
+                    Object o = ReflectionUtils.get(field, object);
                     if (o != null && o.hashCode() == object.hashCode()) continue;
                     String objectString = convertToJson(o);
                     result.append(String.format("\"%s\"", field.getName()))
@@ -93,12 +92,9 @@ public abstract class Printable {
                 if (field.getName().equals("__$hits$__")) continue;
                 // Prevent static non-relevant fields to be shown.
                 if (Modifier.isStatic(field.getModifiers())) continue;
-                field.setAccessible(true);
-                try {
-                    Object o = field.get(object);
-                    String str = o instanceof Printable ? printObject(o, headStart + "  ") : o == null ? "null" : o.toString();
-                    result.append(String.format("%s%s: %s\n", headStart + "  ", field.getName(), str));
-                } catch (IllegalAccessException ignored) {}
+                Object o = ReflectionUtils.get(field, object);
+                String str = o instanceof Printable ? printObject(o, headStart + "  ") : o == null ? "null" : o.toString();
+                result.append(String.format("%s%s: %s\n", headStart + "  ", field.getName(), str));
             }
             oClass = oClass.getSuperclass();
         }

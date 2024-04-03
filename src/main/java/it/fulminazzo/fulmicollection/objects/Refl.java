@@ -66,8 +66,7 @@ public class Refl<T> {
     public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
             Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass, parameterTypes);
-            constructor.setAccessible(true);
-            this.object = constructor.newInstance(parameters);
+            this.object = ReflectionUtils.setAccessible(constructor).newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
@@ -181,8 +180,7 @@ public class Refl<T> {
         try {
             Field finalField = field;
             field = getField(() -> finalField);
-            field.setAccessible(true);
-            field.set(this.object, value);
+            ReflectionUtils.setAccessible(field).set(this.object, value);
             return this;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -300,14 +298,9 @@ public class Refl<T> {
      * @return the field object
      */
     public <O> @Nullable O getFieldObject(@NotNull Field field) {
-        try {
-            Field finalField = field;
-            field = getField(() -> finalField);
-            field.setAccessible(true);
-            return (O) field.get(this.object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        Field finalField = field;
+        field = getField(() -> finalField);
+        return ReflectionUtils.get(field, this.object);
     }
 
     /**
@@ -615,8 +608,7 @@ public class Refl<T> {
                                         final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         try {
             final Method method = getMethod(returnType, name, paramTypes);
-            method.setAccessible(true);
-            return (O) method.invoke(this.object, parameters);
+            return (O) ReflectionUtils.setAccessible(method).invoke(this.object, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
@@ -954,8 +946,7 @@ public class Refl<T> {
                     if (f.getName().equals("__$hits$__")) continue;
                     if (!printStatic && Modifier.isStatic(f.getModifiers())) continue;
                     try {
-                        f.setAccessible(true);
-                        final Object v = f.get(o);
+                        final Object v = ReflectionUtils.get(f, o);
                         if (ReflectionUtils.equalsClass(o, v)) continue;
                         final String vToString;
                         output.append("\n").append(SEPARATOR);
