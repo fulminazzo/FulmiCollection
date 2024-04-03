@@ -1,6 +1,7 @@
 package it.fulminazzo.fulmicollection.objects;
 
 import it.fulminazzo.fulmicollection.utils.ReflectionUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -15,7 +16,21 @@ public abstract class FieldEquable extends Printable {
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
-        if (o instanceof FieldEquable) return hashCode() == o.hashCode();
+        if (o instanceof FieldEquable) {
+            FieldEquable fe = (FieldEquable) o;
+            Class<?> c1 = clazz();
+            Class<?> c2 = fe.clazz();
+            if (!c1.equals(c2)) return false;
+            for (Class<?> c = c1; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+                for (Field field : c.getDeclaredFields())
+                    if (!Modifier.isStatic(field.getModifiers())) {
+                        Object o1 = ReflectionUtils.get(field, this);
+                        Object o2 = ReflectionUtils.get(field, fe);
+                        if (calculateHash(o1) != calculateHash(o2)) return false;
+                    }
+            }
+            return true;
+        }
         return false;
     }
 
@@ -27,13 +42,14 @@ public abstract class FieldEquable extends Printable {
             for (Field field : c.getDeclaredFields())
                 if (!Modifier.isStatic(field.getModifiers())) {
                     Object object = ReflectionUtils.get(field, this);
-                    final int v;
-                    if (object != null) v = object.hashCode();
-                    else v = DEFAULT_HASH_CODE;
-                    hash = OFFSET * hash + v;
+                    hash = OFFSET * hash + calculateHash(object);
                 }
         }
         return hash;
+    }
+
+    private int calculateHash(final @Nullable Object object) {
+        return object == null ? DEFAULT_HASH_CODE : object.hashCode();
     }
 
     protected Class<? extends FieldEquable> clazz() {
