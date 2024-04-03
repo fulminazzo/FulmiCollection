@@ -14,13 +14,15 @@ public abstract class FieldEquable extends Printable {
 
     @Override
     public boolean equals(Object o) {
-        return o != null && getClass().isAssignableFrom(o.getClass()) && hashCode() == o.hashCode();
+        if (o == null) return false;
+        if (o instanceof FieldEquable) return hashCode() == o.hashCode();
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = getClass().hashCode();
-        Class<?> clazz = getClass();
+        Class<?> clazz = clazz();
+        int hash = clazz.hashCode();
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields())
                 if (!Modifier.isStatic(field.getModifiers())) {
@@ -32,5 +34,9 @@ public abstract class FieldEquable extends Printable {
                 }
         }
         return hash;
+    }
+
+    protected Class<? extends FieldEquable> clazz() {
+        return getClass();
     }
 }
