@@ -38,7 +38,7 @@ public class ReflectionUtils {
         } catch (ClassNotFoundException e) {
             Class<T> clazz = getInnerClass(className);
             if (clazz == null) clazz = getInnerInterface(className);
-            if (clazz == null) throw new RuntimeException(CLASS_NOT_FOUND.replace("%class%", className));
+            if (clazz == null) throw new IllegalArgumentException(CLASS_NOT_FOUND.replace("%class%", className));
             return clazz;
         }
     }
