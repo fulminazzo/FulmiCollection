@@ -235,7 +235,7 @@ public class Refl<T> {
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
         try {
             return ifObjectIsPresent(o -> fieldSupplier.get());
-        } catch (NullPointerException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("Could not get field: wrapped object is null");
         }
     }
@@ -405,7 +405,7 @@ public class Refl<T> {
     public @NotNull List<Field> getFields(final @NotNull Predicate<Field> predicate) {
         try {
             return ifObjectIsPresent(o -> ReflectionUtils.getFields(getObjectClass(), predicate));
-        } catch (NullPointerException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("Could not get fields: wrapped object is null");
         }
     }
@@ -499,7 +499,7 @@ public class Refl<T> {
                                       final Class<?> @Nullable ... paramTypes) {
         try {
             return ifObjectIsPresent(o -> ReflectionUtils.getMethod(getObjectClass(), returnType, name, paramTypes));
-        } catch (NullPointerException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
                     returnType, name, ReflectionUtils.classesToString(paramTypes)));
         }
@@ -852,7 +852,7 @@ public class Refl<T> {
     public @NotNull List<Method> getMethods(final @NotNull Predicate<Method> predicate) {
         try {
             return ifObjectIsPresent(o -> ReflectionUtils.getMethods(getObjectClass(), predicate));
-        } catch (NullPointerException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("Could not get methods: wrapped object is null");
         }
     }
@@ -868,14 +868,14 @@ public class Refl<T> {
 
     /**
      * If the object is not null, the given function is executed.
-     * Otherwise, a {@link NullPointerException is thrown}.
+     * Otherwise, a {@link IllegalStateException is thrown}.
      *
      * @param <O>       the object to return
      * @param function the function
      * @return the object to return
      */
     public <O> O ifObjectIsPresent(final @NotNull Function<@NotNull T, O> function) {
-        if (this.object == null) throw new NullPointerException();
+        if (this.object == null) throw new IllegalStateException();
         return function.apply(this.object);
     }
 

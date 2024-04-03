@@ -218,7 +218,7 @@ public class ReflectionUtils {
 
     /**
      * Gets field from the given predicate.
-     * If nothing is found, throws a {@link NullPointerException}.
+     * If nothing is found, throws a {@link IllegalArgumentException}.
      *
      * @param clazz     the clazz
      * @param predicate the predicate
@@ -228,7 +228,7 @@ public class ReflectionUtils {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (predicate.test(field)) return setAccessible(field);
-        throw new NullPointerException();
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -395,11 +395,9 @@ public class ReflectionUtils {
             for (Class<?> i : c.getInterfaces())
                 try {
                     return getMethod(i, predicate);
-                } catch (NullPointerException ignored) {
-
-                }
+                } catch (NullPointerException ignored) {}
         }
-        throw new NullPointerException();
+        throw new IllegalArgumentException();
     }
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @NotNull Predicate<Method> predicate) {
