@@ -95,6 +95,25 @@ public class ReflectionUtils {
     }
 
     /**
+     * Gets the corresponding object from the given field
+     *
+     * @param <T>    the type parameter
+     * @param field  the field
+     * @param object the object
+     * @return the object
+     */
+    public static <T> T get(final @NotNull Field field, final Object object) {
+        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+            try {
+                field.setAccessible(true);
+                return (T) field.get(object);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    /**
      * Sets the given field accessible using a {@link PrivilegedAction}.
      *
      * @param field the field
