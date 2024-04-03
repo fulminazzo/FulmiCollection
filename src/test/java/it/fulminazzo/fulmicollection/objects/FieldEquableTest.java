@@ -33,8 +33,8 @@ class FieldEquableTest {
         m2.name = "Steve";
         m2.id = m1.id;
         m2.age = m1.age;
-        assertEquals(m1.hashCode(), m2.hashCode());
-        assertEquals(m1, m2);
+        assertNotEquals(m1.hashCode(), m2.hashCode());
+        assertNotEquals(m1, m2);
     }
 
     @Test
