@@ -2,11 +2,11 @@ package it.fulminazzo.fulmicollection.structures;
 
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of {@link Map} that temporarily stores values.
@@ -14,7 +14,7 @@ import java.util.Map;
  * @param <K> the type parameter
  * @param <V> the type parameter
  */
-public class CacheMap<K, V> extends FieldEquable {
+public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
     private static final long DEFAULT_PERIOD = 3600 * 1000L;
     private static final long DEFAULT_EXPIRE_TIME = 60 * 1000L;
 
@@ -113,5 +113,76 @@ public class CacheMap<K, V> extends FieldEquable {
      */
     protected long now() {
         return new Date().getTime();
+    }
+
+    @Override
+    public int size() {
+        return this.internal.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.internal.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object o) {
+        return this.internal.containsKey(o);
+    }
+
+    @Override
+    public boolean containsValue(Object o) {
+        return this.internal.values().stream().anyMatch(t -> Objects.equals(t.getValue(), o));
+    }
+
+    @Override
+    public V get(Object o) {
+        Tuple<V, Long> t = this.internal.get(o);
+        return t == null ? null : t.getKey();
+    }
+
+    @Nullable
+    @Override
+    public V put(K k, V v) {
+        Tuple<V, Long> t = this.internal.put(k, new Tuple<>(v, now()));
+        return t == null ? null : t.getKey();
+    }
+
+    @Override
+    public V remove(Object o) {
+        Tuple<V, Long> t = this.internal.remove(o);
+        return t == null ? null : t.getKey();
+    }
+
+    @Override
+    public void putAll(@NotNull Map<? extends K, ? extends V> map) {
+        map.forEach(this::put);
+    }
+
+    @Override
+    public void clear() {
+        this.internal.clear();
+    }
+
+    @NotNull
+    @Override
+    public Set<K> keySet() {
+        return this.internal.keySet();
+    }
+
+    @NotNull
+    @Override
+    public Collection<V> values() {
+        return this.internal.values().stream()
+                .map(Tuple::getKey)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        return this.internal.entrySet().stream()
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().getKey()))
+                .collect(Collectors.toSet());
     }
 }
