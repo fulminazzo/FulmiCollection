@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +79,7 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
      * @param expirationTime the time in milliseconds after which key-value pairs are considered expired
      */
     public CacheMap(final @Nullable Map<K, V> map, final long period, final long expirationTime) {
-        this.internal = new HashMap<>();
+        this.internal = new ConcurrentHashMap<>();
         if (map != null) putAll(map);
         this.period = period;
         this.expirationTime = expirationTime;
