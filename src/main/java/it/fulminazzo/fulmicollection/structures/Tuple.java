@@ -1,7 +1,9 @@
 package it.fulminazzo.fulmicollection.structures;
 
+import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,7 +17,7 @@ import java.util.function.BiConsumer;
  */
 @Getter
 @Setter
-public class Tuple<K, V> implements Serializable {
+public class Tuple<K, V> extends FieldEquable implements Serializable {
     private K key;
     private V value;
 
@@ -125,31 +127,8 @@ public class Tuple<K, V> implements Serializable {
         return this;
     }
 
-    /**
-     * Compare this tuple with the given one.
-     *
-     * @param tuple the tuple
-     * @return true if they are equal
-     */
-    public boolean equals(Tuple<?, ?> tuple) {
-        return tuple != null &&
-                Objects.equals(this.key, tuple.key) &&
-                Objects.equals(this.value, tuple.value);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof Tuple) return equals((Tuple<?, ?>) o);
-        try {if (containsKey((K) o)) return true;}
-        catch (ClassCastException ignored) {}
-        try {if (containsValue((V) o)) return true;}
-        catch (ClassCastException ignored) {}
-        return super.equals(o);
-    }
-
-    @Override
-    public String toString() {
+    public @NotNull String toString() {
         return String.format("%s{key: %s; value: %s}", getClass().getSimpleName(), this.key, this.value);
     }
 }
