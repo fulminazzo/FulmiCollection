@@ -107,6 +107,10 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
         return now() - this.lastCheck >= this.period;
     }
 
+    private void checkIfNecessary() {
+        if (shouldCheck()) clearExpired();
+    }
+
     /**
      * Returns the current time in milliseconds.
      *
@@ -118,26 +122,31 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
 
     @Override
     public int size() {
+        checkIfNecessary();
         return this.internal.size();
     }
 
     @Override
     public boolean isEmpty() {
+        checkIfNecessary();
         return this.internal.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object o) {
+        checkIfNecessary();
         return this.internal.containsKey(o);
     }
 
     @Override
     public boolean containsValue(Object o) {
+        checkIfNecessary();
         return this.internal.values().stream().anyMatch(t -> Objects.equals(t.getValue(), o));
     }
 
     @Override
     public V get(Object o) {
+        checkIfNecessary();
         Tuple<V, Long> t = this.internal.get(o);
         return t == null ? null : t.getKey();
     }
@@ -151,6 +160,7 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
 
     @Override
     public V remove(Object o) {
+        checkIfNecessary();
         Tuple<V, Long> t = this.internal.remove(o);
         return t == null ? null : t.getKey();
     }
@@ -168,12 +178,14 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
     @NotNull
     @Override
     public Set<K> keySet() {
+        checkIfNecessary();
         return this.internal.keySet();
     }
 
     @NotNull
     @Override
     public Collection<V> values() {
+        checkIfNecessary();
         return this.internal.values().stream()
                 .map(Tuple::getKey)
                 .collect(Collectors.toList());
@@ -182,6 +194,7 @@ public class CacheMap<K, V> extends FieldEquable implements Map<K, V> {
     @NotNull
     @Override
     public Set<Entry<K, V>> entrySet() {
+        checkIfNecessary();
         return this.internal.entrySet().stream()
                 .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().getKey()))
                 .collect(Collectors.toSet());
