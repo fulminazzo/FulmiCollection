@@ -15,8 +15,8 @@ import java.util.Map;
  * @param <V> the type parameter
  */
 public class CacheMap<K, V> extends FieldEquable {
-    private static final long DEFAULT_PERIOD = 3600;
-    private static final long DEFAULT_EXPIRE_TIME = 60;
+    private static final long DEFAULT_PERIOD = 3600 * 1000L;
+    private static final long DEFAULT_EXPIRE_TIME = 60 * 1000L;
 
     private final Map<K, Tuple<V, Long>> internal;
     @Getter
