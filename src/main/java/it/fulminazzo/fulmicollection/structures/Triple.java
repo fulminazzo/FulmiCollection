@@ -1,8 +1,10 @@
 package it.fulminazzo.fulmicollection.structures;
 
 import it.fulminazzo.fulmicollection.interfaces.functions.TriConsumer;
+import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,7 +18,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class Triple<F, S, T> implements Serializable {
+public class Triple<F, S, T> extends FieldEquable implements Serializable {
     private F first;
     private S second;
     private T third;
@@ -149,34 +151,8 @@ public class Triple<F, S, T> implements Serializable {
         return this;
     }
 
-    /**
-     * Compare this triple with the given one.
-     *
-     * @param triple the triple
-     * @return true if they are equal
-     */
-    public boolean equals(Triple<?, ?, ?> triple) {
-        return triple != null &&
-                Objects.equals(this.first, triple.first) &&
-                Objects.equals(this.second, triple.second) &&
-                Objects.equals(this.third, triple.third);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof Triple) return equals((Triple<?, ?, ?>) o);
-        try {if (containsFirst((F) o)) return true;}
-        catch (ClassCastException ignored) {}
-        try {if (containsSecond((S) o)) return true;}
-        catch (ClassCastException ignored) {}
-        try {if (containsThird((T) o)) return true;}
-        catch (ClassCastException ignored) {}
-        return super.equals(o);
-    }
-
-    @Override
-    public String toString() {
+    public @NotNull String toString() {
         return String.format("%s{first: %s; second: %s; third: %s}", getClass().getSimpleName(),
                 this.first, this.second, this.third);
     }
