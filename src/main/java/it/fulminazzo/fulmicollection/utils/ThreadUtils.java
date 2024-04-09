@@ -15,7 +15,7 @@ public class ThreadUtils {
      * @param milliseconds the milliseconds
      * @param action       the action
      */
-    protected static void sleepAndThen(long milliseconds, final @Nullable Runnable action) {
+    public static void sleepAndThen(long milliseconds, final @Nullable Runnable action) {
         sleepAndThen(milliseconds, action, null);
     }
 
@@ -26,7 +26,7 @@ public class ThreadUtils {
      * @param action       the action
      * @param onInterrupt  the action to run in case of an {@link InterruptedException}
      */
-    protected static void sleepAndThen(long milliseconds, final @Nullable Runnable action,
+    public static void sleepAndThen(long milliseconds, final @Nullable Runnable action,
                                        final @Nullable Runnable onInterrupt) {
         new Thread(() -> {
             try {
