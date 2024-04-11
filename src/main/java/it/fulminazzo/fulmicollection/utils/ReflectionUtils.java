@@ -170,7 +170,7 @@ public class ReflectionUtils {
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Class<?> fieldType) {
         try {
             return getField(clazz, f -> fieldType.isAssignableFrom(f.getType()));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(FIELD_TYPE_NOT_FOUND
                     .replace("%type%", fieldType.getName())
                     .replace("%class%", clazz.getSimpleName()));
@@ -198,7 +198,7 @@ public class ReflectionUtils {
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull String name) {
         try {
             return getField(clazz, f -> f.getName().equalsIgnoreCase(name));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(FIELD_NOT_FOUND
                     .replace("%name%", name)
                     .replace("%class%", clazz.getSimpleName()));
@@ -358,7 +358,7 @@ public class ReflectionUtils {
                 if (m.getParameterCount() != paramTypes.length) return false;
                 return validateParameters(paramTypes, m);
             });
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(METHOD_NOT_FOUND
                     .replace("%type%", returnType == null ? "?" : returnType.getSimpleName())
                     .replace("%name%", name == null ? "?" : name)
@@ -395,7 +395,7 @@ public class ReflectionUtils {
             for (Class<?> i : c.getInterfaces())
                 try {
                     return getMethod(i, predicate);
-                } catch (NullPointerException ignored) {}
+                } catch (IllegalArgumentException ignored) {}
         }
         throw new IllegalArgumentException(String.format("Could not find method from class '%s' and predicate", clazz.getCanonicalName()));
     }
