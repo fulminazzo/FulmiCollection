@@ -228,7 +228,7 @@ public class ReflectionUtils {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (predicate.test(field)) return setAccessible(field);
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(String.format("Could not find field from class '%s' and predicate", clazz.getCanonicalName()));
     }
 
     /**
@@ -397,7 +397,7 @@ public class ReflectionUtils {
                     return getMethod(i, predicate);
                 } catch (NullPointerException ignored) {}
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(String.format("Could not find method from class '%s' and predicate", clazz.getCanonicalName()));
     }
 
     private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @NotNull Predicate<Method> predicate) {
