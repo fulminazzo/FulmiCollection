@@ -9,6 +9,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +111,7 @@ public class ReflectionUtils {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-        }).orElseThrow(() -> new IllegalArgumentException(String.format("Could not set '%s' to accessible", field)));
+        }).orElseThrow(inaccessibleException(field));
     }
 
     /**
@@ -131,6 +132,16 @@ public class ReflectionUtils {
                 return NullableOptional.empty();
             else throw e;
         }
+    }
+
+    /**
+     * Gets a {@link Supplier} that returns an exception in combination for {@link #setAccessible(AccessibleObject)}.
+     *
+     * @param object the object
+     * @return the supplier
+     */
+    public static Supplier<RuntimeException> inaccessibleException(final @NotNull Object object) {
+        return () -> new IllegalArgumentException(String.format("Could not set '%s' to accessible", object));
     }
 
     /**

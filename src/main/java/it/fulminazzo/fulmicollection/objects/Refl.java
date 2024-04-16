@@ -972,8 +972,7 @@ public class Refl<T> {
     }
 
     private static <T extends AccessibleObject> T setAccessible(final @NotNull T object) {
-        return ReflectionUtils.setAccessible(object).orElseThrow(() ->
-                new IllegalArgumentException(String.format("Could not set '%s' to accessible", object)));
+        return ReflectionUtils.setAccessible(object).orElseThrow(ReflectionUtils.inaccessibleException(object));
     }
 
     @Override
