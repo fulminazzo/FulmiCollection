@@ -126,7 +126,7 @@ public final class BiOptional<K, V> extends FieldEquable {
      * @param <X>      the type of the exception
      * @param function the function
      * @return the tuple
-     * @throws X the x
+     * @throws X the exception
      */
     public <X extends Throwable> Tuple<K, V> orElseThrow(Supplier<? extends X> function) throws X {
         if (isPresent()) return get();
