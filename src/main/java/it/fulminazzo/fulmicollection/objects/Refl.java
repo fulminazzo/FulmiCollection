@@ -66,7 +66,7 @@ public class Refl<T> {
     public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
             Constructor<T> constructor = ReflectionUtils.getConstructor(objectClass, parameterTypes);
-            this.object = setAccessible(constructor).newInstance(parameters);
+            this.object = ReflectionUtils.setAccessibleOrThrow(constructor).newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
@@ -180,7 +180,7 @@ public class Refl<T> {
         try {
             Field finalField = field;
             field = getField(() -> finalField);
-            setAccessible(field).set(this.object, value);
+            ReflectionUtils.setAccessibleOrThrow(field).set(this.object, value);
             return this;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -608,7 +608,7 @@ public class Refl<T> {
                                         final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         try {
             final Method method = getMethod(returnType, name, paramTypes);
-            return (O) setAccessible(method).invoke(this.object, parameters);
+            return (O) ReflectionUtils.setAccessibleOrThrow(method).invoke(this.object, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
@@ -969,10 +969,6 @@ public class Refl<T> {
                 }
             return output + "\n}";
         });
-    }
-
-    private static <T extends AccessibleObject> T setAccessible(final @NotNull T object) {
-        return ReflectionUtils.setAccessible(object).orElseThrow(ReflectionUtils.inaccessibleException(object));
     }
 
     @Override

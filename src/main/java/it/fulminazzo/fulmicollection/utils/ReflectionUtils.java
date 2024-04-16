@@ -105,13 +105,11 @@ public class ReflectionUtils {
      * @return the object
      */
     public static <T> T get(final @NotNull Field field, final Object object) {
-        return setAccessible(field).map(f -> {
-            try {
-                return (T) f.get(object);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).orElseThrow(inaccessibleException(field));
+        try {
+            return (T) setAccessibleOrThrow(field).get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -132,6 +130,17 @@ public class ReflectionUtils {
                 return NullableOptional.empty();
             else throw e;
         }
+    }
+
+    /**
+     * Sets the given object accessible using a {@link PrivilegedAction}.
+     *
+     * @param <T>    the type of the object
+     * @param object the object
+     * @return a {@link NullableOptional} containing the object, if it could be set accessible, otherwise throws {@link #inaccessibleException(Object)}.
+     */
+    public static <T extends AccessibleObject> @NotNull T setAccessibleOrThrow(final @NotNull T object) {
+        return setAccessible(object).orElseThrow(inaccessibleException(object));
     }
 
     /**
