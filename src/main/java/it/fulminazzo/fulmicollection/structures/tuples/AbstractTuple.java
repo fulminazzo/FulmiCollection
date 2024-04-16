@@ -20,6 +20,15 @@ import java.util.Objects;
 abstract class AbstractTuple<T extends AbstractTuple<T, C>, C> extends FieldEquable implements Serializable {
 
     /**
+     * Checks if is present.
+     *
+     * @return true if every value is present
+     */
+    public boolean isPresent() {
+        return Arrays.stream(getFieldObjects()).noneMatch(Objects::isNull);
+    }
+
+    /**
      * Checks if is empty.
      *
      * @return true if no value is present
@@ -38,13 +47,13 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C>, C> extends FieldEqua
     }
 
     /**
-     * If {@link #isEmpty()} is false, the given function is executed.
+     * If {@link #isPresent()} is true, the given function is executed.
      *
      * @param function the function
      * @return this tuple
      */
     public T ifPresent(C function) {
-        if (!isEmpty()) new Refl<>(function).invokeMethod("accept", getFieldObjects());
+        if (isPresent()) new Refl<>(function).invokeMethod("accept", getFieldObjects());
         return (T) this;
     }
 
