@@ -15,9 +15,13 @@ import java.util.Objects;
  * A general class to identify various tuples implementations.
  *
  * @param <T> the type of this tuple
+ * @param <C> the type of the consumer used in {@link #ifPresent(Object)}.
+ *           In case of a single value, it would be <code>Consumer&lt;V&gt;</code>
+ * @param <P> the type of the predicate used in {@link #filter(Object)}.
+ *           In case of a single value, it would be <code>Function&lt;V, Boolean&gt;</code>
  */
 @SuppressWarnings("unchecked")
-abstract class AbstractTuple<T extends AbstractTuple<T, C>, C> extends FieldEquable implements Serializable {
+abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends FieldEquable implements Serializable {
 
     /**
      * Checks if is present.
@@ -66,6 +70,24 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C>, C> extends FieldEqua
     public T orElse(final @NotNull Runnable function) {
         if (isEmpty()) function.run();
         return (T) this;
+    }
+
+    /**
+     * Filters the current tuple using the given function.
+     * If it returns {@link Boolean#TRUE}, then it is returned this.
+     * Otherwise, {@link #empty()} is returned.
+     *
+     * @param function the function
+     * @return the result
+     */
+    public T filter(final @NotNull P function) {
+        if (isPresent() && Boolean.TRUE.equals(new Refl<>(function).invokeMethod("apply", getFieldObjects())))
+            return (T) this;
+        return empty();
+    }
+
+    private T empty() {
+        return (T) new Refl<>(getClass(), new Object[0]).getObject();
     }
 
     private Object[] getFieldObjects() {
