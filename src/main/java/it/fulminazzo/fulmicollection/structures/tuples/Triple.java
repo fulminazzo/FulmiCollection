@@ -1,12 +1,12 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
-import it.fulminazzo.fulmicollection.interfaces.functions.TriConsumer;
-import it.fulminazzo.fulmicollection.objects.FieldEquable;
+import it.fulminazzo.fulmicollection.interfaces.functions.TriConsumerException;
+import it.fulminazzo.fulmicollection.interfaces.functions.TriFunctionException;
+import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class Triple<F, S, T> extends FieldEquable implements Serializable {
+public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerException<F, S, T>, TriFunctionException<F, S, T, Boolean>> {
     private F first;
     private S second;
     private T third;
@@ -52,15 +52,6 @@ public class Triple<F, S, T> extends FieldEquable implements Serializable {
         setFirst(first);
         setSecond(second);
         setThird(third);
-    }
-
-    /**
-     * Check if is empty.
-     *
-     * @return true if {@link #first}, {@link #second} and {@link #third} are null
-     */
-    public boolean isEmpty() {
-        return this.first == null && this.second == null && this.third == null;
     }
 
     /**
@@ -121,39 +112,21 @@ public class Triple<F, S, T> extends FieldEquable implements Serializable {
     }
 
     /**
-     * Copy the current triple into a new one.
-     *
-     * @return the copy
-     */
-    public Triple<F, S, T> copy() {
-        return new Triple<>(this.first, this.second, this.third);
-    }
-
-    /**
-     * If {@link #isEmpty()} is false, the given function is executed.
+     * Converts the current triple to a new one using the given function.
+     * Executed only if {@link #isPresent()}.
      *
      * @param function the function
-     * @return this triple
+     * @return the new tuple
      */
-    public Triple<F, S, T> ifPresent(TriConsumer<F, S, T> function) {
-        if (!isEmpty()) function.accept(this.first, this.second, this.third);
-        return this;
+    @SuppressWarnings("unchecked")
+    public <A, B, C> Triple<A, B, C> map(@NotNull TriFunctionException<F, S, T, Triple<A, B, C>> function) {
+        if (isPresent())
+            try {
+                return function.apply(this.first, this.second, this.third);
+            } catch (Exception e) {
+                ExceptionUtils.throwException(e);
+            }
+        return (Triple<A, B, C>) empty();
     }
 
-    /**
-     * If {@link #isEmpty()} is true, the given function is executed.
-     *
-     * @param function the function
-     * @return this triple
-     */
-    public Triple<F, S, T> orElse(Runnable function) {
-        if (isEmpty()) function.run();
-        return this;
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return String.format("%s{first: %s; second: %s; third: %s}", getClass().getSimpleName(),
-                this.first, this.second, this.third);
-    }
 }
