@@ -1,6 +1,7 @@
 package it.fulminazzo.fulmicollection.structures;
 
 import it.fulminazzo.fulmicollection.interfaces.functions.ConsumerException;
+import it.fulminazzo.fulmicollection.interfaces.functions.FunctionException;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,6 @@ import java.lang.reflect.AccessibleObject;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -118,14 +118,19 @@ public final class NullableOptional<T> {
     }
 
     /**
-     * Filters the current optional based on the given predicate.
+     * Filters the current optional based on the given function.
      *
      * @param function the function
      * @return the nullable optional
      */
-    public NullableOptional<T> filter(Predicate<? super T> function) {
+    public NullableOptional<T> filter(FunctionException<? super T, Boolean> function) {
         Objects.requireNonNull(function);
-        return isPresent() ? function.test(this.value) ? this : empty() : this;
+        try {
+            return isPresent() ? function.apply(this.value) ? this : empty() : this;
+        } catch (Exception e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalStateException("Unreachable code");
+        }
     }
 
     /**
@@ -135,9 +140,14 @@ public final class NullableOptional<T> {
      * @param function the function
      * @return the nullable optional
      */
-    public <U> NullableOptional<U> map(Function<? super T, ? extends U> function) {
+    public <U> NullableOptional<U> map(FunctionException<? super T, ? extends U> function) {
         Objects.requireNonNull(function);
-        return !isPresent() ? empty() : of(function.apply(this.value));
+        try {
+            return !isPresent() ? empty() : of(function.apply(this.value));
+        } catch (Exception e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalStateException("Unreachable code");
+        }
     }
 
     /**
