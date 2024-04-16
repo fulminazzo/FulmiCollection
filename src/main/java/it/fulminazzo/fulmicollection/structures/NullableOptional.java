@@ -1,11 +1,13 @@
 package it.fulminazzo.fulmicollection.structures;
 
+import it.fulminazzo.fulmicollection.interfaces.functions.ConsumerException;
+import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.AccessibleObject;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -65,11 +67,18 @@ public final class NullableOptional<T> {
 
     /**
      * Executes the given function if {@link #isPresent()} is true.
+     * Since this object is primarily used in {@link it.fulminazzo.fulmicollection.utils.ReflectionUtils#setAccessible(AccessibleObject)},
+     * the function required is a {@link ConsumerException} to dismiss usage of try-catch blocks.
      *
      * @param function the function
      */
-    public void ifPresent(Consumer<? super T> function) {
-        if (isPresent()) function.accept(this.value);
+    public void ifPresent(ConsumerException<? super T> function) {
+        if (isPresent())
+            try {
+                function.accept(this.value);
+            } catch (Exception e) {
+                ExceptionUtils.throwException(e);
+            }
     }
 
     /**
