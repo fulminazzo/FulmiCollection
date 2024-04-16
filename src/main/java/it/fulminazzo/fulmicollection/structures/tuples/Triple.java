@@ -61,7 +61,7 @@ public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerE
      * @return true if it does
      */
     public boolean containsFirst(F first) {
-        return this.first != null && Objects.equals(this.first, first);
+        return Objects.equals(this.first, first);
     }
 
     /**
@@ -80,7 +80,7 @@ public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerE
      * @return true if it does
      */
     public boolean containsSecond(S second) {
-        return this.second != null && Objects.equals(this.second, second);
+        return Objects.equals(this.second, second);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerE
      * @return true if it does
      */
     public boolean containsThird(T third) {
-        return this.third != null && Objects.equals(this.third, third);
+        return Objects.equals(this.third, third);
     }
 
     /**

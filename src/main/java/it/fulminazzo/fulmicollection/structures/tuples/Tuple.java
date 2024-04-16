@@ -56,7 +56,7 @@ public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<
      * @return true if it does
      */
     public boolean containsKey(K key) {
-        return this.key != null && Objects.equals(this.key, key);
+        return Objects.equals(this.key, key);
     }
 
     /**
@@ -75,7 +75,7 @@ public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<
      * @return true if it does
      */
     public boolean containsValue(V value) {
-        return this.value != null && Objects.equals(this.value, value);
+        return Objects.equals(this.value, value);
     }
 
     /**
