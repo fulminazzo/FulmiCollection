@@ -1,4 +1,4 @@
-package it.fulminazzo.fulmicollection.structures;
+package it.fulminazzo.fulmicollection.structures.tuples;
 
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import lombok.Getter;

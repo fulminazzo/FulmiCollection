@@ -1,6 +1,7 @@
 package it.fulminazzo.fulmicollection.structures;
 
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
+import it.fulminazzo.fulmicollection.structures.tuples.Tuple;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

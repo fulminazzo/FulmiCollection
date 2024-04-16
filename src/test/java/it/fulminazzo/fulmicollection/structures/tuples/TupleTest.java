@@ -1,4 +1,4 @@
-package it.fulminazzo.fulmicollection.structures;
+package it.fulminazzo.fulmicollection.structures.tuples;
 
 import org.junit.jupiter.api.Test;
 
