@@ -1,13 +1,11 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
-import it.fulminazzo.fulmicollection.objects.FieldEquable;
+import it.fulminazzo.fulmicollection.interfaces.functions.BiConsumerException;
+import it.fulminazzo.fulmicollection.interfaces.functions.BiFunctionException;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 /**
  * The type Tuple.
@@ -17,7 +15,7 @@ import java.util.function.BiConsumer;
  */
 @Getter
 @Setter
-public class Tuple<K, V> extends FieldEquable implements Serializable {
+public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<K, V>, BiFunctionException<K, V, Boolean>> {
     private K key;
     private V value;
 
@@ -25,7 +23,7 @@ public class Tuple<K, V> extends FieldEquable implements Serializable {
      * Instantiates a new Tuple.
      */
     public Tuple() {
-        
+
     }
 
     /**
@@ -47,15 +45,6 @@ public class Tuple<K, V> extends FieldEquable implements Serializable {
     public void set(K key, V value) {
         setKey(key);
         setValue(value);
-    }
-
-    /**
-     * Check if is empty.
-     *
-     * @return true if {@link #key} and {@link #value} are null
-     */
-    public boolean isEmpty() {
-        return this.key == null && this.value == null;
     }
 
     /**
@@ -94,41 +83,5 @@ public class Tuple<K, V> extends FieldEquable implements Serializable {
      */
     public boolean hasValue() {
         return this.value != null;
-    }
-
-    /**
-     * Copy the current tuple into a new one.
-     *
-     * @return the copy
-     */
-    public Tuple<K, V> copy() {
-        return new Tuple<>(this.key, this.value);
-    }
-
-    /**
-     * If {@link #isEmpty()} is false, the given function is executed.
-     *
-     * @param function the function
-     * @return this tuple
-     */
-    public Tuple<K, V> ifPresent(BiConsumer<K, V> function) {
-        if (!isEmpty()) function.accept(this.key, this.value);
-        return this;
-    }
-
-    /**
-     * If {@link #isEmpty()} is true, the given function is executed.
-     *
-     * @param function the function
-     * @return this tuple
-     */
-    public Tuple<K, V> orElse(Runnable function) {
-        if (isEmpty()) function.run();
-        return this;
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return String.format("%s{key: %s; value: %s}", getClass().getSimpleName(), this.key, this.value);
     }
 }
