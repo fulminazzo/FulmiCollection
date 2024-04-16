@@ -108,6 +108,41 @@ public final class NullableOptional<T> {
         else throw function.get();
     }
 
+    /**
+     * Filters the current optional based on the given predicate.
+     *
+     * @param function the function
+     * @return the nullable optional
+     */
+    public NullableOptional<T> filter(Predicate<? super T> function) {
+        Objects.requireNonNull(function);
+        return isPresent() ? function.test(this.value) ? this : empty() : this;
+    }
+
+    /**
+     * Converts the current optional value to a new one.
+     *
+     * @param <U>      the type of the new value
+     * @param function the function
+     * @return the nullable optional
+     */
+    public <U> NullableOptional<U> map(Function<? super T, ? extends U> function) {
+        Objects.requireNonNull(function);
+        return !isPresent() ? empty() : of(function.apply(this.value));
+    }
+
+    /**
+     * Converts the current value to a flattened stream.
+     *
+     * @param <U>      the type of the values in the stream
+     * @param function the function
+     * @return the nullable optional
+     */
+    public <U> NullableOptional<U> flatMap(Function<? super T, NullableOptional<U>> function) {
+        Objects.requireNonNull(function);
+        return !isPresent() ? empty() : Objects.requireNonNull(function.apply(this.value));
+    }
+
     @Override
     public String toString() {
         final String className = getClass().getSimpleName();
