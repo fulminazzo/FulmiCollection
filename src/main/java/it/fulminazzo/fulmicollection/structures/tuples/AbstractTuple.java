@@ -114,9 +114,13 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         for (Field field : refl.getNonStaticFields()) {
             builder.append(field.getName()).append(": ");
             Object object = refl.getFieldObject(field);
-            builder.append(object == null ? "null" : object.toString());
+            builder.append(object == null ? "null" : object.toString())
+                    .append(", ");
         }
-        return builder.append("}").toString();
+        String output = builder.append("}").toString();
+        if (output.endsWith(", }"))
+            output = output.substring(0, output.length() - 3) + "}";
+        return output;
     }
 
 }
