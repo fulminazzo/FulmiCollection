@@ -67,4 +67,18 @@ class TupleTest {
         Tuple<String, Integer> t2 = t1.copy();
         assertEquals(t1, t2);
     }
+
+    @Test
+    void testFilter() {
+        assertTrue(new Tuple<>("Hello", "world").filter((k, v) -> k.equals("not Hello")).isEmpty());
+    }
+
+    @Test
+    void testMap() {
+        Tuple<Integer, Integer> expected = new Tuple<>(10, 20);
+        Tuple<?, ?> actual = new Tuple<>("30", "20")
+                .map((k, v) -> new Tuple<>(Integer.valueOf(k), Integer.valueOf(v)))
+                .map((k, v) -> new Tuple<>(k - 20, v));
+        assertEquals(expected, actual);
+    }
 }
