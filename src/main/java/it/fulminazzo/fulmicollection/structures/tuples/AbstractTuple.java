@@ -46,7 +46,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      *
      * @return the copy
      */
-    public T copy() {
+    public @NotNull T copy() {
         return (T) new Refl<>(getClass(), getFieldObjects()).getObject();
     }
 
@@ -56,7 +56,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @param function the function
      * @return this tuple
      */
-    public T ifPresent(C function) {
+    public @NotNull T ifPresent(final @NotNull C function) {
         if (isPresent()) new Refl<>(function).invokeMethod("accept", getFieldObjects());
         return (T) this;
     }
@@ -67,7 +67,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @param function the function
      * @return this tuple
      */
-    public T orElse(final @NotNull Runnable function) {
+    public @NotNull T orElse(final @NotNull Runnable function) {
         if (isEmpty()) function.run();
         return (T) this;
     }
@@ -80,17 +80,17 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @param function the function
      * @return the result
      */
-    public T filter(final @NotNull P function) {
+    public @NotNull T filter(final @NotNull P function) {
         if (isPresent() && Boolean.TRUE.equals(new Refl<>(function).invokeMethod("apply", getFieldObjects())))
             return (T) this;
         return empty();
     }
 
-    private T empty() {
+    private @NotNull T empty() {
         return (T) new Refl<>(getClass(), new Object[0]).getObject();
     }
 
-    private Object[] getFieldObjects() {
+    private Object @NotNull [] getFieldObjects() {
         List<Object> fields = new LinkedList<>();
         Refl<?> refl = new Refl<>(this);
         for (Field field : refl.getNonStaticFields())
