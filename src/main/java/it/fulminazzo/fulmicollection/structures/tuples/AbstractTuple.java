@@ -15,10 +15,8 @@ import java.util.Objects;
  * A general class to identify various tuples implementations.
  *
  * @param <T> the type of this tuple
- * @param <C> the type of the consumer used in {@link #ifPresent(Object)}.
- *           In case of a single value, it would be <code>Consumer&lt;V&gt;</code>
- * @param <P> the type of the predicate used in {@link #filter(Object)}.
- *           In case of a single value, it would be <code>Function&lt;V, Boolean&gt;</code>
+ * @param <C> the type of the consumer used in {@link #ifPresent(Object)}. In case of a single value, it would be <code>Consumer&lt;V&gt;</code>
+ * @param <P> the type of the predicate used in {@link #filter(Object)}. In case of a single value, it would be <code>Function&lt;V, Boolean&gt;</code>
  */
 @SuppressWarnings("unchecked")
 abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends FieldEquable implements Serializable {
@@ -70,6 +68,17 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
     public @NotNull T orElse(final @NotNull Runnable function) {
         if (isEmpty()) function.run();
         return (T) this;
+    }
+
+    /**
+     * Combines {@link #ifPresent(Object)} and {@link #orElse(Runnable)}.
+     *
+     * @param ifPresent the function for {@link #ifPresent(Object)}
+     * @param orElse    the function for {@link #orElse(Runnable)}
+     * @return this tuple
+     */
+    public @NotNull T ifPresentOrElse(final @NotNull C ifPresent, final @NotNull Runnable orElse) {
+        return ifPresent(ifPresent).orElse(orElse);
     }
 
     /**
