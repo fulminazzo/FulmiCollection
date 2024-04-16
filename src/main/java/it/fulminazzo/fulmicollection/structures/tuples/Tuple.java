@@ -2,8 +2,10 @@ package it.fulminazzo.fulmicollection.structures.tuples;
 
 import it.fulminazzo.fulmicollection.interfaces.functions.BiConsumerException;
 import it.fulminazzo.fulmicollection.interfaces.functions.BiFunctionException;
+import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -84,4 +86,23 @@ public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<
     public boolean hasValue() {
         return this.value != null;
     }
+
+    /**
+     * Converts the current tuple to a new one using the given function.
+     * Executed only if {@link #isPresent()}.
+     *
+     * @param function the function
+     * @return the new tuple
+     */
+    @SuppressWarnings("unchecked")
+    public <S, T> Tuple<S, T> map(@NotNull BiFunctionException<K, V, Tuple<S, T>> function) {
+        if (isPresent())
+            try {
+                return function.apply(this.key, this.value);
+            } catch (Exception e) {
+                ExceptionUtils.throwException(e);
+            }
+        return (Tuple<S, T>) empty();
+    }
+
 }
