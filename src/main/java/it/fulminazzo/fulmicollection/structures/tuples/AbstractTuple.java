@@ -95,7 +95,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return empty();
     }
 
-    private @NotNull T empty() {
+    @NotNull T empty() {
         return (T) new Refl<>(getClass(), new Object[0]).getObject();
     }
 
