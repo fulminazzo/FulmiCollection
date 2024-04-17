@@ -168,6 +168,16 @@ class ReflectionUtilsTest {
     void testConvertedClasses(Class<?> clazz, Class<?> expected) {
         assertEquals(expected, ReflectionUtils.getPrimitiveClass(clazz));
     }
+    
+    @Test
+    void testCompareFields() throws NoSuchFieldException {
+        InnerClass c1 = new InnerClass();
+        c1.field3 = "Hello";
+        InnerClass c2 = new InnerClass();
+        c2.field3 = "Hello";
+        Field field = InnerClass.class.getDeclaredField("field3");
+        assertTrue(ReflectionUtils.compareFields(field, c1, c2));
+    }
 
     static class InnerClass extends UpperClass {
         public String field3;
