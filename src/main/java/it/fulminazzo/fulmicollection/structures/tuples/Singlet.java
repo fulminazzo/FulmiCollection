@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * The type Singlet.
@@ -52,6 +53,19 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
      */
     public boolean hasValue() {
         return this.value != null;
+    }
+
+    /**
+     * Returns the value of {@link #getValue()}.
+     *
+     * @param <X>       the type of the exception
+     * @param exception the exception thrown in case {@link #isEmpty()}
+     * @return the value
+     * @throws X the exception
+     */
+    public <X extends Throwable> @NotNull T orElseThrow(final @NotNull Supplier<X> exception) throws X {
+        if (isEmpty()) throw exception.get();
+        return getValue();
     }
 
     /**
