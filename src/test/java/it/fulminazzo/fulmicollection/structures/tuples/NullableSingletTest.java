@@ -18,9 +18,7 @@ class NullableSingletTest {
 
     @Test
     void testMap() {
-        assertEquals(1, new NullableSinglet<>("1")
-                .map(i -> new NullableSinglet<>(Integer.valueOf(i)))
-                .getValue());
+        assertEquals(1, new NullableSinglet<>("1").map(Integer::valueOf).getValue());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
 import it.fulminazzo.fulmicollection.interfaces.functions.FunctionException;
+import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type parameter
  */
+@SuppressWarnings("unchecked")
 public class NullableSinglet<T> extends Singlet<T> {
     private boolean present;
 
@@ -52,8 +54,14 @@ public class NullableSinglet<T> extends Singlet<T> {
     }
 
     @Override
-    public <V> NullableSinglet<V> map(@NotNull FunctionException<T, Singlet<V>> function) {
-        return super.map(function).toNullable();
+    public <V> NullableSinglet<V> map(@NotNull FunctionException<T, V> function) {
+        if (isPresent())
+            try {
+                return new NullableSinglet<>(function.apply(getValue()));
+            } catch (Exception e) {
+                ExceptionUtils.throwException(e);
+            }
+        return (NullableSinglet<V>) empty();
     }
 
     /**

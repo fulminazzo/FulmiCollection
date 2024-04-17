@@ -63,10 +63,10 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
      * @return the new tuple
      */
     @SuppressWarnings("unchecked")
-    public <V> Singlet<V> map(@NotNull FunctionException<T, Singlet<V>> function) {
+    public <V> Singlet<V> map(@NotNull FunctionException<T, V> function) {
         if (isPresent())
             try {
-                return function.apply(this.value);
+                return new Singlet<>(function.apply(this.value));
             } catch (Exception e) {
                 ExceptionUtils.throwException(e);
             }
