@@ -2,13 +2,18 @@ package it.fulminazzo.fulmicollection.structures.tuples;
 
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import it.fulminazzo.fulmicollection.objects.Refl;
+import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,6 +51,19 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      */
     public @NotNull T copy() {
         return (T) new Refl<>(getClass(), getFieldObjects()).getObject();
+    }
+
+    @NotNull T empty() {
+        try {
+            Constructor<T> constructor = (Constructor<T>) getClass().getDeclaredConstructor();
+            return AccessController.doPrivileged((PrivilegedExceptionAction<T>) () -> {
+                constructor.setAccessible(true);
+                return constructor.newInstance();
+            });
+        } catch (NoSuchMethodException | PrivilegedActionException e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalStateException("Unreachable code");
+        }
     }
 
     /**
@@ -95,16 +113,17 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return empty();
     }
 
-    @NotNull T empty() {
-        return (T) new Refl<>(getClass(), new Object[0]).getObject();
-    }
-
     private Object @NotNull [] getFieldObjects() {
-        List<Object> fields = new LinkedList<>();
-        Refl<?> refl = new Refl<>(this);
-        for (Field field : refl.getNonStaticFields())
-            fields.add(refl.getFieldObject(field));
-        return fields.toArray(new Object[0]);
+        return Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                .map(f -> AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+                    try {
+                        f.setAccessible(true);
+                        return f.get(this);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })).toArray(Object[]::new);
     }
 
     @Override
