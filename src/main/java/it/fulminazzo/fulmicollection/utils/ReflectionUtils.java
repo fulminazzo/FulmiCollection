@@ -99,6 +99,19 @@ public class ReflectionUtils {
 
     /**
      * Gets the corresponding object from the given field.
+     * If it fails, {@link #inaccessibleObject(Object)} is thrown.
+     *
+     * @param <T>    the type of the object
+     * @param field  the field
+     * @param object the object
+     * @return a {@link NullableSinglet} containing the object, if the field could be set accessible
+     */
+    public static <T> T getOrThrow(final @NotNull Field field, final Object object) {
+        return setAccessible(field).toNullable().map(f -> f.get(object)).map(o -> (T) o).orElseThrow(inaccessibleObject(field));
+    }
+
+    /**
+     * Gets the corresponding object from the given field.
      *
      * @param <T>    the type of the object
      * @param field  the field
