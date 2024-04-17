@@ -179,6 +179,22 @@ class ReflectionUtilsTest {
         assertTrue(ReflectionUtils.compareFields(field, c1, c2));
     }
 
+    @Test
+    void testSetAccessibleOrThrow() throws NoSuchFieldException {
+        Field expected = InnerClass.class.getDeclaredField("field3");
+        Field actual = ReflectionUtils.setAccessibleOrThrow(expected);
+        assertEquals(expected, actual);
+        assertTrue(actual.isAccessible());
+    }
+
+    @Test
+    void testGetOrThrow() throws NoSuchFieldException {
+        InnerClass clazz = new InnerClass();
+        clazz.field3 = "Hello";
+        Field field = InnerClass.class.getDeclaredField("field3");
+        assertEquals("Hello", ReflectionUtils.getOrThrow(field, clazz));
+    }
+
     static class InnerClass extends UpperClass {
         public String field3;
         private static String field4;
