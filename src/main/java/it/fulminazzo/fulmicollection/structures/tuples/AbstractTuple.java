@@ -1,23 +1,20 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
+import it.fulminazzo.fulmicollection.interfaces.functions.FunctionException;
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
-import it.fulminazzo.fulmicollection.objects.Refl;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import it.fulminazzo.fulmicollection.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.Callable;
 
 /**
  * A general class to identify various tuples implementations.
@@ -53,7 +50,10 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @return the copy
      */
     public @NotNull T copy() {
-        return (T) new Refl<>(getClass(), getFieldObjects()).getObject();
+        return (T) doPrivileged(() -> getClass().getDeclaredConstructor(getFieldTypes()), c -> {
+            c.setAccessible(true);
+            return c.newInstance(getFieldObjects());
+        });
     }
 
     /**
@@ -62,16 +62,10 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @return the t
      */
     @NotNull T empty() {
-        try {
-            Constructor<T> constructor = (Constructor<T>) getClass().getDeclaredConstructor();
-            return AccessController.doPrivileged((PrivilegedExceptionAction<T>) () -> {
-                constructor.setAccessible(true);
-                return constructor.newInstance();
-            });
-        } catch (NoSuchMethodException | PrivilegedActionException e) {
-            ExceptionUtils.throwException(e);
-            throw new IllegalStateException("Unreachable code");
-        }
+        return (T) doPrivileged(() -> getClass().getDeclaredConstructor(), c -> {
+            c.setAccessible(true);
+            return c.newInstance();
+        });
     }
 
     /**
@@ -81,7 +75,11 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @return this tuple
      */
     public @NotNull T ifPresent(final @NotNull C function) {
-        if (isPresent()) new Refl<>(function).invokeMethod("accept", getFieldObjects());
+        if (isPresent())
+            doPrivileged(() -> function.getClass().getDeclaredMethod("accept", getFieldTypes()), m -> {
+                m.setAccessible(true);
+                return m.invoke(function, getFieldObjects());
+            });
         return (T) this;
     }
 
@@ -116,8 +114,13 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @return the result
      */
     public @NotNull T filter(final @NotNull P function) {
-        if (isPresent() && Boolean.TRUE.equals(new Refl<>(function).invokeMethod("apply", getFieldObjects())))
-            return (T) this;
+        if (isPresent()) {
+            Object test = doPrivileged(() -> function.getClass().getDeclaredMethod("apply", getFieldTypes()), m -> {
+                m.setAccessible(true);
+                return m.invoke(function, getFieldObjects());
+            });
+            if (Boolean.TRUE.equals(test)) return (T) this;
+        }
         return empty();
     }
 
@@ -156,13 +159,25 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return ReflectionUtils.getFields(this, f -> !Modifier.isStatic(f.getModifiers())).toArray(new Field[0]);
     }
 
+    private <O, M> O doPrivileged(Callable<M> method, FunctionException<M, O> exceptionAction) {
+        try {
+            M m = method.call();
+            return AccessController.doPrivileged((PrivilegedExceptionAction<O>) () -> exceptionAction.apply(m));
+        } catch (Exception e) {
+            ExceptionUtils.throwException(e);
+            throw new IllegalStateException("Unreachable code");
+        }
+    }
+
     @Override
     public @NotNull String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName() + "{");
-        Refl<?> refl = new Refl<>(this);
         for (Field field : getFields()) {
             builder.append(field.getName()).append(": ");
-            Object object = refl.getFieldObject(field);
+            Object object = doPrivileged(() -> field, f -> {
+                f.setAccessible(true);
+                return f.get(this);
+            });
             builder.append(object == null ? "null" : object.toString())
                     .append(", ");
         }
