@@ -50,6 +50,15 @@ public class NullableSinglet<T> extends Singlet<T> {
         return this.present;
     }
 
+    /**
+     * Converts the current singlet to a non-nullable singlet
+     *
+     * @return the singlet
+     */
+    public Singlet<T> toNonNullable() {
+        return new Singlet<>(getValue());
+    }
+
     @Override
     public @NotNull String toString() {
         return super.toString().replaceAll("(, )?present: (true|false)(, )", "");

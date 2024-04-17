@@ -72,4 +72,13 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
             }
         return (Singlet<V>) empty();
     }
+
+    /**
+     * Converts the current singlet to a nullable singlet
+     *
+     * @return the nullable singlet
+     */
+    public NullableSinglet<T> toNullable() {
+        return new NullableSinglet<>(this.value);
+    }
 }
