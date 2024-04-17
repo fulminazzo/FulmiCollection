@@ -24,8 +24,8 @@ public abstract class FieldEquable extends Printable {
             for (Class<?> c = c1; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
                 for (Field field : c.getDeclaredFields())
                     if (!Modifier.isStatic(field.getModifiers())) {
-                        Object o1 = ReflectionUtils.get(field, this);
-                        Object o2 = ReflectionUtils.get(field, fe);
+                        Object o1 = ReflectionUtils.getOrThrow(field, this);
+                        Object o2 = ReflectionUtils.getOrThrow(field, fe);
                         if (calculateHash(o1) != calculateHash(o2)) return false;
                     }
             }
@@ -41,7 +41,7 @@ public abstract class FieldEquable extends Printable {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields())
                 if (!Modifier.isStatic(field.getModifiers())) {
-                    Object object = ReflectionUtils.get(field, this);
+                    Object object = ReflectionUtils.getOrThrow(field, this);
                     hash = OFFSET * hash + calculateHash(object);
                 }
         }

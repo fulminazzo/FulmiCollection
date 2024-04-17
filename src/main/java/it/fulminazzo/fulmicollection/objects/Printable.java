@@ -54,15 +54,14 @@ public abstract class Printable {
                 if (field.getName().equals("__$hits$__")) continue;
                 // Prevent static non-relevant fields to be shown.
                 if (Modifier.isStatic(field.getModifiers())) continue;
-                try {
-                    Object o = ReflectionUtils.get(field, object);
-                    if (o != null && o.hashCode() == object.hashCode()) continue;
+                ReflectionUtils.get(field, object).ifPresent(o -> {
+                    if (o != null && o.hashCode() == object.hashCode()) return;
                     String objectString = convertToJson(o);
                     result.append(String.format("\"%s\"", field.getName()))
                             .append(": ")
                             .append(objectString)
                             .append(", ");
-                } catch (Exception ignored) {}
+                });
             }
             oClass = oClass.getSuperclass();
         }
@@ -80,7 +79,7 @@ public abstract class Printable {
      */
     public static @Nullable String printObject(@Nullable Object object, @Nullable String headStart) {
         if (object == null) return null;
-        if (headStart == null) headStart = "";
+        final String finalHeadStart = headStart == null ? "" : headStart;
         StringBuilder result = new StringBuilder(String.format("%s {\n", object.getClass().getSimpleName()));
         Class<?> oClass = object.getClass();
         while (oClass != null) {
@@ -92,13 +91,15 @@ public abstract class Printable {
                 if (field.getName().equals("__$hits$__")) continue;
                 // Prevent static non-relevant fields to be shown.
                 if (Modifier.isStatic(field.getModifiers())) continue;
-                Object o = ReflectionUtils.get(field, object);
-                String str = o instanceof Printable ? printObject(o, headStart + "  ") : o == null ? "null" : o.toString();
-                result.append(String.format("%s%s: %s\n", headStart + "  ", field.getName(), str));
+                ReflectionUtils.get(field, object).ifPresent(o -> {
+                    String str = o instanceof Printable ? printObject(o, finalHeadStart + "  ") :
+                            o == null ? "null" : o.toString();
+                    result.append(String.format("%s%s: %s\n", finalHeadStart + "  ", field.getName(), str));
+                });
             }
             oClass = oClass.getSuperclass();
         }
-        return result + String.format("%s}", headStart);
+        return result + String.format("%s}", finalHeadStart);
     }
 
     @Override

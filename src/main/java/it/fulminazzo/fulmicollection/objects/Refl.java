@@ -945,12 +945,12 @@ public class Refl<T> {
                     // Remove fields used by code coverage from Intellij IDEA.
                     if (f.getName().equals("__$hits$__")) continue;
                     if (!printStatic && Modifier.isStatic(f.getModifiers())) continue;
-                    try {
-                        final Object v = ReflectionUtils.get(f, o);
-                        if (ReflectionUtils.equalsClass(o, v)) continue;
+                    Class<?> finalC = c;
+                    ReflectionUtils.get(f, o).ifPresent(v -> {
+                        if (ReflectionUtils.equalsClass(o, v)) return;
                         final String vToString;
                         output.append("\n").append(SEPARATOR);
-                        output.append("(").append(className.apply(c)).append(") ");
+                        output.append("(").append(className.apply(finalC)).append(") ");
                         if (Modifier.isStatic(f.getModifiers())) output.append("static ");
                         output.append(className.apply(f.getType()));
                         output.append(" ").append(f.getName());
@@ -960,12 +960,8 @@ public class Refl<T> {
                         else if (recursive)
                             vToString = new Refl<>(v).printFields(simpleNames, printStatic).replace("\n", "\n" + SEPARATOR);
                         else vToString = v.toString();
-                        output.append(vToString);
-                    } catch (Exception e) {
-                        output.append("UNKNOWN");
-                    } finally {
-                        output.append(";");
-                    }
+                        output.append(vToString).append(";");
+                    });
                 }
             return output + "\n}";
         });
