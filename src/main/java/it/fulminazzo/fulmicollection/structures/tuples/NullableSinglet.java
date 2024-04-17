@@ -1,5 +1,7 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An implementation of {@link Singlet} that allows null objects to be passed as values.
  *
@@ -46,5 +48,10 @@ public class NullableSinglet<T> extends Singlet<T> {
     @Override
     public boolean isPresent() {
         return this.present;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return super.toString().replaceAll("(, )?present: (true|false)(, )", "");
     }
 }
