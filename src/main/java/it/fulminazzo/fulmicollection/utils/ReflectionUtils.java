@@ -1,6 +1,5 @@
 package it.fulminazzo.fulmicollection.utils;
 
-import it.fulminazzo.fulmicollection.structures.NullableOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +8,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -99,58 +97,34 @@ public class ReflectionUtils {
     /**
      * Gets the corresponding object from the given field
      *
-     * @param <T>    the type of the object
+     * @param <T>    the type parameter
      * @param field  the field
      * @param object the object
      * @return the object
      */
     public static <T> T get(final @NotNull Field field, final Object object) {
-        try {
-            return (T) setAccessibleOrThrow(field).get(object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+            try {
+                field.setAccessible(true);
+                return (T) field.get(object);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
      * Sets the given object accessible using a {@link PrivilegedAction}.
      *
-     * @param <T>    the type of the object
+     * @param <T>    the type parameter
      * @param object the object
-     * @return a {@link NullableOptional} containing the object, if it could be set accessible
+     * @return the same object
      */
-    public static <T extends AccessibleObject> @NotNull NullableOptional<T> setAccessible(final @NotNull T object) {
-        try {
-            return NullableOptional.of(AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-                object.setAccessible(true);
-                return object;
-            }));
-        } catch (RuntimeException e) {
-            if (e.getClass().getCanonicalName().equals("java.lang.reflect.InaccessibleObjectException"))
-                return NullableOptional.empty();
-            else throw e;
-        }
-    }
-
-    /**
-     * Sets the given object accessible using a {@link PrivilegedAction}.
-     *
-     * @param <T>    the type of the object
-     * @param object the object
-     * @return a {@link NullableOptional} containing the object, if it could be set accessible, otherwise throws {@link #inaccessibleException(Object)}.
-     */
-    public static <T extends AccessibleObject> @NotNull T setAccessibleOrThrow(final @NotNull T object) {
-        return setAccessible(object).orElseThrow(inaccessibleException(object));
-    }
-
-    /**
-     * Gets a {@link Supplier} that returns an exception in combination for {@link #setAccessible(AccessibleObject)}.
-     *
-     * @param object the object
-     * @return the supplier
-     */
-    public static Supplier<RuntimeException> inaccessibleException(final @NotNull Object object) {
-        return () -> new IllegalArgumentException(String.format("Could not set '%s' to accessible", object));
+    public static <T extends AccessibleObject> @NotNull T setAccessible(final @NotNull T object) {
+        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+            object.setAccessible(true);
+            return object;
+        });
     }
 
     /**
@@ -253,7 +227,7 @@ public class ReflectionUtils {
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
-                if (predicate.test(field)) return field;
+                if (predicate.test(field)) return setAccessible(field);
         throw new IllegalArgumentException(String.format("Could not find field from class '%s' and predicate", clazz.getCanonicalName()));
     }
 
@@ -477,7 +451,10 @@ public class ReflectionUtils {
             for (Class<?> i : c.getInterfaces())
                 addDeclaredMethods(i, methods);
         }
-        return methods.stream().distinct().collect(Collectors.toList());
+        return methods.stream()
+                .map(ReflectionUtils::setAccessible)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private static void addDeclaredMethods(@NotNull Class<?> clazz, @NotNull LinkedList<Method> methods) {
