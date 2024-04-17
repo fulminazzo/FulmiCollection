@@ -5,6 +5,7 @@ import it.fulminazzo.fulmicollection.objects.Refl;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import it.fulminazzo.fulmicollection.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -16,6 +17,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A general class to identify various tuples implementations.
@@ -134,6 +136,15 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
                         throw new RuntimeException(e);
                     }
                 })).toArray(Object[]::new);
+    }
+
+    /**
+     * Gets all the relevant fields for this tuple.
+     *
+     * @return the types of the fields
+     */
+    Class<?> @NotNull [] getFieldTypes() {
+        return Arrays.stream(getFields()).map(Field::getType).toArray(Class[]::new);
     }
 
     /**
