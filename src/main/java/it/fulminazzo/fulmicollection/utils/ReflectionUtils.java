@@ -573,6 +573,18 @@ public class ReflectionUtils {
     }
 
     /**
+     * Compares the given field by getting the actual values from the two objects.
+     *
+     * @param field   the field
+     * @param object1 the first object
+     * @param object2 the second object
+     * @return true if they are equal
+     */
+    public static boolean compareFields(final @NotNull Field field, final @NotNull Object object1, final @NotNull Object object2) {
+        return get(field, object1).map(o -> Objects.equals(o, get(field, object2).getValue())).getValue();
+    }
+
+    /**
      * Compares object1 fields with object2 fields.
      *
      * @param object1 the first object
@@ -584,7 +596,7 @@ public class ReflectionUtils {
         if (!object1.getClass().isAssignableFrom(object2.getClass())) return false;
         for (Field field : getFields(object1)) {
             if (Modifier.isStatic(field.getModifiers())) continue;
-            if (!get(field, object1).map(o -> o.equals(get(field, object2))).getValue()) return false;
+            if (!compareFields(field, object1, object2)) return false;
         }
         return true;
     }
