@@ -57,6 +57,11 @@ public class NullableSinglet<T> extends Singlet<T> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return !isPresent();
+    }
+
+    @Override
     public <V> NullableSinglet<V> map(@NotNull FunctionException<T, V> function) {
         if (isPresent())
             try {
