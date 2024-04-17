@@ -229,7 +229,7 @@ public class ReflectionUtils {
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
         for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
-                if (predicate.test(field)) return setAccessible(field);
+                if (predicate.test(field)) return field;
         throw new IllegalArgumentException(String.format("Could not find field from class '%s' and predicate", clazz.getCanonicalName()));
     }
 
@@ -453,10 +453,7 @@ public class ReflectionUtils {
             for (Class<?> i : c.getInterfaces())
                 addDeclaredMethods(i, methods);
         }
-        return methods.stream()
-                .map(ReflectionUtils::setAccessible)
-                .distinct()
-                .collect(Collectors.toList());
+        return methods.stream().distinct().collect(Collectors.toList());
     }
 
     private static void addDeclaredMethods(@NotNull Class<?> clazz, @NotNull LinkedList<Method> methods) {
