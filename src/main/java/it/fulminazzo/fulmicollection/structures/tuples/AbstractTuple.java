@@ -53,6 +53,11 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return (T) new Refl<>(getClass(), getFieldObjects()).getObject();
     }
 
+    /**
+     * Empty t.
+     *
+     * @return the t
+     */
     @NotNull T empty() {
         try {
             Constructor<T> constructor = (Constructor<T>) getClass().getDeclaredConstructor();
@@ -113,9 +118,13 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return empty();
     }
 
-    private Object @NotNull [] getFieldObjects() {
-        return Arrays.stream(getClass().getDeclaredFields())
-                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+    /**
+     * Gets all the relevant fields for this tuple.
+     *
+     * @return the values of the fields
+     */
+    Object @NotNull [] getFieldObjects() {
+        return Arrays.stream(getFields())
                 .map(f -> AccessController.doPrivileged((PrivilegedAction<?>) () -> {
                     try {
                         f.setAccessible(true);
@@ -126,11 +135,22 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
                 })).toArray(Object[]::new);
     }
 
+    /**
+     * Gets all the relevant fields for this tuple.
+     *
+     * @return the fields
+     */
+    Field @NotNull [] getFields() {
+        return Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                .toArray(Field[]::new);
+    }
+
     @Override
     public @NotNull String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName() + "{");
         Refl<?> refl = new Refl<>(this);
-        for (Field field : refl.getNonStaticFields()) {
+        for (Field field : getFields()) {
             builder.append(field.getName()).append(": ");
             Object object = refl.getFieldObject(field);
             builder.append(object == null ? "null" : object.toString())
