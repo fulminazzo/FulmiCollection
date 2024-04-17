@@ -111,6 +111,18 @@ public class ReflectionUtils {
 
     /**
      * Sets the given object accessible using a {@link PrivilegedAction}.
+     * If it fails, {@link #inaccessibleObject(Object)} is thrown.
+     *
+     * @param <T>    the type of the object
+     * @param object the object
+     * @return the object
+     */
+    public static <T extends AccessibleObject> @NotNull T setAccessibleOrThrow(final @NotNull T object) {
+        return setAccessible(object).orElseThrow(inaccessibleObject(object));
+    }
+
+    /**
+     * Sets the given object accessible using a {@link PrivilegedAction}.
      *
      * @param <T>    the type of the object
      * @param object the object
@@ -572,9 +584,7 @@ public class ReflectionUtils {
         if (!object1.getClass().isAssignableFrom(object2.getClass())) return false;
         for (Field field : getFields(object1)) {
             if (Modifier.isStatic(field.getModifiers())) continue;
-            Object o1 = get(field, object1);
-            Object o2 = get(field, object2);
-            if (!Objects.equals(o1, o2)) return false;
+            if (!get(field, object1).map(o -> o.equals(get(field, object2))).getValue()) return false;
         }
         return true;
     }
