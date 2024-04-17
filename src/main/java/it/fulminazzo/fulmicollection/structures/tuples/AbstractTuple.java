@@ -3,6 +3,7 @@ package it.fulminazzo.fulmicollection.structures.tuples;
 import it.fulminazzo.fulmicollection.objects.FieldEquable;
 import it.fulminazzo.fulmicollection.objects.Refl;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
+import it.fulminazzo.fulmicollection.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -141,9 +142,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
      * @return the fields
      */
     Field @NotNull [] getFields() {
-        return Arrays.stream(getClass().getDeclaredFields())
-                .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                .toArray(Field[]::new);
+        return ReflectionUtils.getFields(this, f -> !Modifier.isStatic(f.getModifiers())).toArray(new Field[0]);
     }
 
     @Override
