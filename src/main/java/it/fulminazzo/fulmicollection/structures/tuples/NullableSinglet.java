@@ -1,5 +1,6 @@
 package it.fulminazzo.fulmicollection.structures.tuples;
 
+import it.fulminazzo.fulmicollection.interfaces.functions.FunctionException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,6 +49,11 @@ public class NullableSinglet<T> extends Singlet<T> {
     @Override
     public boolean isPresent() {
         return this.present;
+    }
+
+    @Override
+    public <V> NullableSinglet<V> map(@NotNull FunctionException<T, Singlet<V>> function) {
+        return super.map(function).toNullable();
     }
 
     /**
