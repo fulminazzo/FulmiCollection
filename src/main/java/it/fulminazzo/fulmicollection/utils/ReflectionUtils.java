@@ -10,6 +10,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -127,6 +128,18 @@ public class ReflectionUtils {
                 throw e;
         }
         return singlet;
+    }
+
+    /**
+     * Returns the exception
+     * used to signal
+     * that the given object could not be set to accessible from {@link #setAccessible(AccessibleObject)}.
+     *
+     * @param object the object
+     * @return the supplier
+     */
+    public static @NotNull Supplier<IllegalArgumentException> inaccessibleObject(final @NotNull Object object) {
+        return () -> new IllegalArgumentException(String.format("Could not set '%s' accessible", object));
     }
 
     /**
