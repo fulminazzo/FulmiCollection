@@ -97,22 +97,15 @@ public class ReflectionUtils {
     }
 
     /**
-     * Gets the corresponding object from the given field
+     * Gets the corresponding object from the given field.
      *
-     * @param <T>    the type parameter
+     * @param <T>    the type of the object
      * @param field  the field
      * @param object the object
-     * @return the object
+     * @return a {@link NullableSinglet} containing the object, if the field could be set accessible
      */
-    public static <T> T get(final @NotNull Field field, final Object object) {
-        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-            try {
-                field.setAccessible(true);
-                return (T) field.get(object);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public static <T> NullableSinglet<T> get(final @NotNull Field field, final Object object) {
+        return setAccessible(field).toNullable().map(f -> f.get(object)).map(o -> (T) o);
     }
 
     /**
