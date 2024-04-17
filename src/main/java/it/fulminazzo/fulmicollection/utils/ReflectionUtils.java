@@ -318,9 +318,7 @@ public class ReflectionUtils {
         return fields.stream()
                 // Remove fields used by code coverage from Intellij IDEA.
                 .filter(f -> !f.getName().equals("__$hits$__"))
-                .peek(ReflectionUtils::setAccessible)
-                .distinct()
-                .collect(Collectors.toList());
+                .distinct().collect(Collectors.toList());
     }
 
     /**
