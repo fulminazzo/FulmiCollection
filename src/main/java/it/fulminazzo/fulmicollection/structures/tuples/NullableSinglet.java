@@ -4,6 +4,9 @@ import it.fulminazzo.fulmicollection.interfaces.functions.FunctionException;
 import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
 /**
  * An implementation of {@link Singlet} that allows null objects to be passed as values.
  *
@@ -71,6 +74,17 @@ public class NullableSinglet<T> extends Singlet<T> {
      */
     public Singlet<T> toNonNullable() {
         return new Singlet<>(getValue());
+    }
+
+    @Override
+    Field @NotNull [] getFields() {
+        return Arrays.stream(super.getFields()).filter(f -> {
+            try {
+                return !f.equals(NullableSinglet.class.getDeclaredField("present"));
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }).toArray(Field[]::new);
     }
 
     @Override
