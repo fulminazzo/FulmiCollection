@@ -56,6 +56,19 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
     }
 
     /**
+     * Checks if {@link #isPresent()}.
+     * If it is, return {@link #value}.
+     * Else, return the default one.
+     *
+     * @param defaultValue the default value
+     * @return the value
+     */
+    public T orElseGet(final @NotNull T defaultValue) {
+        if (isPresent()) return this.value;
+        else return defaultValue;
+    }
+
+    /**
      * Returns the value of {@link #getValue()}.
      *
      * @param <X>       the type of the exception
