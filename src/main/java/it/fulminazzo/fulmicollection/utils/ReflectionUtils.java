@@ -1,5 +1,7 @@
 package it.fulminazzo.fulmicollection.utils;
 
+import it.fulminazzo.fulmicollection.structures.tuples.NullableSinglet;
+import it.fulminazzo.fulmicollection.structures.tuples.Singlet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,15 +118,22 @@ public class ReflectionUtils {
     /**
      * Sets the given object accessible using a {@link PrivilegedAction}.
      *
-     * @param <T>    the type parameter
+     * @param <T>    the type of the object
      * @param object the object
-     * @return the same object
+     * @return a {@link Singlet} containing the object, if it could be set accessible
      */
-    public static <T extends AccessibleObject> @NotNull T setAccessible(final @NotNull T object) {
-        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-            object.setAccessible(true);
-            return object;
-        });
+    public static <T extends AccessibleObject> @NotNull Singlet<T> setAccessible(final @NotNull T object) {
+        Singlet<T> singlet = new Singlet<>();
+        try {
+            singlet.setValue(AccessController.doPrivileged((PrivilegedAction<T>) () -> {
+                object.setAccessible(true);
+                return object;
+            }));
+        } catch (RuntimeException e) {
+            if (!e.getClass().getCanonicalName().equals("java.lang.reflect.InaccessibleObjectException"))
+                throw e;
+        }
+        return singlet;
     }
 
     /**
