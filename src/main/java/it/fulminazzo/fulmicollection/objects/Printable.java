@@ -102,8 +102,9 @@ public abstract class Printable {
         return result + String.format("%s}", finalHeadStart);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
-    public @Nullable String toString() {
+    public @NotNull String toString() {
         return printObject(this, "");
     }
 }
