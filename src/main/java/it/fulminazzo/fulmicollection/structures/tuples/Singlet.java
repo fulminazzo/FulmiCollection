@@ -6,6 +6,7 @@ import it.fulminazzo.fulmicollection.utils.ExceptionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -63,7 +64,7 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
      * @param defaultValue the default value
      * @return the value
      */
-    public T orElseGet(final @NotNull T defaultValue) {
+    public T orElseGet(final @Nullable T defaultValue) {
         if (isPresent()) return this.value;
         else return defaultValue;
     }
