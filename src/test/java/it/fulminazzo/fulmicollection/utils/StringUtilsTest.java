@@ -15,6 +15,13 @@ class StringUtilsTest {
         assertEquals("file.yml", StringUtils.getFileName(path));
     }
 
+    @Test
+    void testDecapitalize() {
+        String string = "TEST STRING";
+        String expected = "TEST_STRING";
+        assertEquals(expected, StringUtils.decapitalize(StringUtils.capitalize(string)));
+    }
+
     @ParameterizedTest
     @CsvSource({"test string, Test String",
             "test String, Test String",

@@ -39,10 +39,29 @@ public class StringUtils {
     }
 
     /**
+     * Inverse function of {@link #capitalize(String)}.
+     *
+     * @param string the string to convert
+     * @return the converted string
+     */
+    @Nullable
+    public static String decapitalize(@Nullable String string) {
+        if (string == null) return null;
+        final String SEPARATOR = "_";
+        string = string.replaceAll("[\r\n\t ]", SEPARATOR);
+        String result = "";
+        for (char c : string.toCharArray()) {
+            if (Character.isUpperCase(c) && !result.endsWith(SEPARATOR)) result += SEPARATOR;
+            result += c;
+        }
+        if (result.startsWith(SEPARATOR)) result = result.substring(1);
+        return result.toUpperCase();
+    }
+
+    /**
      * Replacement for WordUtils.capitalizeFully(string.replace("_", " ")):
-     * converts a string by replacing its "_" characters with spaces and capitalizing
-     * every first char of any word. For example, "this_string" will be formatted
-     * as "This String".
+     * converts a string by capitalizing every first char of any word.
+     * For example, "this string" will be formatted as "This String".
      *
      * @param string the string to convert
      * @return the converted string
