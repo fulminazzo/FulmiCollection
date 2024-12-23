@@ -606,6 +606,8 @@ public class ReflectionUtils {
         if (object2 == null) return false;
         if (!object1.getClass().isAssignableFrom(object2.getClass())) return false;
         for (Field field : getFields(object1)) {
+            // Do not compare fields in inner classes
+            if (field.getName().matches("this\\$[0-9]+")) continue;
             if (Modifier.isStatic(field.getModifiers())) continue;
             if (!compareFields(field, object1, object2)) return false;
         }
