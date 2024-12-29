@@ -37,13 +37,14 @@ public class ReflectionUtils {
      */
     public static <T> @NotNull Class<T> getClass(@NotNull String className) {
         try {
-            return (Class<T>) Class.forName(className);
+            if (!className.isEmpty())
+                return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             Class<T> clazz = getInnerClass(className);
             if (clazz == null) clazz = getInnerInterface(className);
-            if (clazz == null) throw new IllegalArgumentException(CLASS_NOT_FOUND.replace("%class%", className));
-            return clazz;
+            if (clazz != null) return clazz;
         }
+        throw new IllegalArgumentException(CLASS_NOT_FOUND.replace("%class%", className));
     }
 
     private static <T> @Nullable Class<T> getInnerClass(@NotNull String classPath) {
@@ -54,13 +55,13 @@ public class ReflectionUtils {
         for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
         if (mainClass.toString().endsWith("."))
             mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
-        try {
-            Class<?> primClazz = Class.forName(mainClass.toString());
+//        try {
+            Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
             clazz = (Class<T>) Arrays.stream(primClazz.getDeclaredClasses())
                     .distinct()
                     .filter(c -> c.getSimpleName().equals(realClass))
                     .findAny().orElse(null);
-        } catch (ClassNotFoundException ignored) {}
+//        } catch (ClassNotFoundException ignored) {}
         return clazz;
     }
 
@@ -72,12 +73,12 @@ public class ReflectionUtils {
         for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
         if (mainClass.toString().endsWith("."))
             mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
-        try {
-            Class<?> primClazz = Class.forName(mainClass.toString());
+//        try {
+            Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
             clazz = (Class<T>) Arrays.stream(primClazz.getInterfaces())
                     .filter(c -> c.getSimpleName().equals(realClass))
                     .findAny().orElse(null);
-        } catch (ClassNotFoundException ignored) {}
+//        } catch (ClassNotFoundException ignored) {}
         return clazz;
     }
 
