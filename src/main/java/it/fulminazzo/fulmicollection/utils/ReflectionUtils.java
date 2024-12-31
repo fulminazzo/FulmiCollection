@@ -357,7 +357,6 @@ public class ReflectionUtils {
             if (paramTypes == null)
                 if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
                 else continue;
-            if (constructor.getParameterCount() != paramTypes.length) continue;
             if (validateParameters(paramTypes, constructor)) return (Constructor<T>) constructor;
         }
         return null;
@@ -394,7 +393,6 @@ public class ReflectionUtils {
                 if (name != null && !m.getName().equalsIgnoreCase(name)) return false;
                 if (returnType != null && !returnType.isAssignableFrom(m.getReturnType())) return false;
                 if (paramTypes == null) return m.getParameterCount() == 0;
-                if (m.getParameterCount() != paramTypes.length) return false;
                 return validateParameters(paramTypes, m);
             });
         } catch (IllegalArgumentException e) {
@@ -407,17 +405,22 @@ public class ReflectionUtils {
     }
 
     private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, @NotNull Executable executable) {
-        for (int i = 0; i < paramTypes.length; i++) {
+        Class<?>[] parameterTypes = executable.getParameterTypes();
+        int length = parameterTypes.length;
+        if (length > paramTypes.length) return false;
+        for (int i = 0; i < length; i++) {
             final Class<?> expected = getWrapperClass(paramTypes[i]);
             if (expected == null) continue;
-            final Class<?> actual = getWrapperClass(executable.getParameterTypes()[i]);
+            final Class<?> actual = getWrapperClass(parameterTypes[i]);
             if (actual == null) throw new IllegalStateException("Unreachable code");
+            if (actual.isArray() && executable.isVarArgs())
+                if (actual.getComponentType().isAssignableFrom(expected)) return true;
             if (expected.isArray() && (!actual.isArray() || !expected.getComponentType().isAssignableFrom(actual.getComponentType())))
                 return false;
             if (!actual.isAssignableFrom(expected))
                 return false;
         }
-        return true;
+        return length == paramTypes.length;
     }
 
     /**

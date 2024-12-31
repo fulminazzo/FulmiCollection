@@ -92,6 +92,12 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    void testPrintFormat() {
+        assertDoesNotThrow(() -> ReflectionUtils.getMethod(System.out, null,
+                "printf", "Hello, %s!", "world"));
+    }
+
+    @Test
     void testEqualFields() {
         PrintableTest.Person person1 = new PrintableTest.Person("Alex", 10, null);
         PrintableTest.Person person2 = new PrintableTest.Person("Alex", 10, null);
