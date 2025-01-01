@@ -137,7 +137,7 @@ class ReflectionUtilsTest {
 
     @Test
     void testGetMethods() {
-        final List<Method> methods = ReflectionUtils.getMethods(new InnerClass());
+        final List<Method> methods = TestUtils.computeNonObjectMethods(() -> ReflectionUtils.getMethods(new InnerClass()));
         final List<String> expected = Arrays.asList("firstMethod", "secondMethod", "thirdMethod", "thirdMethod");
         assertEquals(expected.size(), methods.size());
         for (int i = 0; i < expected.size(); i++)

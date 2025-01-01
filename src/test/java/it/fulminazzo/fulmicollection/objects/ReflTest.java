@@ -1,6 +1,10 @@
 package it.fulminazzo.fulmicollection.objects;
 
-import org.junit.jupiter.api.*;
+import it.fulminazzo.fulmicollection.utils.TestUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -128,19 +132,22 @@ class ReflTest extends AbstractReflTest {
             assertIterableEquals(Arrays.asList(
                     TestClass.class.getDeclaredMethod("printField", String.class),
                     TestClass.class.getDeclaredMethod("equals", Object.class),
-                    TestClass.class.getDeclaredMethod("print")), this.refl.getMethods());
+                    TestClass.class.getDeclaredMethod("print")),
+                    TestUtils.computeNonObjectMethods(() -> this.refl.getMethods()));
         }
 
         @Test
         void testGetStaticMethods() throws NoSuchMethodException {
-            assertIterableEquals(Collections.singletonList(TestClass.class.getDeclaredMethod("print")), this.refl.getStaticMethods());
+            assertIterableEquals(Collections.singletonList(TestClass.class.getDeclaredMethod("print")),
+                    TestUtils.computeNonObjectMethods(() -> this.refl.getStaticMethods()));
         }
 
         @Test
         void testGetNonStaticMethods() throws NoSuchMethodException {
             assertIterableEquals(Arrays.asList(
                     TestClass.class.getDeclaredMethod("printField", String.class),
-                    TestClass.class.getDeclaredMethod("equals", Object.class)), this.refl.getNonStaticMethods());
+                    TestClass.class.getDeclaredMethod("equals", Object.class)),
+                    TestUtils.computeNonObjectMethods(() -> this.refl.getNonStaticMethods()));
         }
     }
 
