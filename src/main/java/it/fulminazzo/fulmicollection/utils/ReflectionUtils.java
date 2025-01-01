@@ -266,7 +266,7 @@ public class ReflectionUtils {
      * @return the field
      */
     public static @NotNull Field getField(@NotNull Class<?> clazz, @NotNull Predicate<Field> predicate) {
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass())
             for (Field field : c.getDeclaredFields())
                 if (predicate.test(field)) return field;
         throw new IllegalArgumentException(String.format("Could not find field from class '%s' and predicate", clazz.getCanonicalName()));
@@ -312,7 +312,7 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Field> getFields(@NotNull Class<?> clazz) {
         LinkedList<Field> fields = new LinkedList<>();
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass())
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass())
             Arrays.stream(c.getDeclaredFields())
                     .sorted(Comparator.comparing(f -> Modifier.isStatic(f.getModifiers())))
                     .forEach(fields::addLast);
@@ -345,7 +345,7 @@ public class ReflectionUtils {
      */
     public static <T> @NotNull Constructor<T> getConstructor(@NotNull Class<?> clazz, Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
             Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
             if (constructor != null) return constructor;
         }
@@ -431,7 +431,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @NotNull Method getMethod(@NotNull Class<?> clazz, @NotNull Predicate<Method> predicate) {
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
             Method method = getMethodFromClass(c, predicate);
             if (method != null) return method;
             for (Class<?> i : c.getInterfaces())
@@ -488,7 +488,7 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz) {
         LinkedList<Method> methods = new LinkedList<>();
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()){
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()){
             addDeclaredMethods(c, methods);
             for (Class<?> i : c.getInterfaces())
                 addDeclaredMethods(i, methods);

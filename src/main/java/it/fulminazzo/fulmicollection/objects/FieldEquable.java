@@ -38,7 +38,7 @@ public abstract class FieldEquable extends Printable {
     public int hashCode() {
         Class<?> clazz = clazz();
         int hash = clazz.hashCode();
-        for (Class<?> c = clazz; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields())
                 if (!Modifier.isStatic(field.getModifiers())) {
                     Object object = ReflectionUtils.getOrThrow(field, this);
