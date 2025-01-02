@@ -19,7 +19,7 @@ public abstract class EnumObject {
     /**
      * Instantiates a new Enum object.
      */
-    public EnumObject() {
+    protected EnumObject() {
         int previous = ORDINALS.getOrDefault(getClass(), -1);
         this.ordinal = ++previous;
         ORDINALS.put(getClass(), previous);
@@ -71,7 +71,7 @@ public abstract class EnumObject {
      * @param name      the name
      * @return the value
      */
-    public static <E extends EnumObject> @NotNull E valueOf(final @NotNull Class<E> enumClass,
+    protected static <E extends EnumObject> @NotNull E valueOf(final @NotNull Class<E> enumClass,
                                                             final @NotNull String name) {
         for (E e : values(enumClass))
             if (e.name().equals(name))
@@ -88,7 +88,7 @@ public abstract class EnumObject {
      * @return the values
      */
     @SuppressWarnings("unchecked")
-    public static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
+    protected static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
         Refl<?> refl = new Refl<>(enumClass);
         return (E[]) refl.getStaticFields().stream()
                 .map(f -> refl.getFieldObject(f))
