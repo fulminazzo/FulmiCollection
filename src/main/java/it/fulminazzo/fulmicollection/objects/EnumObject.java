@@ -39,6 +39,7 @@ public abstract class EnumObject {
     public @NotNull String name() {
         Refl<?> refl = new Refl<>(getClass());
         return refl.getStaticFields().stream()
+                .filter(f -> getClass().isAssignableFrom(f.getType()))
                 .filter(f -> equals(refl.getFieldObject(f)))
                 .map(Field::getName)
                 .findFirst().orElseThrow(() -> new IllegalStateException("Could not find any field matching: " + this));
@@ -88,6 +89,7 @@ public abstract class EnumObject {
     protected static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
         Refl<?> refl = new Refl<>(enumClass);
         return (E[]) refl.getStaticFields().stream()
+                .filter(f -> enumClass.isAssignableFrom(f.getType()))
                 .map(refl::getFieldObject)
                 .map(enumClass::cast)
                 .toArray();
