@@ -71,7 +71,7 @@ public abstract class EnumObject {
      * @return the value
      */
     protected static <E extends EnumObject> @NotNull E valueOf(final @NotNull Class<E> enumClass,
-                                                            final @NotNull String name) {
+                                                               final @NotNull String name) {
         for (E e : values(enumClass))
             if (e.name().equals(name))
                 return e;
