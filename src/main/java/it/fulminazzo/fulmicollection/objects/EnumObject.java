@@ -88,8 +88,8 @@ public abstract class EnumObject {
     protected static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
         Refl<?> refl = new Refl<>(enumClass);
         return (E[]) refl.getStaticFields().stream()
-                .map(f -> refl.getFieldObject(f))
-                .map(o -> enumClass.cast(o))
+                .map(refl::getFieldObject)
+                .map(enumClass::cast)
                 .toArray();
     }
 
