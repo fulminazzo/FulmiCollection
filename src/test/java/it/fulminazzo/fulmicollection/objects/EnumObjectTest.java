@@ -56,6 +56,18 @@ class EnumObjectTest {
         assertNotEquals(MockEnum.SECOND.hashCode(), MockEnum.THIRD.hashCode());
     }
 
+    private static Object[] getNotEqualsObjects() {
+        return new Object[]{
+                null, "Hello", new EnumObject() {}, MockEnum.SECOND
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("getNotEqualsObjects")
+    void testNotEqual(Object object) {
+        assertNotEquals(MockEnum.FIRST, object);
+    }
+
     static class MockEnum extends EnumObject {
         public static final MockEnum FIRST = new MockEnum();
         public static final MockEnum SECOND = new MockEnum();
