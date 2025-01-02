@@ -26,6 +26,18 @@ class EnumObjectTest {
         assertEquals(ordinal, mockEnum.ordinal());
     }
 
+    private static Object[][] nameValues() {
+        String[] names = new String[]{"FIRST", "SECOND", "THIRD"};
+        AtomicInteger i = new AtomicInteger();
+        return composedValues(e -> new Object[]{e, names[i.getAndIncrement()]});
+    }
+
+    @ParameterizedTest
+    @MethodSource("nameValues")
+    void testName(MockEnum mockEnum, String name) {
+        assertEquals(name, mockEnum.name());
+    }
+
     static class MockEnum extends EnumObject {
         public static final MockEnum FIRST = new MockEnum();
         public static final MockEnum SECOND = new MockEnum();
