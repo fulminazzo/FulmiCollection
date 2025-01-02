@@ -63,6 +63,24 @@ public abstract class EnumObject {
     }
 
     /**
+     * Gets the most appropriate {@link EnumObject} value from the given name.
+     * If none was found, a {@link IllegalArgumentException} will be thrown.
+     *
+     * @param <E>       the type of the class
+     * @param enumClass the enum class
+     * @param name      the name
+     * @return the value
+     */
+    public static <E extends EnumObject> @NotNull E valueOf(final @NotNull Class<E> enumClass,
+                                                            final @NotNull String name) {
+        for (E e : values(enumClass))
+            if (e.name().equals(name))
+                return e;
+        throw new IllegalArgumentException(String.format("No enum constant %s.%s",
+                enumClass.getCanonicalName(), name));
+    }
+
+    /**
      * Gets all the {@link EnumObject} values of the specified class.
      *
      * @param <E>       the type of the class
