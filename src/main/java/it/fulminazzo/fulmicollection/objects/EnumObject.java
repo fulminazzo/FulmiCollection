@@ -22,18 +22,18 @@ public abstract class EnumObject {
     }
 
     /**
-     * Ordinal int.
+     * Gets the number associated with the current enum object.
      *
-     * @return the int
+     * @return the number
      */
     public int ordinal() {
         return this.ordinal;
     }
 
     /**
-     * Name string.
+     * Gets the name of the current enum object.
      *
-     * @return the string
+     * @return the name
      */
     public abstract @NotNull String name();
 
