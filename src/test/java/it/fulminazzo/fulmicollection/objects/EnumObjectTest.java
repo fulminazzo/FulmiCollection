@@ -1,5 +1,6 @@
 package it.fulminazzo.fulmicollection.objects;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -8,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 class EnumObjectTest {
 
@@ -42,6 +44,11 @@ class EnumObjectTest {
     @MethodSource("nameValues")
     void testValueOf(MockEnum mockEnum, String name) {
         assertEquals(mockEnum, MockEnum.valueOf(name));
+    }
+
+    @Test
+    void testInvalidValueOf() {
+        assertThrowsExactly(IllegalArgumentException.class, () -> MockEnum.valueOf("INVALID"));
     }
 
     static class MockEnum extends EnumObject {
