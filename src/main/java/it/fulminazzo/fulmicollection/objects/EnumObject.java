@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Represents an abstract object that should behave as an {@link Enum}.
@@ -39,8 +40,7 @@ public abstract class EnumObject {
      */
     public @NotNull String name() {
         Refl<?> refl = new Refl<>(getClass());
-        return refl.getStaticFields().stream()
-                .filter(f -> getClass().isAssignableFrom(f.getType()))
+        return getFieldsStream(getClass())
                 .filter(f -> equals(refl.getFieldObject(f)))
                 .map(Field::getName)
                 .findFirst().orElseThrow(() -> new IllegalStateException("Could not find any field matching: " + this));
@@ -89,11 +89,15 @@ public abstract class EnumObject {
     @SuppressWarnings("unchecked")
     protected static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
         Refl<?> refl = new Refl<>(enumClass);
-        return refl.getStaticFields().stream()
-                .filter(f -> enumClass.isAssignableFrom(f.getType()))
+        return getFieldsStream(enumClass)
                 .map(refl::getFieldObject)
                 .map(enumClass::cast)
                 .toArray(a -> (E[]) Array.newInstance(enumClass, a));
+    }
+
+    private static <E extends EnumObject> @NotNull Stream<Field> getFieldsStream(@NotNull Class<E> enumClass) {
+        return new Refl<>(enumClass).getStaticFields().stream()
+                .filter(f -> enumClass.isAssignableFrom(f.getType()) || f.getType().isAssignableFrom(enumClass));
     }
 
 }
