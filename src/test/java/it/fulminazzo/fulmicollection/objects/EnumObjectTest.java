@@ -8,8 +8,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EnumObjectTest {
 
@@ -49,6 +48,12 @@ class EnumObjectTest {
     @Test
     void testInvalidValueOf() {
         assertThrowsExactly(IllegalArgumentException.class, () -> MockEnum.valueOf("INVALID"));
+    }
+
+    @Test
+    void testHashCode() {
+        assertNotEquals(MockEnum.FIRST.hashCode(), MockEnum.SECOND.hashCode());
+        assertNotEquals(MockEnum.SECOND.hashCode(), MockEnum.THIRD.hashCode());
     }
 
     static class MockEnum extends EnumObject {
