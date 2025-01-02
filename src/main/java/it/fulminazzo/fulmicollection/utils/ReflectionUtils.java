@@ -509,10 +509,19 @@ public class ReflectionUtils {
      * @return the boolean
      */
     public static boolean isPrimitiveOrWrapper(@Nullable Class<?> clazz) {
+        return isPrimitive(clazz) || isWrapper(clazz);
+    }
+
+    /**
+     * Is wrapper boolean.
+     *
+     * @param clazz the clazz
+     * @return the boolean
+     */
+    public static boolean isWrapper(@Nullable Class<?> clazz) {
         if (clazz == null) return false;
         for (Class<?> c : WRAPPER_CLASSES) if (clazz.equals(c)) return true;
-        if (clazz.equals(String.class)) return true;
-        return isPrimitive(clazz);
+        return clazz.equals(String.class);
     }
 
     /**
