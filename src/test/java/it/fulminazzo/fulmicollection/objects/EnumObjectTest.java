@@ -38,6 +38,12 @@ class EnumObjectTest {
         assertEquals(name, mockEnum.name());
     }
 
+    @ParameterizedTest
+    @MethodSource("nameValues")
+    void testValueOf(MockEnum mockEnum, String name) {
+        assertEquals(mockEnum, MockEnum.valueOf(name));
+    }
+
     static class MockEnum extends EnumObject {
         public static final MockEnum FIRST = new MockEnum();
         public static final MockEnum SECOND = new MockEnum();
