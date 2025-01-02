@@ -16,9 +16,6 @@ public abstract class EnumObject {
     private static final Map<Class<? extends EnumObject>, Integer> ORDINALS = new HashMap<>();
     private final int ordinal;
 
-    /**
-     * Instantiates a new Enum object.
-     */
     protected EnumObject() {
         int previous = ORDINALS.getOrDefault(getClass(), -1);
         this.ordinal = ++previous;
