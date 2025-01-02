@@ -16,6 +16,9 @@ public abstract class EnumObject {
     private static final Map<Class<? extends EnumObject>, Integer> ORDINALS = new HashMap<>();
     private final int ordinal;
 
+    /**
+     * Instantiates a new Enum object.
+     */
     public EnumObject() {
         int previous = ORDINALS.getOrDefault(getClass(), -1);
         this.ordinal = ++previous;
@@ -57,6 +60,22 @@ public abstract class EnumObject {
     @Override
     public String toString() {
         return name();
+    }
+
+    /**
+     * Gets all the {@link EnumObject} values of the specified class.
+     *
+     * @param <E>       the type of the class
+     * @param enumClass the enum class
+     * @return the values
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
+        Refl<?> refl = new Refl<>(enumClass);
+        return (E[]) refl.getStaticFields().stream()
+                .map(f -> refl.getFieldObject(f))
+                .map(o -> enumClass.cast(o))
+                .toArray();
     }
 
 }
