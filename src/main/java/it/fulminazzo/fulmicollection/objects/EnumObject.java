@@ -2,6 +2,7 @@ package it.fulminazzo.fulmicollection.objects;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,13 @@ public abstract class EnumObject {
      *
      * @return the name
      */
-    public abstract @NotNull String name();
+    public @NotNull String name() {
+        Refl<?> refl = new Refl<>(getClass());
+        return refl.getStaticFields().stream()
+                .filter(f -> equals(refl.getFieldObject(f)))
+                .map(Field::getName)
+                .findFirst().orElseThrow(() -> new IllegalStateException("Could not find any field matching: " + this));
+    }
 
     @Override
     public int hashCode() {
