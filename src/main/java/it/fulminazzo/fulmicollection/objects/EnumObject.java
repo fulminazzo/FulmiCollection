@@ -2,6 +2,7 @@ package it.fulminazzo.fulmicollection.objects;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,11 +89,11 @@ public abstract class EnumObject {
     @SuppressWarnings("unchecked")
     protected static <E extends EnumObject> E @NotNull [] values(final @NotNull Class<E> enumClass) {
         Refl<?> refl = new Refl<>(enumClass);
-        return (E[]) refl.getStaticFields().stream()
+        return refl.getStaticFields().stream()
                 .filter(f -> enumClass.isAssignableFrom(f.getType()))
                 .map(refl::getFieldObject)
                 .map(enumClass::cast)
-                .toArray();
+                .toArray(a -> (E[]) Array.newInstance(enumClass, a));
     }
 
 }
