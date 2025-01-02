@@ -2,6 +2,9 @@ package it.fulminazzo.fulmicollection.objects;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Represents an abstract object that should behave as an {@link Enum}.
  * This means that it will have all the enum main methods:
@@ -9,9 +12,29 @@ import org.jetbrains.annotations.NotNull;
  * for <code>valueOf</code> and <code>values</code>.
  */
 public abstract class EnumObject {
+    private static final Map<Class<? extends EnumObject>, Integer> ORDINALS = new HashMap<>();
+    private final int ordinal;
 
-    public abstract int ordinal();
+    public EnumObject() {
+        int previous = ORDINALS.getOrDefault(getClass(), -1);
+        this.ordinal = ++previous;
+        ORDINALS.put(getClass(), previous);
+    }
 
+    /**
+     * Ordinal int.
+     *
+     * @return the int
+     */
+    public int ordinal() {
+        return this.ordinal;
+    }
+
+    /**
+     * Name string.
+     *
+     * @return the string
+     */
     public abstract @NotNull String name();
 
     @Override
