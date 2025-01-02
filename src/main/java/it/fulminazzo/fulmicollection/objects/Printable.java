@@ -77,7 +77,7 @@ public abstract class Printable {
      * @param headStart the start string
      * @return the string containing the information
      */
-    public static @Nullable String printObject(@Nullable Object object, @Nullable String headStart) {
+    public static String printObject(@Nullable Object object, @Nullable String headStart) {
         if (object == null) return null;
         final String finalHeadStart = headStart == null ? "" : headStart;
         StringBuilder result = new StringBuilder(String.format("%s {\n", object.getClass().getSimpleName()));

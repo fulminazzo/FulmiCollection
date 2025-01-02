@@ -84,8 +84,7 @@ public class JarUtils {
      * @param resourceName the resource name
      * @return the resource
      */
-    @Nullable
-    public static InputStream getResource(@NotNull String resourceName) {
+    public static @Nullable InputStream getResource(@NotNull String resourceName) {
         if (resourceName.startsWith("/")) resourceName = resourceName.substring(1);
         InputStream resource = JarUtils.class.getResourceAsStream(resourceName);
         if (resource == null) resource = JarUtils.class.getResourceAsStream("/" + resourceName);
@@ -99,7 +98,6 @@ public class JarUtils {
      * @param path the path
      * @return an InputStream with the file contents (if found)
      */
-    @Nullable
     public static InputStream getJarFile(@NotNull File file, @NotNull String path) {
         JarFile jarFile = getJar(file);
         if (jarFile == null) return null;
@@ -113,7 +111,6 @@ public class JarUtils {
      * @param path the path
      * @return an InputStream with the file contents (if found)
      */
-    @Nullable
     public static InputStream getJarFile(@NotNull JarFile jar, @NotNull String path) {
         try {
             ZipEntry jarEntry = jar.getEntry(path);
@@ -129,7 +126,6 @@ public class JarUtils {
      * @param jarClass the Class
      * @return the corresponding JarFile, if present
      */
-    @Nullable
     public static JarFile getJarFile(@NotNull Class<?> jarClass) {
         try {
             return getJar(jarClass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
@@ -144,7 +140,6 @@ public class JarUtils {
      * @param jarPath the String path
      * @return the corresponding JarFile, if present
      */
-    @Nullable
     public static JarFile getJar(@NotNull String jarPath) {
         return getJar(new File(jarPath));
     }
@@ -155,7 +150,6 @@ public class JarUtils {
      * @param jarFile the File
      * @return the corresponding JarFile, if present
      */
-    @Nullable
     public static JarFile getJar(@NotNull File jarFile) {
         try {
             if (jarFile.isFile()) return new JarFile(jarFile);

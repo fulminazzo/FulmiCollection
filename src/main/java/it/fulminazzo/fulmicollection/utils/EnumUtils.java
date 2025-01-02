@@ -21,7 +21,6 @@ public class EnumUtils {
      * @param name   the name of the enum
      * @return the enum
      */
-    @Nullable
     public static <E extends Enum<E>> E valueOf(@NotNull Class<? extends E> eClass, @NotNull String name) {
         for (E e : eClass.getEnumConstants())
             if (e.name().equalsIgnoreCase(name)) return e;

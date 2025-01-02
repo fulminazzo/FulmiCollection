@@ -27,7 +27,7 @@ public class ThreadUtils {
      * @param onInterrupt  the action to run in case of an {@link InterruptedException}
      */
     public static void sleepAndThen(long milliseconds, final @Nullable Runnable action,
-                                       final @Nullable Runnable onInterrupt) {
+                                    final @Nullable Runnable onInterrupt) {
         new Thread(() -> {
             try {
                 Thread.sleep(milliseconds);

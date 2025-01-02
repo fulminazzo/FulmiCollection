@@ -249,7 +249,7 @@ public class Refl<T> {
      * @param fieldType the field type
      * @return the field object nameless
      */
-    public <O> @Nullable O getFieldObjectNameless(final @NotNull String fieldType) {
+    public <O> O getFieldObjectNameless(final @NotNull String fieldType) {
         return getFieldObject(getFieldNameless(fieldType));
     }
 
@@ -261,7 +261,7 @@ public class Refl<T> {
      * @param fieldType the field type
      * @return the field object
      */
-    public <O> @Nullable O getFieldObject(final @NotNull Class<?> fieldType) {
+    public <O> O getFieldObject(final @NotNull Class<?> fieldType) {
         return getFieldObject(getField(fieldType));
     }
 
@@ -273,7 +273,7 @@ public class Refl<T> {
      * @param name the name
      * @return the field object
      */
-    public <O> @Nullable O getFieldObject(final @NotNull String name) {
+    public <O> O getFieldObject(final @NotNull String name) {
         return getFieldObject(getField(name));
     }
 
@@ -285,7 +285,7 @@ public class Refl<T> {
      * @param predicate the predicate
      * @return the field object
      */
-    public <O> @Nullable O getFieldObject(final @NotNull Predicate<Field> predicate) {
+    public <O> O getFieldObject(final @NotNull Predicate<Field> predicate) {
         return getFieldObject(getField(predicate));
     }
 
@@ -297,7 +297,7 @@ public class Refl<T> {
      * @param field the field
      * @return the field object
      */
-    public <O> @Nullable O getFieldObject(@NotNull Field field) {
+    public <O> O getFieldObject(@NotNull Field field) {
         Field finalField = field;
         field = getField(() -> finalField);
         return (O) ReflectionUtils.get(field, this.object).orElseThrow(ReflectionUtils.inaccessibleObject(field));
@@ -512,7 +512,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final Object @Nullable ... parameters) {
+    public <O> O invokeMethod(final Object @Nullable ... parameters) {
         return invokeMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
@@ -524,7 +524,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+    public <O> O invokeMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         return invokeMethod(null, null, paramTypes, parameters);
     }
 
@@ -536,7 +536,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+    public <O> O invokeMethod(final @Nullable String name, final Object @Nullable ... parameters) {
         return invokeMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
@@ -549,7 +549,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+    public <O> O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
                                         final Object @Nullable ... parameters) {
         return invokeMethod(null, name, paramTypes, parameters);
     }
@@ -562,7 +562,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+    public <O> O invokeMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
         return invokeMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
@@ -575,7 +575,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+    public <O> O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
                                         final Object @Nullable ... parameters) {
         return invokeMethod(returnType, null, paramTypes, parameters);
     }
@@ -589,7 +589,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+    public <O> O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                         final Object @Nullable ... parameters) {
         return invokeMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
@@ -604,7 +604,7 @@ public class Refl<T> {
      * @param parameters the parameters
      * @return the result
      */
-    public <O> @Nullable O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+    public <O> O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                         final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         try {
             final Method method = getMethod(returnType, name, paramTypes);

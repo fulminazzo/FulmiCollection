@@ -48,38 +48,30 @@ public class ReflectionUtils {
     }
 
     private static <T> @Nullable Class<T> getInnerClass(@NotNull String classPath) {
-        Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
         StringBuilder mainClass = new StringBuilder();
         String realClass = tmp[tmp.length - 1];
         for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
         if (mainClass.toString().endsWith("."))
             mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
-//        try {
-            Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
-            clazz = (Class<T>) Arrays.stream(primClazz.getDeclaredClasses())
-                    .distinct()
-                    .filter(c -> c.getSimpleName().equals(realClass))
-                    .findAny().orElse(null);
-//        } catch (ClassNotFoundException ignored) {}
-        return clazz;
+        Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
+        return (Class<T>) Arrays.stream(primClazz.getDeclaredClasses())
+                .distinct()
+                .filter(c -> c.getSimpleName().equals(realClass))
+                .findAny().orElse(null);
     }
 
     private static <T> @Nullable Class<T> getInnerInterface(@NotNull String classPath) {
-        Class<T> clazz = null;
         String[] tmp = classPath.split("\\.");
         StringBuilder mainClass = new StringBuilder();
         String realClass = tmp[tmp.length - 1];
         for (int i = 0; i < tmp.length - 1; i++) mainClass.append(tmp[i]).append(".");
         if (mainClass.toString().endsWith("."))
             mainClass = new StringBuilder(mainClass.substring(0, mainClass.length() - 1));
-//        try {
-            Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
-            clazz = (Class<T>) Arrays.stream(primClazz.getInterfaces())
-                    .filter(c -> c.getSimpleName().equals(realClass))
-                    .findAny().orElse(null);
-//        } catch (ClassNotFoundException ignored) {}
-        return clazz;
+        Class<?> primClazz = ReflectionUtils.getClass(mainClass.toString());
+        return (Class<T>) Arrays.stream(primClazz.getInterfaces())
+                .filter(c -> c.getSimpleName().equals(realClass))
+                .findAny().orElse(null);
     }
 
     /**
@@ -352,7 +344,7 @@ public class ReflectionUtils {
         throw new IllegalArgumentException(CONSTRUCTOR_NOT_FOUND.replace("%parameters%", classesToString(paramTypes)));
     }
 
-    private @Nullable static <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, Class<?> @Nullable [] paramTypes) {
+    private static @Nullable <T> Constructor<T> getConstructorFromClass(@NotNull Class<?> c, Class<?> @Nullable [] paramTypes) {
         for (Constructor<?> constructor : c.getDeclaredConstructors()) {
             if (paramTypes == null)
                 if (constructor.getParameterCount() == 0) return (Constructor<T>) constructor;
@@ -442,7 +434,7 @@ public class ReflectionUtils {
         throw new IllegalArgumentException(String.format("Could not find method from class '%s' and predicate", clazz.getCanonicalName()));
     }
 
-    private @Nullable static Method getMethodFromClass(@NotNull Class<?> c, @NotNull Predicate<Method> predicate) {
+    private static @Nullable Method getMethodFromClass(@NotNull Class<?> c, @NotNull Predicate<Method> predicate) {
         for (Method method : c.getDeclaredMethods())
             if (predicate.test(method)) return method;
         return null;
@@ -548,7 +540,7 @@ public class ReflectionUtils {
      * @param clazz the class
      * @return the primitive class
      */
-    public static @Nullable Class<?> getPrimitiveClass(@Nullable Class<?> clazz) {
+    public static Class<?> getPrimitiveClass(@Nullable Class<?> clazz) {
         if (clazz == null) return null;
         else if (clazz.equals(Boolean.class))
             return boolean.class;
@@ -575,7 +567,7 @@ public class ReflectionUtils {
      * @param clazz the clazz
      * @return the wrapper class
      */
-    public static @Nullable Class<?> getWrapperClass(@Nullable Class<?> clazz) {
+    public static Class<?> getWrapperClass(@Nullable Class<?> clazz) {
         if (clazz == null) return null;
         else if (clazz.equals(boolean.class))
             return Boolean.class;
@@ -663,4 +655,5 @@ public class ReflectionUtils {
     public static @NotNull String classesToString(@NotNull List<Class<?>> classes) {
         return classes.stream().map(c -> c == null ? "null" : c.getCanonicalName()).collect(Collectors.joining(", "));
     }
+
 }
