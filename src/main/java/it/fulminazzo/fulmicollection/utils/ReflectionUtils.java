@@ -379,7 +379,7 @@ public class ReflectionUtils {
      * @return the method
      */
     public static @NotNull Method getMethod(@NotNull Class<?> clazz, @Nullable Class<?> returnType, @Nullable String name,
-                                             Class<?> @Nullable ... paramTypes) {
+                                            Class<?> @Nullable ... paramTypes) {
         try {
             return getMethod(clazz, m -> {
                 if (name != null && !m.getName().equalsIgnoreCase(name)) return false;
@@ -398,6 +398,12 @@ public class ReflectionUtils {
 
     private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes, @NotNull Executable executable) {
         Class<?>[] parameterTypes = executable.getParameterTypes();
+        return validateParameters(paramTypes, parameterTypes, executable.isVarArgs());
+    }
+
+    private static boolean validateParameters(@Nullable Class<?> @NotNull [] paramTypes,
+                                              @NotNull Class<?> @NotNull [] parameterTypes,
+                                              boolean isVarArgs) {
         int length = parameterTypes.length;
         if (length > paramTypes.length) return false;
         for (int i = 0; i < length; i++) {
@@ -405,7 +411,7 @@ public class ReflectionUtils {
             if (expected == null) continue;
             final Class<?> actual = getWrapperClass(parameterTypes[i]);
             if (actual == null) throw new IllegalStateException("Unreachable code");
-            if (actual.isArray() && executable.isVarArgs())
+            if (actual.isArray() && isVarArgs)
                 if (actual.getComponentType().isAssignableFrom(expected)) return true;
             if (expected.isArray() && (!actual.isArray() || !expected.getComponentType().isAssignableFrom(actual.getComponentType())))
                 return false;
@@ -429,7 +435,8 @@ public class ReflectionUtils {
             for (Class<?> i : c.getInterfaces())
                 try {
                     return getMethod(i, predicate);
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException ignored) {
+                }
         }
         throw new IllegalArgumentException(String.format("Could not find method from class '%s' and predicate", clazz.getCanonicalName()));
     }
@@ -480,7 +487,7 @@ public class ReflectionUtils {
      */
     public static @NotNull List<Method> getMethods(@NotNull Class<?> clazz) {
         LinkedList<Method> methods = new LinkedList<>();
-        for (Class<?> c = clazz; c != null; c = c.getSuperclass()){
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
             addDeclaredMethods(c, methods);
             for (Class<?> i : c.getInterfaces())
                 addDeclaredMethods(i, methods);
@@ -642,7 +649,7 @@ public class ReflectionUtils {
      * @param classes the classes
      * @return the string
      */
-    public static @NotNull String classesToString(Class<?> @Nullable... classes) {
+    public static @NotNull String classesToString(Class<?> @Nullable ... classes) {
         return classesToString(classes == null ? new ArrayList<>() : Arrays.asList(classes));
     }
 
