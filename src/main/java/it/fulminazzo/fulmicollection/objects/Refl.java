@@ -863,7 +863,7 @@ public class Refl<T> {
      * @return the object class
      */
     public Class<T> getObjectClass() {
-        return (Class<T>) (this.object instanceof Class ? this.object : this.object.getClass());
+        return (Class<T>) this.object.getClass();
     }
 
     /**
