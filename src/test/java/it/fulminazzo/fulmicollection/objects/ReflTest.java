@@ -21,8 +21,8 @@ class ReflTest extends AbstractReflTest {
 
     @Test
     void testClassSimpleName() {
-        Refl<?> refl = new Refl<>(String.class);
-        String actual = refl.invokeMethod("getSimpleName");
+        Refl<?> refl = new Refl<>("Hello, world!");
+        String actual = refl.invokeMethodRefl("getClass").invokeMethod("getSimpleName");
         assertEquals("String", actual);
     }
 
