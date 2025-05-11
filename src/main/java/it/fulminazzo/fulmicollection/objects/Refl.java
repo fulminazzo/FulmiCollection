@@ -970,6 +970,16 @@ public class Refl<T> {
     }
 
     /**
+     * If the current object is a class, it is returned.
+     * Otherwise, it is returned the object class.
+     *
+     * @return the object class
+     */
+    public Class<?> getStaticClass() {
+        return (Class<T>) (this.object instanceof Class ? this.object : this.object.getClass());
+    }
+
+    /**
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link IllegalStateException is thrown}.
      *
