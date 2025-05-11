@@ -109,7 +109,7 @@ public class Refl<T> {
         return ifObjectIsPresent(o -> {
             final Class<V> arrayClass;
             if (o instanceof Class) arrayClass = (Class<V>) o;
-            else arrayClass = (Class<V>) getObjectClass();
+            else arrayClass = (Class<V>) getStaticClass();
             return (V[]) Array.newInstance(arrayClass, size);
         });
     }
@@ -196,7 +196,7 @@ public class Refl<T> {
      * @return the field nameless
      */
     public @NotNull Field getFieldNameless(final @NotNull String fieldType) {
-        return getField(() -> ReflectionUtils.getFieldNameless(getObjectClass(), fieldType));
+        return getField(() -> ReflectionUtils.getFieldNameless(getStaticClass(), fieldType));
     }
 
     /**
@@ -207,7 +207,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Class<?> fieldType) {
-        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldType));
+        return getField(() -> ReflectionUtils.getField(getStaticClass(), fieldType));
     }
 
     /**
@@ -218,7 +218,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull String fieldName) {
-        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldName));
+        return getField(() -> ReflectionUtils.getField(getStaticClass(), fieldName));
     }
 
     /**
@@ -229,7 +229,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Predicate<Field> predicate) {
-        return getField(() -> ReflectionUtils.getField(getObjectClass(), predicate));
+        return getField(() -> ReflectionUtils.getField(getStaticClass(), predicate));
     }
 
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
@@ -404,7 +404,7 @@ public class Refl<T> {
      */
     public @NotNull List<Field> getFields(final @NotNull Predicate<Field> predicate) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getFields(getObjectClass(), predicate));
+            return ifObjectIsPresent(o -> ReflectionUtils.getFields(getStaticClass(), predicate));
         } catch (IllegalStateException e) {
             throw new IllegalStateException("Could not get fields: wrapped object is null");
         }
