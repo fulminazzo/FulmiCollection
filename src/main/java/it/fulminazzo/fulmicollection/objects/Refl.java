@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * A class that acts as a wrapper for an object.
  * It provides various utilities to work with reflections.
  *
- * @param <T> the object
+ * @param <T>  the object
  */
 @SuppressWarnings("unchecked")
 @Getter
@@ -28,7 +28,7 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param className  the class name
+     * @param className the class name
      * @param parameters the parameters
      */
     public Refl(final @NotNull String className, Object @Nullable ... parameters) {
@@ -38,9 +38,9 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param className      the class name
+     * @param className the class name
      * @param parameterTypes the parameter types
-     * @param parameters     the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull String className, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         this(ReflectionUtils.getClass(className), parameterTypes, parameters);
@@ -50,7 +50,7 @@ public class Refl<T> {
      * Instantiates a new Refl.
      *
      * @param objectClass the object class
-     * @param parameters  the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull Class<T> objectClass, Object @Nullable ... parameters) {
         this(objectClass, ReflectionUtils.objectsToClasses(parameters), parameters);
@@ -59,9 +59,9 @@ public class Refl<T> {
     /**
      * Instantiates a new Refl.
      *
-     * @param objectClass    the object class
+     * @param objectClass the object class
      * @param parameterTypes the parameter types
-     * @param parameters     the parameters
+     * @param parameters the parameters
      */
     public Refl(final @NotNull Class<T> objectClass, final Class<?> @Nullable [] parameterTypes, Object @Nullable ... parameters) {
         try {
@@ -86,11 +86,11 @@ public class Refl<T> {
      * Creates an array with the class of the given object.
      * If the object is a class, it will be used to create the array.
      *
-     * @param <V>      the type parameter
+     * @param <V>       the type parameter
      * @param elements the elements
      * @return the array
      */
-    public <V> @NotNull V[] toArray(final V @Nullable ... elements) {
+    public <V> @NotNull V[] toArray(final V @Nullable... elements) {
         V[] v = toArray(elements == null ? 0 : elements.length);
         if (elements != null)
             System.arraycopy(elements, 0, v, 0, elements.length);
@@ -101,7 +101,7 @@ public class Refl<T> {
      * Creates an array with the class of the given object.
      * If the object is a class, it will be used to create the array.
      *
-     * @param <V>  the type parameter
+     * @param <V>   the type parameter
      * @param size the size
      * @return the array
      */
@@ -109,7 +109,7 @@ public class Refl<T> {
         return ifObjectIsPresent(o -> {
             final Class<V> arrayClass;
             if (o instanceof Class) arrayClass = (Class<V>) o;
-            else arrayClass = (Class<V>) getStaticClass();
+            else arrayClass = (Class<V>) getObjectClass();
             return (V[]) Array.newInstance(arrayClass, size);
         });
     }
@@ -119,9 +119,9 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
-     * @param value     the value
+     * @param value the value
      * @return the field object nameless
      */
     public <O> Refl<T> setFieldObjectNameless(final @NotNull String fieldType, final @Nullable O value) {
@@ -132,9 +132,9 @@ public class Refl<T> {
      * Gets the field from its type and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
-     * @param value     the value
+     * @param value the value
      * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Class<?> fieldType, final @Nullable O value) {
@@ -145,8 +145,8 @@ public class Refl<T> {
      * Gets the field from its name and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
-     * @param name  the name
+     * @param <O>    the type parameter
+     * @param name the name
      * @param value the value
      * @return the field object
      */
@@ -158,9 +158,9 @@ public class Refl<T> {
      * Gets the field from the predicate and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
-     * @param value     the value
+     * @param value the value
      * @return the field object
      */
     public <O> Refl<T> setFieldObject(final @NotNull Predicate<Field> predicate, final @Nullable O value) {
@@ -171,7 +171,7 @@ public class Refl<T> {
      * Gets the field from the given field and sets its value to the specified one.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @param value the value
      * @return the field object
@@ -196,7 +196,7 @@ public class Refl<T> {
      * @return the field nameless
      */
     public @NotNull Field getFieldNameless(final @NotNull String fieldType) {
-        return getField(() -> ReflectionUtils.getFieldNameless(getStaticClass(), fieldType));
+        return getField(() -> ReflectionUtils.getFieldNameless(getObjectClass(), fieldType));
     }
 
     /**
@@ -207,7 +207,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Class<?> fieldType) {
-        return getField(() -> ReflectionUtils.getField(getStaticClass(), fieldType));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldType));
     }
 
     /**
@@ -218,7 +218,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull String fieldName) {
-        return getField(() -> ReflectionUtils.getField(getStaticClass(), fieldName));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), fieldName));
     }
 
     /**
@@ -229,7 +229,7 @@ public class Refl<T> {
      * @return the field
      */
     public @NotNull Field getField(final @NotNull Predicate<Field> predicate) {
-        return getField(() -> ReflectionUtils.getField(getStaticClass(), predicate));
+        return getField(() -> ReflectionUtils.getField(getObjectClass(), predicate));
     }
 
     private @NotNull Field getField(final @NotNull Supplier<Field> fieldSupplier) {
@@ -245,7 +245,7 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field object nameless
      */
@@ -257,7 +257,7 @@ public class Refl<T> {
      * Gets the field content from its type.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field object
      */
@@ -269,7 +269,7 @@ public class Refl<T> {
      * Gets the field content from its name.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>  the type parameter
+     * @param <O>   the type parameter
      * @param name the name
      * @return the field object
      */
@@ -281,7 +281,7 @@ public class Refl<T> {
      * Gets the field content from the predicate.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
      * @return the field object
      */
@@ -293,7 +293,7 @@ public class Refl<T> {
      * Gets the field content from the given field.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @return the field object
      */
@@ -309,7 +309,7 @@ public class Refl<T> {
      * Uses {@link ReflectionUtils#getClass(String)}.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field refl nameless
      */
@@ -322,7 +322,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param fieldType the field type
      * @return the field refl
      */
@@ -335,7 +335,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>  the type parameter
+     * @param <O>   the type parameter
      * @param name the name
      * @return the field refl
      */
@@ -348,7 +348,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>       the type parameter
+     * @param <O>        the type parameter
      * @param predicate the predicate
      * @return the field refl
      */
@@ -361,7 +361,7 @@ public class Refl<T> {
      * The contents may be null, but the {@link Refl} will never be.
      * Throws {@link IllegalStateException} if {@link #object} is null.
      *
-     * @param <O>   the type parameter
+     * @param <O>    the type parameter
      * @param field the field
      * @return the field refl
      */
@@ -404,100 +404,10 @@ public class Refl<T> {
      */
     public @NotNull List<Field> getFields(final @NotNull Predicate<Field> predicate) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getFields(getStaticClass(), predicate));
+            return ifObjectIsPresent(o -> ReflectionUtils.getFields(getObjectClass(), predicate));
         } catch (IllegalStateException e) {
             throw new IllegalStateException("Could not get fields: wrapped object is null");
         }
-    }
-
-    /**
-     * Gets static method from its parameters.
-     *
-     * @param parameters the parameters
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final Object @Nullable ... parameters) {
-        return getStaticMethod(null, null, ReflectionUtils.objectsToClasses(parameters));
-    }
-
-    /**
-     * Gets static method from its parameter types.
-     *
-     * @param paramTypes the parameter types
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final Class<?> @Nullable ... paramTypes) {
-        return getStaticMethod(null, null, paramTypes);
-    }
-
-    /**
-     * Gets static method from its name and parameters.
-     *
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable String name, final Object @Nullable ... parameters) {
-        return getStaticMethod(name, ReflectionUtils.objectsToClasses(parameters));
-    }
-
-    /**
-     * Gets static method from its name and parameter types.
-     *
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable String name, final Class<?> @Nullable ... paramTypes) {
-        return getStaticMethod(null, name, paramTypes);
-    }
-
-    /**
-     * Gets static method from its return type and parameters.
-     *
-     * @param returnType the return type
-     * @param parameters the parameters
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
-        return getStaticMethod(returnType, ReflectionUtils.objectsToClasses(parameters));
-    }
-
-    /**
-     * Gets static method from its return type and parameter types.
-     *
-     * @param returnType the return type
-     * @param paramTypes the parameter types
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable ... paramTypes) {
-        return getStaticMethod(returnType, null, paramTypes);
-    }
-
-    /**
-     * Gets static method from its name, return type and parameters.
-     *
-     * @param returnType the return type
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                           final Object @Nullable ... parameters) {
-        return getStaticMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters));
-    }
-
-    /**
-     * Gets static method from its name, return type and parameter types.
-     *
-     * @param returnType the return type
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @return the method
-     */
-    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                           final Class<?> @Nullable ... paramTypes) {
-        return getMethod(returnType, name, true, paramTypes);
     }
 
     /**
@@ -523,7 +433,7 @@ public class Refl<T> {
     /**
      * Gets method from its name and parameters.
      *
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the method
      */
@@ -534,7 +444,7 @@ public class Refl<T> {
     /**
      * Gets method from its name and parameter types.
      *
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @return the method
      */
@@ -568,12 +478,12 @@ public class Refl<T> {
      * Gets method from its name, return type and parameters.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the method
      */
     public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                     final Object @Nullable ... parameters) {
+                                      final Object @Nullable ... parameters) {
         return getMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters));
     }
 
@@ -581,142 +491,28 @@ public class Refl<T> {
      * Gets method from its name, return type and parameter types.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @return the method
      */
     public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                     final Class<?> @Nullable ... paramTypes) {
-        return getMethod(returnType, name, false, paramTypes);
-    }
-
-    /**
-     * Gets method from its name, return type and parameter types.
-     *
-     * @param returnType the return type
-     * @param name       the name
-     * @param isStatic   if the method is static
-     * @param paramTypes the parameter types
-     * @return the method
-     */
-    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                     final boolean isStatic, final Class<?> @Nullable ... paramTypes) {
+                                      final Class<?> @Nullable ... paramTypes) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(isStatic ? getStaticClass() : getObjectClass(), returnType, name, paramTypes));
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
         } catch (IllegalStateException e) {
+            if (this.object instanceof Class)
+                try {
+                    return ifObjectIsPresent(o -> ReflectionUtils.getMethod((Class<?>) this.object, returnType, name, paramTypes));
+                } catch (IllegalStateException ignored) {}
             throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
                     returnType, name, ReflectionUtils.classesToString(paramTypes)));
         }
     }
 
     /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final Object @Nullable ... parameters) {
-        return invokeStaticMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return invokeStaticMethod(null, null, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable String name, final Object @Nullable ... parameters) {
-        return invokeStaticMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                                    final Object @Nullable ... parameters) {
-        return invokeStaticMethod(null, name, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
-        return invokeStaticMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                                    final Object @Nullable ... parameters) {
-        return invokeStaticMethod(returnType, null, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                    final Object @Nullable ... parameters) {
-        return invokeStaticMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                    final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return invokeMethod(returnType, name, true, paramTypes, parameters);
-    }
-
-    /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param parameters the parameters
      * @return the result
      */
@@ -727,7 +523,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -739,8 +535,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -751,21 +547,21 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> O invokeMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(null, name, paramTypes, parameters);
     }
 
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param parameters the parameters
      * @return the result
@@ -777,163 +573,50 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> O invokeMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(returnType, null, paramTypes, parameters);
     }
 
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
     public <O> O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
     /**
      * Invoke the best matching method and return its result.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                              final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return invokeMethod(returnType, name, false, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching method and return its result.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param name       the name
-     * @param isStatic   if the method is static
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> O invokeMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                              final boolean isStatic, final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         try {
-            final Method method = getMethod(returnType, name, isStatic, paramTypes);
+            final Method method = getMethod(returnType, name, paramTypes);
             return (O) ReflectionUtils.setAccessibleOrThrow(method).invoke(this.object, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             ExceptionUtils.throwException(e);
             throw new IllegalStateException("Unreachable code");
         }
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final Object @Nullable ... parameters) {
-        return callStaticMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return callStaticMethod(null, null, paramTypes, parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param name       the name
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable String name, final Object @Nullable ... parameters) {
-        return callStaticMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                                    final Object @Nullable ... parameters) {
-        return callStaticMethod(null, name, paramTypes, parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param returnType the return type
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
-        return callStaticMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param returnType the return type
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                                    final Object @Nullable ... parameters) {
-        return callStaticMethod(returnType, null, paramTypes, parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param returnType the return type
-     * @param name       the name
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                    final Object @Nullable ... parameters) {
-        return callStaticMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Call the best matching static method without returning its result.
-     *
-     * @param returnType the return type
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return this refl
-     */
-    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                                    final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        invokeStaticMethod(returnType, name, paramTypes, parameters);
-        return this;
     }
 
     /**
@@ -960,7 +643,7 @@ public class Refl<T> {
     /**
      * Call the best matching method without returning its result.
      *
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return this refl
      */
@@ -971,13 +654,13 @@ public class Refl<T> {
     /**
      * Call the best matching method without returning its result.
      *
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return this refl
      */
     public Refl<T> callMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return callMethod(null, name, paramTypes, parameters);
     }
 
@@ -1001,7 +684,7 @@ public class Refl<T> {
      * @return this refl
      */
     public Refl<T> callMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return callMethod(returnType, null, paramTypes, parameters);
     }
 
@@ -1009,12 +692,12 @@ public class Refl<T> {
      * Call the best matching method without returning its result.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return this refl
      */
     public Refl<T> callMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                              final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return callMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
@@ -1022,125 +705,21 @@ public class Refl<T> {
      * Call the best matching method without returning its result.
      *
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return this refl
      */
     public Refl<T> callMethod(final @Nullable Class<?> returnType, final @Nullable String name,
-                              final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         invokeMethod(returnType, name, paramTypes, parameters);
         return this;
     }
 
     /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(null, null, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable String name, final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                                                        final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(null, name, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                                                        final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(returnType, null, paramTypes, parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param name       the name
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
-                                                        final Object @Nullable ... parameters) {
-        return invokeStaticMethodRefl(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
-    }
-
-    /**
-     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
-     *
-     * @param <O>        the type parameter
-     * @param returnType the return type
-     * @param name       the name
-     * @param paramTypes the parameter types
-     * @param parameters the parameters
-     * @return the result
-     */
-    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
-                                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
-        return new Refl<>(invokeStaticMethod(returnType, name, paramTypes, parameters));
-    }
-
-    /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param parameters the parameters
      * @return the result
      */
@@ -1151,7 +730,7 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
@@ -1163,8 +742,8 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
@@ -1175,21 +754,21 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
-     * @param name       the name
+     * @param <O>         the type parameter
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
-                                                  final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethodRefl(null, name, paramTypes, parameters);
     }
 
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param parameters the parameters
      * @return the result
@@ -1201,43 +780,43 @@ public class Refl<T> {
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
-                                                  final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethodRefl(returnType, null, paramTypes, parameters);
     }
 
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param parameters the parameters
      * @return the result
      */
     public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
-                                                  final Object @Nullable ... parameters) {
+                                        final Object @Nullable ... parameters) {
         return invokeMethodRefl(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
     }
 
     /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
-     * @param <O>        the type parameter
+     * @param <O>         the type parameter
      * @param returnType the return type
-     * @param name       the name
+     * @param name the name
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
      */
     public <O> @Nullable Refl<O> invokeMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
-                                                  final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
         return new Refl<>(invokeMethod(returnType, name, paramTypes, parameters));
     }
 
@@ -1288,16 +867,6 @@ public class Refl<T> {
      * @return the object class
      */
     public Class<T> getObjectClass() {
-        return (Class<T>) this.object.getClass();
-    }
-
-    /**
-     * If the current object is a class, it is returned.
-     * Otherwise, it is returned the object class.
-     *
-     * @return the object class
-     */
-    public Class<?> getStaticClass() {
         return (Class<T>) (this.object instanceof Class ? this.object : this.object.getClass());
     }
 
@@ -1305,7 +874,7 @@ public class Refl<T> {
      * If the object is not null, the given function is executed.
      * Otherwise, a {@link IllegalStateException is thrown}.
      *
-     * @param <O>      the object to return
+     * @param <O>       the object to return
      * @param function the function
      * @return the object to return
      */
@@ -1365,7 +934,7 @@ public class Refl<T> {
      *
      * @param simpleNames if true, only the name of the classes will be displayed (not the path)
      * @param printStatic if true, print the static fields
-     * @param recursive   if true, converts the unknown objects to a {@link Refl} and invoke this function.
+     * @param recursive if true, converts the unknown objects to a {@link Refl} and invoke this function.
      * @return the string
      */
     public @NotNull String printFields(boolean simpleNames, boolean printStatic, boolean recursive) {
