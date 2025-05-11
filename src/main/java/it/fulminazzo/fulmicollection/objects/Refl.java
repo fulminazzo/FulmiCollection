@@ -1032,6 +1032,110 @@ public class Refl<T> {
     }
 
     /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(null, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable String name, final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+                                                        final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(null, name, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+                                                        final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(returnType, null, paramTypes, parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
+                                                        final Object @Nullable ... parameters) {
+        return invokeStaticMethodRefl(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Invoke the best matching static method and return its result wrapped in a {@link Refl} object.
+     *
+     * @param <O>        the type parameter
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return the result
+     */
+    public <O> @Nullable Refl<O> invokeStaticMethodRefl(final @Nullable Class<?> returnType, final @Nullable String name,
+                                                        final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return new Refl<>(invokeStaticMethod(returnType, name, paramTypes, parameters));
+    }
+
+    /**
      * Invoke the best matching method and return its result wrapped in a {@link Refl} object.
      *
      * @param <O>        the type parameter
