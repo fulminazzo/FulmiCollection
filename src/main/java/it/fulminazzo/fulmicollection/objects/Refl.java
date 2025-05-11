@@ -411,6 +411,96 @@ public class Refl<T> {
     }
 
     /**
+     * Gets static method from its parameters.
+     *
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final Object @Nullable ... parameters) {
+        return getStaticMethod(null, null, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets static method from its parameter types.
+     *
+     * @param paramTypes the parameter types
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final Class<?> @Nullable ... paramTypes) {
+        return getStaticMethod(null, null, paramTypes);
+    }
+
+    /**
+     * Gets static method from its name and parameters.
+     *
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+        return getStaticMethod(name, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets static method from its name and parameter types.
+     *
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable String name, final Class<?> @Nullable ... paramTypes) {
+        return getStaticMethod(null, name, paramTypes);
+    }
+
+    /**
+     * Gets static method from its return type and parameters.
+     *
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return getStaticMethod(returnType, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets static method from its return type and parameter types.
+     *
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable ... paramTypes) {
+        return getStaticMethod(returnType, null, paramTypes);
+    }
+
+    /**
+     * Gets static method from its name, return type and parameters.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                           final Object @Nullable ... parameters) {
+        return getStaticMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters));
+    }
+
+    /**
+     * Gets static method from its name, return type and parameter types.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @return the method
+     */
+    public @NotNull Method getStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                           final Class<?> @Nullable ... paramTypes) {
+        return getMethod(returnType, name, true, paramTypes);
+    }
+
+    /**
      * Gets method from its parameters.
      *
      * @param parameters the parameters
@@ -497,8 +587,21 @@ public class Refl<T> {
      */
     public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                      final Class<?> @Nullable ... paramTypes) {
+        return getMethod(returnType, name, false, paramTypes);
+    }
+
+    /**
+     * Gets method from its name, return type and parameter types.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @return the method
+     */
+    public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                     final boolean isStatic, final Class<?> @Nullable ... paramTypes) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(getObjectClass(), returnType, name, paramTypes));
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(isStatic ? getStaticClass() : getObjectClass(), returnType, name, paramTypes));
         } catch (IllegalStateException e) {
             throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
                     returnType, name, ReflectionUtils.classesToString(paramTypes)));
