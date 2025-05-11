@@ -498,12 +498,12 @@ public class Refl<T> {
     public @NotNull Method getMethod(final @Nullable Class<?> returnType, final @Nullable String name,
                                       final Class<?> @Nullable ... paramTypes) {
         try {
-            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
-        } catch (IllegalStateException e) {
             if (this.object instanceof Class)
                 try {
                     return ifObjectIsPresent(o -> ReflectionUtils.getMethod((Class<?>) this.object, returnType, name, paramTypes));
-                } catch (IllegalStateException ignored) {}
+                } catch (IllegalArgumentException ignored) {}
+            return ifObjectIsPresent(o -> ReflectionUtils.getMethod(this.object.getClass(), returnType, name, paramTypes));
+        } catch (IllegalStateException e) {
             throw new IllegalStateException(String.format("Could not get method %s %s(%s): wrapped object is null",
                     returnType, name, ReflectionUtils.classesToString(paramTypes)));
         }
