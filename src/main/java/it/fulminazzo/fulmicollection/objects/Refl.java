@@ -838,6 +838,103 @@ public class Refl<T> {
     }
 
     /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final Object @Nullable ... parameters) {
+        return callStaticMethod(null, null, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        return callStaticMethod(null, null, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param name       the name
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable String name, final Object @Nullable ... parameters) {
+        return callStaticMethod(name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable String name, final Class<?> @Nullable [] paramTypes,
+                                    final Object @Nullable ... parameters) {
+        return callStaticMethod(null, name, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param returnType the return type
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final Object @Nullable ... parameters) {
+        return callStaticMethod(returnType, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param returnType the return type
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final Class<?> @Nullable [] paramTypes,
+                                    final Object @Nullable ... parameters) {
+        return callStaticMethod(returnType, null, paramTypes, parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                    final Object @Nullable ... parameters) {
+        return callStaticMethod(returnType, name, ReflectionUtils.objectsToClasses(parameters), parameters);
+    }
+
+    /**
+     * Call the best matching static method without returning its result.
+     *
+     * @param returnType the return type
+     * @param name       the name
+     * @param paramTypes the parameter types
+     * @param parameters the parameters
+     * @return this refl
+     */
+    public Refl<T> callStaticMethod(final @Nullable Class<?> returnType, final @Nullable String name,
+                                    final Class<?> @Nullable [] paramTypes, final Object @Nullable ... parameters) {
+        invokeStaticMethod(returnType, name, paramTypes, parameters);
+        return this;
+    }
+
+    /**
      * Call the best matching method without returning its result.
      *
      * @param parameters the parameters
