@@ -595,6 +595,7 @@ public class Refl<T> {
      *
      * @param returnType the return type
      * @param name       the name
+     * @param isStatic   if the method is static
      * @param paramTypes the parameter types
      * @return the method
      */
@@ -822,6 +823,7 @@ public class Refl<T> {
      * @param <O>        the type parameter
      * @param returnType the return type
      * @param name       the name
+     * @param isStatic   if the method is static
      * @param paramTypes the parameter types
      * @param parameters the parameters
      * @return the result
