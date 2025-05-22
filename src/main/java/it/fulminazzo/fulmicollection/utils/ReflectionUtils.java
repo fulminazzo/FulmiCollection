@@ -337,10 +337,8 @@ public class ReflectionUtils {
      */
     public static <T> @NotNull Constructor<T> getConstructor(@NotNull Class<?> clazz, Class<?> @Nullable ... paramTypes) {
         if (paramTypes == null) paramTypes = new Class<?>[0];
-        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
-            Constructor<T> constructor = getConstructorFromClass(c, paramTypes);
-            if (constructor != null) return constructor;
-        }
+        Constructor<T> constructor = getConstructorFromClass(clazz, paramTypes);
+        if (constructor != null) return constructor;
         throw new IllegalArgumentException(CONSTRUCTOR_NOT_FOUND.replace("%parameters%", classesToString(paramTypes)));
     }
 
