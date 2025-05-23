@@ -8,9 +8,10 @@ package it.fulminazzo.fulmicollection.interfaces.functions;
  * @param <S> the type parameter
  * @param <T> the type parameter
  * @param <Q> the type parameter
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface TetraConsumerException<F, S, T, Q> {
+public interface TetraConsumerException<F, S, T, Q, X extends Throwable> {
 
     /**
      * Accept function.
@@ -19,9 +20,9 @@ public interface TetraConsumerException<F, S, T, Q> {
      * @param second the second argument
      * @param third  the third argument
      * @param fourth the fourth argument
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    void accept(F first, S second, T third, Q fourth) throws Exception;
+    void accept(F first, S second, T third, Q fourth) throws X;
 
     /**
      * Apply this consumer and the after one.
@@ -29,7 +30,7 @@ public interface TetraConsumerException<F, S, T, Q> {
      * @param after the next consumer.
      * @return a consumer combining both this and the after one.
      */
-    default TetraConsumerException<F, S, T, Q> andThen(TetraConsumerException<? super F, ? super S, ? super T, ? super Q> after) {
+    default TetraConsumerException<F, S, T, Q, X> andThen(TetraConsumerException<? super F, ? super S, ? super T, ? super Q, X> after) {
         return (f, s, t, q) -> {
             this.accept(f, s, t, q);
             after.accept(f, s, t, q);

@@ -1,7 +1,5 @@
 package it.fulminazzo.fulmicollection.interfaces.functions;
 
-import java.util.function.Function;
-
 /**
  * Interface that represents a three parameters function that throws an exception.
  * (F, S, T) -&#62; R
@@ -10,9 +8,10 @@ import java.util.function.Function;
  * @param <S> the type parameter
  * @param <T> the type parameter
  * @param <R> the return type
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface TriFunctionException<F, S, T, R> {
+public interface TriFunctionException<F, S, T, R, X extends Throwable> {
 
     /**
      * Apply function.
@@ -21,9 +20,9 @@ public interface TriFunctionException<F, S, T, R> {
      * @param second the second argument
      * @param third  the third argument
      * @return the returning object
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    R apply(F first, S second, T third) throws Exception;
+    R apply(F first, S second, T third) throws X;
 
     /**
      * Apply this function and another function.
@@ -32,7 +31,7 @@ public interface TriFunctionException<F, S, T, R> {
      * @param after the after function
      * @return a TriFunction that combines this and the function.
      */
-    default <V> TriFunctionException<F, S, T, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> TriFunctionException<F, S, T, V, X> andThen(FunctionException<? super R, ? extends V, X> after) {
         return (f, s, t) -> after.apply(this.apply(f, s, t));
     }
 }

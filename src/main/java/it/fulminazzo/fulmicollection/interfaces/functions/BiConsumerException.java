@@ -6,18 +6,19 @@ package it.fulminazzo.fulmicollection.interfaces.functions;
  *
  * @param <F> the type parameter
  * @param <S> the type parameter
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface BiConsumerException<F, S> {
+public interface BiConsumerException<F, S, X extends Throwable> {
 
     /**
      * Accept function.
      *
      * @param first  the first argument
      * @param second the second argument
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    void accept(F first, S second) throws Exception;
+    void accept(F first, S second) throws X;
 
     /**
      * Apply this consumer and the after one.
@@ -25,7 +26,7 @@ public interface BiConsumerException<F, S> {
      * @param after the next consumer.
      * @return a consumer combining both this and the after one.
      */
-    default BiConsumerException<F, S> andThen(BiConsumerException<? super F, ? super S> after) {
+    default BiConsumerException<F, S, X> andThen(BiConsumerException<? super F, ? super S, X> after) {
         return (f, s) -> {
             this.accept(f, s);
             after.accept(f, s);

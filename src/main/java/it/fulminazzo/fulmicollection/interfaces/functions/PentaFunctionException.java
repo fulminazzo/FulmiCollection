@@ -1,7 +1,5 @@
 package it.fulminazzo.fulmicollection.interfaces.functions;
 
-import java.util.function.Function;
-
 /**
  * Interface that represents a five parameters function that throws an exception.
  * (F, S, T, Q, P) -&#62; R
@@ -12,9 +10,10 @@ import java.util.function.Function;
  * @param <Q> the type parameter
  * @param <P> the type parameter
  * @param <R> the return type
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface PentaFunctionException<F, S, T, Q, P, R> {
+public interface PentaFunctionException<F, S, T, Q, P, R, X extends Throwable> {
 
     /**
      * Apply function.
@@ -25,9 +24,9 @@ public interface PentaFunctionException<F, S, T, Q, P, R> {
      * @param fourth the fourth argument
      * @param fifth  the fifth argument
      * @return the returning object
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    R apply(F first, S second, T third, Q fourth, P fifth) throws Exception;
+    R apply(F first, S second, T third, Q fourth, P fifth) throws X;
 
     /**
      * Apply this function and another function.
@@ -36,7 +35,7 @@ public interface PentaFunctionException<F, S, T, Q, P, R> {
      * @param after the after function
      * @return a QuadFunction that combines this and the function.
      */
-    default <V> PentaFunctionException<F, S, T, Q, P, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> PentaFunctionException<F, S, T, Q, P, V, X> andThen(FunctionException<? super R, ? extends V, X> after) {
         return (f, s, t, q, p) -> after.apply(this.apply(f, s, t, q, p));
     }
 }

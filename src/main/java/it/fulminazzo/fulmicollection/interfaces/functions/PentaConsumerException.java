@@ -9,9 +9,10 @@ package it.fulminazzo.fulmicollection.interfaces.functions;
  * @param <T> the type parameter
  * @param <Q> the type parameter
  * @param <P> the type parameter
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface PentaConsumerException<F, S, T, Q, P> {
+public interface PentaConsumerException<F, S, T, Q, P, X extends Throwable> {
 
     /**
      * Accept function.
@@ -21,9 +22,9 @@ public interface PentaConsumerException<F, S, T, Q, P> {
      * @param third  the third argument
      * @param fourth the fourth argument
      * @param fifth  the fifth argument
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    void accept(F first, S second, T third, Q fourth, P fifth) throws Exception;
+    void accept(F first, S second, T third, Q fourth, P fifth) throws X;
 
     /**
      * Apply this consumer and the after one.
@@ -31,7 +32,7 @@ public interface PentaConsumerException<F, S, T, Q, P> {
      * @param after the next consumer.
      * @return a consumer combining both this and the after one.
      */
-    default PentaConsumerException<F, S, T, Q, P> andThen(PentaConsumerException<? super F, ? super S, ? super T, ? super Q, ? super P> after) {
+    default PentaConsumerException<F, S, T, Q, P, X> andThen(PentaConsumerException<? super F, ? super S, ? super T, ? super Q, ? super P, X> after) {
         return (f, s, t, q, p) -> {
             this.accept(f, s, t, q, p);
             after.accept(f, s, t, q, p);

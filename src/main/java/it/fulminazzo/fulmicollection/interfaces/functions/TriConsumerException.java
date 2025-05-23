@@ -7,9 +7,10 @@ package it.fulminazzo.fulmicollection.interfaces.functions;
  * @param <F> the type parameter
  * @param <S> the type parameter
  * @param <T> the type parameter
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface TriConsumerException<F, S, T> {
+public interface TriConsumerException<F, S, T, X extends Throwable> {
 
     /**
      * Accept function.
@@ -17,9 +18,9 @@ public interface TriConsumerException<F, S, T> {
      * @param first  the first argument
      * @param second the second argument
      * @param third  the third argument
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    void accept(F first, S second, T third) throws Exception;
+    void accept(F first, S second, T third) throws X;
 
     /**
      * Apply this consumer and the after one.
@@ -27,7 +28,7 @@ public interface TriConsumerException<F, S, T> {
      * @param after the next consumer.
      * @return a consumer combining both this and the after one.
      */
-    default TriConsumerException<F, S, T> andThen(TriConsumerException<? super F, ? super S, ? super T> after) {
+    default TriConsumerException<F, S, T, X> andThen(TriConsumerException<? super F, ? super S, ? super T, X> after) {
         return (f, s, t) -> {
             this.accept(f, s, t);
             after.accept(f, s, t);

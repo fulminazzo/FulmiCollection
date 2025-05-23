@@ -1,7 +1,5 @@
 package it.fulminazzo.fulmicollection.interfaces.functions;
 
-import java.util.function.Function;
-
 /**
  * Interface that represents a four parameters function that throws an exception.
  * (F, S, T, Q) -&#62; R
@@ -11,9 +9,10 @@ import java.util.function.Function;
  * @param <T> the type parameter
  * @param <Q> the type parameter
  * @param <R> the return type
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface TetraFunctionException<F, S, T, Q, R> {
+public interface TetraFunctionException<F, S, T, Q, R, X extends Throwable> {
 
     /**
      * Apply function.
@@ -23,9 +22,9 @@ public interface TetraFunctionException<F, S, T, Q, R> {
      * @param third  the third argument
      * @param fourth the fourth argument
      * @return the returning object
-     * @throws Exception the exception
+     * @throws X the exception
      */
-    R apply(F first, S second, T third, Q fourth) throws Exception;
+    R apply(F first, S second, T third, Q fourth) throws X;
 
     /**
      * Apply this function and another function.
@@ -34,7 +33,7 @@ public interface TetraFunctionException<F, S, T, Q, R> {
      * @param after the after function
      * @return a QuadFunction that combines this and the function.
      */
-    default <V> TetraFunctionException<F, S, T, Q, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> TetraFunctionException<F, S, T, Q, V, X> andThen(FunctionException<? super R, ? extends V, X> after) {
         return (f, s, t, q) -> after.apply(this.apply(f, s, t, q));
     }
 }
