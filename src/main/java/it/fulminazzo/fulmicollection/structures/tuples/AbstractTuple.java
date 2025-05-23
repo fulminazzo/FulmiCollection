@@ -159,7 +159,7 @@ abstract class AbstractTuple<T extends AbstractTuple<T, C, P>, C, P> extends Fie
         return ReflectionUtils.getFields(this, f -> !Modifier.isStatic(f.getModifiers())).toArray(new Field[0]);
     }
 
-    private <O, M> O doPrivileged(Callable<M> method, FunctionException<M, O> exceptionAction) {
+    private <O, M> O doPrivileged(Callable<M> method, FunctionException<M, O, Exception> exceptionAction) {
         try {
             M m = method.call();
             return AccessController.doPrivileged((PrivilegedExceptionAction<O>) () -> exceptionAction.apply(m));

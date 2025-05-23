@@ -18,7 +18,11 @@ import java.util.function.Supplier;
  */
 @Getter
 @Setter
-public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, FunctionException<T, Boolean>> {
+public class Singlet<T> extends AbstractTuple<
+        Singlet<T>,
+        ConsumerException<T, Exception>,
+        FunctionException<T, Boolean, Exception>
+        > {
     private T value;
 
     /**
@@ -91,7 +95,7 @@ public class Singlet<T> extends AbstractTuple<Singlet<T>, ConsumerException<T>, 
      * @return the new tuple
      */
     @SuppressWarnings("unchecked")
-    public <V> Singlet<V> map(@NotNull FunctionException<T, V> function) {
+    public <V> Singlet<V> map(@NotNull FunctionException<T, V, Exception> function) {
         if (isPresent())
             try {
                 return new Singlet<>(function.apply(this.value));

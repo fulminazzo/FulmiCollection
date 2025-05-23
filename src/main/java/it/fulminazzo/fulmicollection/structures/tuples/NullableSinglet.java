@@ -62,7 +62,7 @@ public class NullableSinglet<T> extends Singlet<T> {
     }
 
     @Override
-    public <V> NullableSinglet<V> map(@NotNull FunctionException<T, V> function) {
+    public <V> NullableSinglet<V> map(@NotNull FunctionException<T, V, Exception> function) {
         if (isPresent())
             try {
                 return new NullableSinglet<>(function.apply(getValue()));

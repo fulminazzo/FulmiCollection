@@ -18,7 +18,11 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerException<F, S, T>, TriFunctionException<F, S, T, Boolean>> {
+public class Triple<F, S, T> extends AbstractTuple<
+        Triple<F, S, T>,
+        TriConsumerException<F, S, T, Exception>,
+        TriFunctionException<F, S, T, Boolean, Exception>
+        > {
     private F first;
     private S second;
     private T third;
@@ -119,7 +123,7 @@ public class Triple<F, S, T> extends AbstractTuple<Triple<F, S, T>, TriConsumerE
      * @return the new tuple
      */
     @SuppressWarnings("unchecked")
-    public <A, B, C> Triple<A, B, C> map(@NotNull TriFunctionException<F, S, T, Triple<A, B, C>> function) {
+    public <A, B, C> Triple<A, B, C> map(@NotNull TriFunctionException<F, S, T, Triple<A, B, C>, Exception> function) {
         if (isPresent())
             try {
                 return function.apply(this.first, this.second, this.third);

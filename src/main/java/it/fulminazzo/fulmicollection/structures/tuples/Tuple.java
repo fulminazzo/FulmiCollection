@@ -17,7 +17,11 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<K, V>, BiFunctionException<K, V, Boolean>> {
+public class Tuple<K, V> extends AbstractTuple<
+        Tuple<K, V>,
+        BiConsumerException<K, V, Exception>,
+        BiFunctionException<K, V, Boolean, Exception>
+        > {
     private K key;
     private V value;
 
@@ -95,7 +99,7 @@ public class Tuple<K, V> extends AbstractTuple<Tuple<K, V>, BiConsumerException<
      * @return the new tuple
      */
     @SuppressWarnings("unchecked")
-    public <S, T> Tuple<S, T> map(@NotNull BiFunctionException<K, V, Tuple<S, T>> function) {
+    public <S, T> Tuple<S, T> map(@NotNull BiFunctionException<K, V, Tuple<S, T>, Exception> function) {
         if (isPresent())
             try {
                 return function.apply(this.key, this.value);
