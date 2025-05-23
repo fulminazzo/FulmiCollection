@@ -1,7 +1,5 @@
 package it.fulminazzo.fulmicollection.interfaces.functions;
 
-import java.util.function.Function;
-
 /**
  * Interface that represents a two parameters function that throws an exception.
  * (F, S) -&#62; R

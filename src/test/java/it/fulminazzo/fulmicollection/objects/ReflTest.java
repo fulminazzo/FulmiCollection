@@ -39,7 +39,7 @@ class ReflTest extends AbstractReflTest {
 
     @Test
     void testInEquality() {
-        assertNotEquals(this.refl, new Refl<>(new Object()));
+        assertNotEquals(new Refl<>(new Object()), this.refl);
     }
 
     @Test
