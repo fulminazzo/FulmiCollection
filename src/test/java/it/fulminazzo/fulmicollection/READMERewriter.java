@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class READMERewriter {
     private static final List<String> VALUES = Arrays.asList("", "Bi", "Tri", "Tetra", "Penta", "Hexa", "Septa");
     private static final String[] PARAMETERS = new String[]{"f", "s", "t", "q", "p", "h", "e"};
-    private static final String FUNCTIONS_REGEX = "(.*)(Consumer|Function)(.*)";
+    private static final String FUNCTIONS_REGEX = "(.*)(Consumer|Function|Supplier)(.*)";
 
     @Test
     void rewrite() throws IOException {

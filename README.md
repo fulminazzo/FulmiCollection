@@ -21,6 +21,7 @@ FulmiCollection is a library project created by Fulminazzo that contains various
 |------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
 | [ConsumerException](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/ConsumerException.java)           | `(f) -> void throws Exception`             |
 | [FunctionException](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/FunctionException.java)           | `(f) -> r throws Exception`                |
+| [SupplierException](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/SupplierException.java)           | `(f) -> void throws Exception`             |
 | [BiConsumerException](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/BiConsumerException.java)       | `(f, s) -> void throws Exception`          |
 | [BiFunctionException](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/BiFunctionException.java)       | `(f, s) -> r throws Exception`             |
 | [TriConsumer](src/main/java/it/fulminazzo/fulmicollection/interfaces/functions/TriConsumer.java)                       | `(f, s, t) -> void`                        |
