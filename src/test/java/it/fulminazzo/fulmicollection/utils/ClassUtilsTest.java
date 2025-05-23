@@ -46,6 +46,7 @@ class ClassUtilsTest {
         Set<Class<?>> expected = new HashSet<>(Arrays.asList(
                 BiConsumerException.class, BiFunctionException.class, ConsumerException.class, FunctionException.class,
                 PentaConsumer.class, PentaConsumerException.class, PentaFunction.class, PentaFunctionException.class,
+                SupplierException.class,
                 TetraConsumer.class, TetraConsumerException.class, TetraFunction.class, TetraFunctionException.class,
                 TriConsumer.class, TriConsumerException.class, TriFunction.class, TriFunctionException.class
         ));
