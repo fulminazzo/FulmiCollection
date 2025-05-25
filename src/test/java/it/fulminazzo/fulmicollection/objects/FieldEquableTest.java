@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class FieldEquableTest {
 
     @Test
+    void testIgnoreField() {
+        MockClass m1 = new MockClass();
+        m1.name = "Alex";
+        m1.id = UUID.randomUUID();
+        m1.age = 10;
+        m1.toIgnore = true;
+        MockClass m2 = new MockClass();
+        m2.name = m1.name;
+        m2.id = m1.id;
+        m2.age = m1.age;
+        m2.toIgnore = false;
+        assertEquals(m1.name, m2.name);
+    }
+
+    @Test
     void testEquality() {
         MockClass m1 = new MockClass();
         m1.name = "Alex";
@@ -57,5 +72,8 @@ class FieldEquableTest {
     static class MockClass extends MockSuperClass {
         String surname;
         int age;
+
+        @IgnoreField
+        boolean toIgnore;
     }
 }
