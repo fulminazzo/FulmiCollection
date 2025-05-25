@@ -23,7 +23,7 @@ public abstract class FieldEquable extends Printable {
             if (!c1.equals(c2)) return false;
             for (Class<?> c = c1; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
                 for (Field field : c.getDeclaredFields())
-                    if (!Modifier.isStatic(field.getModifiers())) {
+                    if (!Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(IgnoreField.class)) {
                         Object o1 = ReflectionUtils.getOrThrow(field, this);
                         Object o2 = ReflectionUtils.getOrThrow(field, fe);
                         if (calculateHash(o1) != calculateHash(o2)) return false;
