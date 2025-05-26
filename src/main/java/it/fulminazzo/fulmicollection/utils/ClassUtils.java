@@ -1,5 +1,6 @@
 package it.fulminazzo.fulmicollection.utils;
 
+import it.fulminazzo.fulmicollection.structures.tuples.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,7 @@ import java.util.zip.ZipException;
  * The type Class utils.
  */
 public class ClassUtils {
+    private static final Map<Tuple<String, String>, Set<Class<?>>> INTERNAL_CACHE = new HashMap<>();
 
     /**
      * This code works whether it is run from a JAR file or from an IDE.
@@ -71,6 +73,10 @@ public class ClassUtils {
      * @return the set of classes
      */
     private static @NotNull Set<Class<?>> findClassesInPackageSingle(@NotNull String packageName, String classPath)  {
+        Tuple<String, String> key = new Tuple<>(packageName, classPath);
+        Set<Class<?>> cached = INTERNAL_CACHE.get(key);
+        if (cached != null) return cached;
+
         final TreeSet<Class<?>> classes = new TreeSet<>(Comparator.comparing(Class::getCanonicalName));
 
         try {
@@ -120,6 +126,8 @@ public class ClassUtils {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        INTERNAL_CACHE.put(key, classes);
 
         return classes;
     }
