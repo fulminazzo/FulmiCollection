@@ -84,24 +84,25 @@ public class ClassUtils {
                 final String separator = "/";
                 final String path = packageName.replace(".", separator);
                 // JAR File
-                FileInputStream fileInputStream = new FileInputStream(classPath);
-                JarInputStream inputStream = new JarInputStream(fileInputStream);
-                while (inputStream.available() > 0) {
-                    try {
-                        JarEntry entry = inputStream.getNextJarEntry();
-                        if (entry == null) continue;
-                        String className = entry.getName();
-                        if (!className.startsWith(path)) continue;
-                        if (className.equalsIgnoreCase(path + separator)) continue;
-                        className = className.replace(separator, ".");
-                        if (className.endsWith(".")) continue;
-                        if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
-                        else {
-                            className = className.substring(0, className.length() - ".class".length());
-                            Class<?> clazz = Class.forName(className);
-                            if (clazz.getCanonicalName() != null) classes.add(clazz);
+                try (FileInputStream fileInputStream = new FileInputStream(classPath)) {
+                    JarInputStream inputStream = new JarInputStream(fileInputStream);
+                    while (inputStream.available() > 0) {
+                        try {
+                            JarEntry entry = inputStream.getNextJarEntry();
+                            if (entry == null) continue;
+                            String className = entry.getName();
+                            if (!className.startsWith(path)) continue;
+                            if (className.equalsIgnoreCase(path + separator)) continue;
+                            className = className.replace(separator, ".");
+                            if (className.endsWith(".")) continue;
+                            if (!className.endsWith(".class")) classes.addAll(findClassesInPackageSingle(className, classPath));
+                            else {
+                                className = className.substring(0, className.length() - ".class".length());
+                                Class<?> clazz = Class.forName(className);
+                                if (clazz.getCanonicalName() != null) classes.add(clazz);
+                            }
+                        } catch (ZipException ignored) {
                         }
-                    } catch (ZipException ignored) {
                     }
                 }
             } else {
