@@ -3,6 +3,8 @@ package it.fulminazzo.fulmicollection.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -17,11 +19,16 @@ public class ExceptionUtils {
      * @return the exception
      */
     public static @NotNull Throwable unwrapRuntimeException(@NotNull Throwable exception) {
-        while (exception.getCause() != null &&
-                (exception.getClass().equals(RuntimeException.class) ||
-                        (exception.getClass().equals(InvocationTargetException.class) ||
+        if (exception instanceof PrivilegedActionException) {
+            PrivilegedActionException pae = (PrivilegedActionException) exception;
+            Exception ex = pae.getException();
+            if (ex != null) return unwrapRuntimeException(ex);
+        }
+        Throwable cause = exception.getCause();
+        if (cause != null && (exception.getClass().equals(RuntimeException.class) ||
+                (exception.getClass().equals(InvocationTargetException.class) ||
                         exception.getClass().equals(ExecutionException.class))))
-            exception = exception.getCause();
+            return unwrapRuntimeException(cause);
         return exception;
     }
 
