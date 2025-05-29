@@ -119,7 +119,7 @@ public final class ObjectUtils {
             }
 
         final Refl<O> object = new Refl<>(clazz, new Object[0]);
-        for (final Field field : object.getNonStaticFields())
+        for (final Field field : new Refl<>(t.getClass()).getNonStaticFields())
             try {
                 ReflectionUtils.get(field, t).map(obj1 -> {
                     if (obj1 == null) return null;
