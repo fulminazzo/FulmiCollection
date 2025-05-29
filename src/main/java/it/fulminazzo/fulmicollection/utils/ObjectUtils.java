@@ -55,10 +55,11 @@ public final class ObjectUtils {
         else if (!(object instanceof Map)) {
             Map<Object, Object> map = new LinkedHashMap<>();
             Refl<?> refl = new Refl<>(object);
-            for (final Field field : refl.getNonStaticFields()) {
-                Object obj = refl.getFieldObject(field);
-                map.put(field.getName(), obj);
-            }
+            for (final Field field : refl.getNonStaticFields())
+                if (!field.getName().contains("$")) {
+                    Object obj = refl.getFieldObject(field);
+                    map.put(field.getName(), obj);
+                }
             object = map;
         }
         Map<?, ?> map = (Map<?, ?>) object;
