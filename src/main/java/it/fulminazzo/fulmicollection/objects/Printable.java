@@ -91,6 +91,7 @@ public abstract class Printable {
                 if (field.getName().equals("__$hits$__")) continue;
                 // Prevent static non-relevant fields to be shown.
                 if (Modifier.isStatic(field.getModifiers())) continue;
+                if (field.isAnnotationPresent(IgnoreField.class)) continue;
                 ReflectionUtils.get(field, object).ifPresent(o -> {
                     String str = o instanceof Printable ? printObject(o, finalHeadStart + "  ") :
                             o == null ? "null" : o.toString();
@@ -102,7 +103,6 @@ public abstract class Printable {
         return result + String.format("%s}", finalHeadStart);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
     public @NotNull String toString() {
         return printObject(this, "");
